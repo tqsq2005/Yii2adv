@@ -1,0 +1,34 @@
+/**
+ * 左侧浮动工具栏的css，包含返回顶部，页面刷新，页面二维码及返回底部
+ */
+#floatButton {
+    position: fixed;
+    top: 50%;
+    right: 0;
+    z-index: 9999999;
+}
+
+#floatButton .btn:focus {
+    outline: 0
+}
+
+@media screen and (max-width: 767px) {
+    #floatButton {
+        display: none;
+    }
+}
+
+#pageQrcode img.qrcode {
+    position: absolute;
+    right: 50px;
+    bottom: -34px;
+    padding: 10px;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    display: none
+}
+
+#pageQrcode:hover img.qrcode {
+    display: block
+}

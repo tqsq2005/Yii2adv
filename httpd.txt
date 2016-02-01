@@ -1,0 +1,98 @@
+<VirtualHost *:80>
+   ServerName js.dev
+   DocumentRoot "E:/xampp/htdocs/Yii2Adv/frontend/web/"
+
+   <Directory "E:/xampp/htdocs/Yii2Adv/frontend/web/">
+       # use mod_rewrite for pretty URL support
+       RewriteEngine on
+       # If a directory or a file exists, use the request directly
+       RewriteCond %{REQUEST_FILENAME} !-f
+       RewriteCond %{REQUEST_FILENAME} !-d
+       # Otherwise forward the request to index.php
+       RewriteRule . index.php
+
+       # use index.php as index file
+       DirectoryIndex index.php
+
+       # ...other settings...
+   </Directory>
+</VirtualHost>
+
+<VirtualHost *:80>
+   ServerName admin.dev
+   DocumentRoot "E:/xampp/htdocs/Yii2Adv/backend/web/"
+
+   <Directory "E:/xampp/htdocs/Yii2Adv/backend/web/">
+       # use mod_rewrite for pretty URL support
+       RewriteEngine on
+       # If a directory or a file exists, use the request directly
+       RewriteCond %{REQUEST_FILENAME} !-f
+       RewriteCond %{REQUEST_FILENAME} !-d
+       # Otherwise forward the request to index.php
+       RewriteRule . index.php
+
+       # use index.php as index file
+       DirectoryIndex index.php
+
+       # ...other settings...
+   </Directory>
+</VirtualHost>
+
+
+
+
+<VirtualHost *:80>
+    ServerName js.dev
+    #ErrorLog /dev/null
+    #LogLevel emerg
+    #CustomLog /dev/null combined
+
+    RewriteEngine on
+    # the main rewrite rule for the frontend application
+    RewriteCond %{REQUEST_URI} !^/(backend/web|admin)
+    RewriteRule !^/frontend/web /frontend/web%{REQUEST_URI} [L]
+    # redirect to the page without a trailing slash (uncomment if necessary)
+    #RewriteCond %{REQUEST_URI} ^/admin/$
+    #RewriteRule ^(/admin)/ $1 [L,R=301]
+    # disable the trailing slash redirect
+    RewriteCond %{REQUEST_URI} ^/admin$
+    RewriteRule ^/admin /backend/web/index.php [L]
+    # the main rewrite rule for the backend application
+    RewriteCond %{REQUEST_URI} ^/admin
+    RewriteRule ^/admin(.*) /backend/web$1 [L]
+
+    DocumentRoot "E:/xampp/htdocs/Yii2Adv/"
+    <Directory />
+        Options FollowSymLinks
+        AllowOverride None
+        AddDefaultCharset utf-8
+    </Directory>
+    <Directory "E:/xampp/htdocs/Yii2Adv/frontend/web/">
+        RewriteEngine on
+        # if a directory or a file exists, use the request directly
+        RewriteCond %{REQUEST_FILENAME} !-f
+        RewriteCond %{REQUEST_FILENAME} !-d
+        # otherwise forward the request to index.php
+        RewriteRule . index.php
+
+        Order Allow,Deny
+        Allow from all
+    </Directory>
+    <Directory "E:/xampp/htdocs/Yii2Adv/backend/web/">
+        RewriteEngine on
+        # if a directory or a file exists, use the request directly
+        RewriteCond %{REQUEST_FILENAME} !-f
+        RewriteCond %{REQUEST_FILENAME} !-d
+        # otherwise forward the request to index.php
+        RewriteRule . index.php
+
+        Order Allow,Deny
+        Allow from all
+    </Directory>
+    <FilesMatch \.(htaccess|htpasswd|svn|git)>
+        Deny from all
+        Satisfy All
+    </FilesMatch>
+</VirtualHost>
+
+
