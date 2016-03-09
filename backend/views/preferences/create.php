@@ -2,18 +2,19 @@
 
 use yii\helpers\Html;
 
+/**
+ * @var yii\web\View $this
+ * @var common\models\Preferences $model
+ */
 
-/* @var $this yii\web\View */
-/* @var $model common\models\Preferences */
-
-$this->title = '添加系统参数';
-$this->params['breadcrumbs'][] = ['label' => '系统参数配置', 'url' => ['index']];
+$this->title = 'Create Preferences';
+$this->params['breadcrumbs'][] = ['label' => 'Preferences', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="preferences-create">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
+    <div class="page-header">
+        <h1><?= Html::encode($this->title) ?></h1>
+    </div>
     <?= $this->render('_form', [
         'model' => $model,
     ]) ?>

@@ -91,7 +91,6 @@ if (Yii::$app->controller->action->id === 'login') {
             'content.php',
             ['content' => $content, 'directoryAsset' => $directoryAsset]
         ) ?>
-
     </div>
 
     <div class="btn-group-vertical" style="display: none;" role="group" aria-label="侧边辅助按钮组" id="floatButton">
@@ -106,7 +105,20 @@ if (Yii::$app->controller->action->id === 'login') {
         <button type="button" class="btn btn-default" role="button" aria-label="去底部" id="goBottom" title="去底部"><span
                 class="glyphicon glyphicon-arrow-down"></span></button>
     </div>
-
+    <?php
+        \yii\bootstrap\Modal::begin([
+            'headerOptions' => ['id' => 'modalHeader'],
+            //'footer'        => '<button type="button" class="btn btn-success" data-dismiss="modal">关闭</button>',
+            //'footerOptions' => ['id' => 'modalFooter'],
+            'id' => 'modal',
+            'size' => 'modal-lg',
+            //keeps from closing modal with esc key or by clicking out of the modal.
+            // user must click cancel or X to close
+            'clientOptions' => ['backdrop' => 'static', 'keyboard' => FALSE]
+        ]);
+        echo "<div id='modalContent'><div style='text-align:center'><img src='" . Yii::$app->getHomeUrl() . "/images/loading.gif'></div></div>";
+        yii\bootstrap\Modal::end();
+    ?>
     <?php $this->endBody() ?>
     </body>
     </html>

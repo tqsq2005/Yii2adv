@@ -3,9 +3,11 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
-/* @var $this yii\web\View */
-/* @var $model common\models\PreferencesSearch */
-/* @var $form yii\widgets\ActiveForm */
+/**
+ * @var yii\web\View $this
+ * @var common\models\PreferencesSearch $model
+ * @var yii\widgets\ActiveForm $form
+ */
 ?>
 
 <div class="preferences-search">

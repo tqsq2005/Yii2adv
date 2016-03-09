@@ -70,7 +70,10 @@ return [
             'class' => 'pheme\settings\Module',
             'sourceLanguage' => 'en'
         ],
-
+        //preferences
+        'sysini' => [
+            'class' => 'common\modules\preferences\Preferences',
+        ],
     ],
     'components' => [
         /*'user' => [
@@ -120,12 +123,12 @@ return [
         echo "<hr>";
     },*/
     //mdmsoft/yii2-admin
-    /*'as access' => [
+    'as access' => [
         'class' => 'mdm\admin\classes\AccessControl',
         'allowActions' => [
             'site/*',
             'admin/*',
-            'some-controller/some-action',
+            //'some-controller/some-action',
             'debug/*',
             'gii/*',
             'user/*',
@@ -135,5 +138,5 @@ return [
             // add a lot of actions here until you finally completed setting up rbac,
             // otherwise you may not even take a first step.
         ]
-    ],*/
+    ],
 ];

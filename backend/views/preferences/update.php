@@ -2,8 +2,10 @@
 
 use yii\helpers\Html;
 
-/* @var $this yii\web\View */
-/* @var $model common\models\Preferences */
+/**
+ * @var yii\web\View $this
+ * @var common\models\Preferences $model
+ */
 
 $this->title = 'Update Preferences: ' . ' ' . $model->id;
 $this->params['breadcrumbs'][] = ['label' => 'Preferences', 'url' => ['index']];

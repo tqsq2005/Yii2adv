@@ -72,6 +72,9 @@ $config = [
             'charset' => 'utf8',
             //表前缀
             'tablePrefix' => 'populac_',
+            /*'on afterOpen' => function($event) {
+                $event->sender->createCommand("SET time_zone = 'UTC'")->execute();
+            },*/
         ],
         'mailer' => [
             'class' => 'yii\swiftmailer\Mailer',

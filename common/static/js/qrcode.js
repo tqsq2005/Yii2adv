@@ -7,6 +7,10 @@
  * 4、Bootbox美化gii生成的删除按钮
  */
 jQuery(function($) {
+    //layer加载扩展模块
+    layer.config({
+        extend: 'extend/layer.ext.js'
+    });
     // 新窗口打开外链
     $('a[href^="http://"], a[href^="https://"]').each(function () {
         var a = new RegExp('/' + window.location.host + '/');

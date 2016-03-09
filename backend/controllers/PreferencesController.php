@@ -2,11 +2,9 @@
 
 namespace backend\controllers;
 
-use common\traits\AjaxValidationTrait;
 use Yii;
 use common\models\Preferences;
 use common\models\PreferencesSearch;
-use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -16,8 +14,6 @@ use yii\filters\VerbFilter;
  */
 class PreferencesController extends Controller
 {
-    use AjaxValidationTrait;
-
     public function behaviors()
     {
         return [
@@ -25,24 +21,6 @@ class PreferencesController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['post'],
-                ],
-            ],
-            'access' => [
-                'class' => AccessControl::className(),
-                'rules' => [
-                    [
-                        'allow'     => true,
-                        'roles'     => ['@'],
-                        'actions'   => ['create', 'update', 'delete'],
-                        'matchCallback' => function () {
-                            return Yii::$app->user->identity->getIsAdmin();
-                        },
-                    ],
-                    [
-                        'allow'     => true,
-                        'roles'     => ['@'],
-                        'actions'   => ['index', 'view'],
-                    ],
                 ],
             ],
         ];
@@ -54,12 +32,12 @@ class PreferencesController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new PreferencesSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $searchModel = new PreferencesSearch;
+        $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
         ]);
     }
 
@@ -70,9 +48,24 @@ class PreferencesController extends Controller
      */
     public function actionView($id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
+        $model = $this->findModel($id);
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->id]);
+        } else {
+            return $this->renderAjax('view', ['model' => $model]);
+        }/*
+        if($model->load(Yii::$app->request->post() && $model->save())) {
+            return $this->redirect(['view', 'id' => (string) $model->_id ]);
+        } elseif(Yii::$app->request->isAjax) {
+            return $this->render('_form', [
+                'model' => $model
+            ]);
+        } else {
+            return $this->render('_form', [
+                'model' => $model
+            ]);
+        }*/
     }
 
     /**
@@ -82,18 +75,16 @@ class PreferencesController extends Controller
      */
     public function actionCreate()
     {
-        $model = new Preferences();
-
-        $this->performAjaxValidation($model);
-
+        $model = new Preferences;
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            Yii::$app->getSession()->setFlash('success', [
-                'message' => $model->classmarkcn . '的参数“' . $model->name1 . '”添加成功！',
+            return $this->redirect(['index', 'PreferencesSearch[classmark]' => $model->classmark, 'create-classmark' => $model->classmark]);
+        } elseif(Yii::$app->request->isAjax) {
+            return $this->renderAjax('_form', [
+                'model' => $model
             ]);
-            return $this->redirect(['view', 'id' => $model->id]);
         } else {
-            return $this->render('create', [
-                'model' => $model->loadDefaultValues(),
+            return $this->render('_form', [
+                'model' => $model
             ]);
         }
     }
@@ -108,16 +99,15 @@ class PreferencesController extends Controller
     {
         $model = $this->findModel($id);
 
-        $this->performAjaxValidation($model);
-
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            Yii::$app->getSession()->setFlash('success', [
-                'message' => $model->classmarkcn . '的参数“' . $model->name1 . '”修改成功！',
-            ]);
             return $this->redirect(['view', 'id' => $model->id]);
+        } elseif(Yii::$app->request->isAjax) {
+            return $this->renderAjax('_form', [
+                'model' => $model
+            ]);
         } else {
-            return $this->render('update', [
-                'model' => $model,
+            return $this->render('_form', [
+                'model' => $model
             ]);
         }
     }
@@ -131,9 +121,7 @@ class PreferencesController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
-        Yii::$app->getSession()->setFlash('success', [
-            'message' => '已删除！',
-        ]);
+
         return $this->redirect(['index']);
     }
 
@@ -152,4 +140,19 @@ class PreferencesController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
+    /**
+     * (mixed|string) actionGetclassmarkcn : Ajax返回classmark对应的classmarkcn
+     * @param string $classmark
+     * @return mixed|string
+     */
+    public function actionGetclassmarkcn($classmark = '')
+    {
+        if(Yii::$app->request->isPost) {
+            return Preferences::getClassmarkcnByClassmark($_POST['classmark']);
+        } else {
+            return '';
+        }
+    }
+
 }

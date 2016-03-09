@@ -1,45 +1,67 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+use kartik\widgets\ActiveForm;
+use kartik\builder\Form;
+use kartik\datecontrol\DateControl;
 
-/* @var $this yii\web\View */
-/* @var $model common\models\Preferences */
-/* @var $form yii\widgets\ActiveForm */
+/**
+ * @var yii\web\View $this
+ * @var common\models\Preferences $model
+ * @var yii\widgets\ActiveForm $form
+ */
+
 ?>
-
 <div class="preferences-form">
 
     <?php $form = ActiveForm::begin([
-        'options'=>['enctype'=>'multipart/form-data','class' => 'form-horizontal'],
-        'enableAjaxValidation' => true,
-        'fieldConfig' => [
-            'template' => "{label}\n<div class=\"col-md-5\">{input}</div>\n<div class=\"col-md-5\">{error}</div>",
-            'labelOptions' => ['class' => 'col-md-2 control-label'],
-        ],
-    ]); ?>
+        'id'    => 'preferences-form',
+        'type'  => ActiveForm::TYPE_HORIZONTAL,
+        'formConfig' => [
+            'labelSpan' => 3,
+        ]
+    ]); echo Form::widget([
 
-    <?= $form->field($model, 'classmarkcn')->textInput(['maxlength' => true, 'placeholder' => '请输入中文项目分类']) ?>
+    'model' => $model,
+    'form' => $form,
+    'columns' => 1,
+    'columnSize' => Form::SIZE_LARGE,
+    'attributes' => [
 
-    <?= $form->field($model, 'classmark')->textInput(['maxlength' => true, 'placeholder' => '请输入英文项目分类']) ?>
+'codes'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter 参数编码...', 'maxlength'=>4]],
 
-    <?= $form->field($model, 'name1')->textInput(['maxlength' => true, 'placeholder' => '请输入参数名称']) ?>
+'name1'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter 参数名称...', 'maxlength'=>80]], 
 
-    <?= $form->field($model, 'codes')->textInput(['maxlength' => true, 'placeholder' => '请输入参数代码']) ?>
+'classmark'=>['type'=> Form::INPUT_TEXT, 'options'=>[
+    'placeholder'=>'Enter 项目分类-英文...',
+    'maxlength'=>30,
+    'value' => ($model->isNewRecord && Yii::$app->request->get('create-classmark')) ? Yii::$app->request->get('create-classmark') : $model->classmark,
+]],
 
-    <?= $form->field($model, 'status')->dropDownList($model->getStatusOptions()) ?>
+'classmarkcn'=>['type'=> Form::INPUT_TEXT, 'options'=>[
+    'placeholder'=>'Enter 项目分类-中文...',
+    'maxlength'=>50,
+    'value' => ($model->isNewRecord && Yii::$app->request->get('create-classmark')) ? \common\models\Preferences::getClassmarkcnByClassmark(Yii::$app->request->get('create-classmark')) : $model->classmarkcn,
+]],
 
+'status'=>['type'=> Form::INPUT_DROPDOWN_LIST, 'items' => $model->getStatusOptions()],
+
+    ]
+
+
+    ]);
+    ?>
     <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? '添加' : '更新', ['class' => $model->isNewRecord ? 'col-lg-2 col-lg-offset-2 btn btn-lg btn-success' : 'col-lg-2 col-lg-offset-2 btn btn-lg btn-primary']) ?>
+        <div class="col-sm-offset-3 col-sm-9">
+            <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Save') : Yii::t('app', 'Update'), ['id' => 'btn-modal-footer','class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']); ?>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        </div>
     </div>
-
-    <?php ActiveForm::end(); ?>
+    <?php
+    //echo Html::submitButton($model->isNewRecord ? Yii::t('app', 'Save') : Yii::t('app', 'Update'), ['id' => 'btn-modal-footer','class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']);
+    ActiveForm::end(); ?>
 
 </div>
-<?php \common\widgets\JsBlock::begin() ?>
-    <script type="text/javascript">
-        $(function() {
-            $('.form-group').addClass('form-group-lg');
-        });
-    </script>
-<?php \common\widgets\JsBlock::end() ?>
+
+

@@ -50,6 +50,17 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
+        //主题
+        /*'view' => [
+            'theme' => [
+                'class' => 'yii\base\Theme',
+                'basePath' => 'themes/metro',
+                'baseUrl' => 'themes/metro',
+                'pathMap' => [
+                    '@app/views' => 'themes/metro',
+                ],
+            ],
+        ],*/
     ],
     'params' => $params,
 ];

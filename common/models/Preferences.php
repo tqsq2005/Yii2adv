@@ -104,4 +104,12 @@ class Preferences extends \yii\db\ActiveRecord
         ])->name1;
         return $name1;
     }
+
+    public static function getClassmarkcnByClassmark($classmark = '')
+    {
+        $model = self::find()->andFilterWhere(['classmark' => $classmark])->one();
+        if($model)
+            return $model->classmarkcn;
+        return '';
+    }
 }

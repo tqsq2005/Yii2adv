@@ -36,7 +36,8 @@
         "warrence/yii2-kartikgii": "dev-master",
         "thiagotalma/yii2-jstree": "~1.0.0",
         "kartik-v/bootstrap-tabs-x": "@dev",
-        "kartik-v/yii2-mpdf": "dev-master"
+        "kartik-v/yii2-mpdf": "dev-master",
+        "kartik-v/yii2-dynagrid": "@dev"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",
@@ -56,7 +57,7 @@
     "repositories": {
         "packagist": {
             "type": "composer",
-            "url": "http://packagist.phpcomposer.com"
+            "url": "https://packagist.phpcomposer.com"
         }
     }
 }

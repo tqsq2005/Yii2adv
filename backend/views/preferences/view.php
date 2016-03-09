@@ -1,32 +1,31 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\DetailView;
+use kartik\detail\DetailView;
+use kartik\datecontrol\DateControl;
 
-/* @var $this yii\web\View */
-/* @var $model common\models\Preferences */
+/**
+ * @var yii\web\View $this
+ * @var common\models\Preferences $model
+ */
 
-$this->title = $model->id;
+$this->title = '<span class="fa fa-list-ul fa-lg" /> ' . $model->classmarkcn . ' <span class="fa fa-arrow-right text-warning" /> ' . $model->name1 ;
 $this->params['breadcrumbs'][] = ['label' => 'Preferences', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="preferences-view">
 
-    <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>
-        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
 
     <?= DetailView::widget([
-        'model' => $model,
+            'model' => $model,
+            'condensed'=>false,
+            'hover'=>true,
+            'mode'=>Yii::$app->request->get('edit')=='t' ? DetailView::MODE_EDIT : DetailView::MODE_VIEW,
+            'panel'=>[
+            'heading'=>$this->title,
+            'type'=>DetailView::TYPE_INFO,
+        ],
         'attributes' => [
             'codes',
             'name1',
@@ -35,9 +34,17 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'classmarkcn',
             'status',
-            'created_at',
-            'updated_at',
+            'created_at:datetime',
+            'updated_at:datetime',
         ],
+        'deleteOptions'=>[
+            'url'=>['delete', 'id' => $model->id],
+            'data'=>[
+                'confirm'=>Yii::t('app', 'Are you sure you want to delete this item?'),
+                'method'=>'post',
+            ],
+        ],
+        'enableEditMode'=>true,
     ]) ?>
 
 </div>

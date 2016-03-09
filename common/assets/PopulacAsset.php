@@ -54,6 +54,7 @@ class PopulacAsset extends AssetBundle{
         //'js/charisma.js',
         'js/app/common.js',
         'js/qrcode.js',//二维码
+        'js/ajax-modal-popup.js',//modal js
     ];
     public $css = [
         //'css/bootstrap-cerulean.min.css',
