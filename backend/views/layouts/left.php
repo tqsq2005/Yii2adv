@@ -70,7 +70,7 @@
                             ['label' => '系统使用帮助1', 'icon' => 'fa fa-question-circle', 'url' => ['/helpdoc'],],
                             ['label' => '系统使用帮助2', 'icon' => 'fa fa-question-circle', 'url' => ['/helpmenu'],],
                             ['label' => '系统权限设置', 'icon' => 'fa fa-users', 'url' => ['/admin'],],
-                            ['label' => '系统参数配置', 'icon' => 'fa fa-wrench', 'url' => ['/preferences/index'],],
+                            ['label' => '系统参数配置', 'icon' => 'fa fa-wrench', 'url' => ['/preferences/index', 'per-page' => Yii::$app->params['backend.view_item_per_page']],],
                         ],
                     ],
                 ],

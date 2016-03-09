@@ -134,7 +134,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'title' => '请点击设置每页显示记录数',
             ]),
             'after'=>Html::a('<i class="fa fa-warning"></i> 删除选中列', ['delcolumn'], ['class' => 'delcolumn btn btn-danger']) . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' .
-                Html::a('<i class="glyphicon glyphicon-repeat"></i> 重置列表', ['index'], ['class' => 'btn btn-info']) . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' .
+                Html::a('<i class="glyphicon glyphicon-repeat"></i> 重置列表', ['index', 'per-page' => Yii::$app->params['backend.view_item_per_page']], ['class' => 'btn btn-info']) . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' .
                 '<input type="hidden" class="per-page-size-set" name="per-page" value='. Yii::$app->request->get('per-page', 20) .'>',
             'showFooter'=>false,
         ],
