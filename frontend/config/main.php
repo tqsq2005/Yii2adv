@@ -49,6 +49,7 @@ return [
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
+            'class' => '\bedezign\yii2\audit\components\web\ErrorHandler',
         ],
         //主题
         /*'view' => [

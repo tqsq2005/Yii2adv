@@ -6,6 +6,7 @@ use Yii;
 use backend\models\Helpmenu;
 use backend\models\HelpmenuSearch;
 use yii\filters\AccessControl;
+use yii\helpers\Url;
 use yii\helpers\VarDumper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -26,20 +27,20 @@ class HelpmenuController extends Controller
                     'delete' => ['post'],
                 ],
             ],
-            'access' => [
+            /*'access' => [
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
                         'allow'     => true,
                         'roles'     => ['@'],
                     ],
-                    /*[
+                    [
                         'actions' => ['treenode'],
                         'allow'     => true,
                         'roles'     => ['@', '?'],
-                    ],*/
+                    ],
                 ],
-            ],
+            ],*/
         ];
     }
 
@@ -68,10 +69,10 @@ class HelpmenuController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-        return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['view', 'id' => $model->id]);
         } else {
-        return $this->render('view', ['model' => $model]);
-}
+            return $this->render('view', ['model' => $model]);
+        }
     }
 
     /**
@@ -151,7 +152,8 @@ class HelpmenuController extends Controller
                 'id' => '%',
                 'text' => '系统使用帮助',
                 'children' => true,
-                'icon' => './images/js18.png'
+                'icon' => './images/js18.png',
+                'url' => Url::to(['detail', 'unitcode' => '^']),
             ];
         } else {
             $model = new Helpmenu();
@@ -161,6 +163,37 @@ class HelpmenuController extends Controller
         //VarDumper::dump($data);
         Yii::$app->response->format = Response::FORMAT_JSON;
         echo json_encode($data);
+    }
+
+    public function actionDetail()
+    {
+        $unitcode = Yii::$app->request->post('unitcode', '%');
+        $unitname = Yii::$app->request->post('unitname', '系统使用帮助');
+        $helpmenu = new Helpmenu();
+
+        if($helpmenu->isParent($unitcode)) {
+            $searchModel = new HelpmenuSearch;
+            $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams(), $unitcode);
+
+            return $this->renderAjax('_detail-help-children', [
+                'dataProvider' => $dataProvider,
+                'searchModel' => $searchModel,
+                'unitname' => $unitname,
+            ]);
+        } else {
+            $model = Helpmenu::findOne(['unitcode' => $unitcode]);
+
+            if ($model->load(Yii::$app->request->post()) && $model->save()) {
+                return $this->renderAjax('_detail-help-info', ['model' => $model]);
+            } else {
+                return $this->renderAjax('_detail-help-info', ['model' => $model]);
+            }
+        }
+    }
+
+    public function actionMain()
+    {
+        return $this->render('main');
     }
 
     /**

@@ -27,6 +27,7 @@ if (Yii::$app->controller->action->id === 'login') {
     }
 
     dmstr\web\AdminLteAsset::register($this);
+    \bedezign\yii2\audit\web\JSLoggingAsset::register($this);//audit-Log
 
     $directoryAsset = Yii::$app->assetManager->getPublishedUrl('@vendor/almasaeed2010/adminlte/dist');
     ?>
@@ -65,7 +66,7 @@ if (Yii::$app->controller->action->id === 'login') {
                 'delay' => (!empty($message['duration'])) ? $message['duration'] : 3000, //This delay is how long the message shows for
                 'showProgressbar' => true,
                 'placement' => [
-                    'from' => (!empty($message['positonY'])) ? $message['positonY'] : 'bottom',
+                    'from' => (!empty($message['positonY'])) ? $message['positonY'] : 'top',
                     'align' => (!empty($message['positonX'])) ? $message['positonX'] : 'right',
                 ]
             ]

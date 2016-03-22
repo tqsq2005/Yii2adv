@@ -11,6 +11,7 @@ use frontend\assets\AppAsset;
 use common\widgets\Alert;
 
 AppAsset::register($this);
+\bedezign\yii2\audit\web\JSLoggingAsset::register($this);//audit-Log
 \kartik\icons\Icon::map($this);
 \uran1980\yii\widgets\pace\Pace::widget([
     'color' => 'green',

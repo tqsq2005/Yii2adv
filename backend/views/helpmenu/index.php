@@ -136,7 +136,8 @@ $this->registerJsFile('@web/plus/jsTree/jstree.min.js', ['depends' => 'yii\web\J
                 }
             },
             'force_text' : true,
-            'plugins' : ['state','dnd','contextmenu']
+            'plugins' : ['state','dnd']
+            //'plugins' : ['state','dnd','contextmenu']
         }).on('changed.jstree', function (e, data) {
             if(data && data.selected && data.selected.length) {
                 /*$.get('<?= \yii\helpers\Url::to(['helpmenu/index']) ?>?HelpmenuSearch[upunitcode]=' + data.selected.join(':'), function (d) {

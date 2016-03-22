@@ -5,6 +5,7 @@ use common\traits\AjaxValidationTrait;
 use dosamigos\qrcode\QrCode;
 use Yii;
 use yii\filters\AccessControl;
+use yii\helpers\VarDumper;
 use yii\web\Controller;
 //use common\models\LoginForm;
 use dektrium\user\models\LoginForm;
@@ -26,7 +27,7 @@ class SiteController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['login', 'error', 'qrcode', 'test'],
+                        'actions' => ['login', 'error', 'qrcode', 'test', 'test2'],
                         'allow' => true,
                     ],
                     [
@@ -126,5 +127,14 @@ class SiteController extends Controller
     public function actionTest()
     {
         return $this->render('test');
+    }
+
+    public function actionTest2()
+    {
+        $aliases = Yii::$aliases;
+        VarDumper::dump($aliases);
+        echo Yii::$app->getHomeUrl();
+        echo Yii::$app->getBasePath();
+        echo Yii::$app->getControllerPath();
     }
 }

@@ -26,9 +26,11 @@ class HelpmenuSearch extends Helpmenu
         return Model::scenarios();
     }
 
-    public function search($params)
+    public function search($params, $upunitcode)
     {
-        $query = Helpmenu::find();
+        $query = Helpmenu::find()->andFilterWhere([
+            'upunitcode' => $upunitcode,
+        ]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

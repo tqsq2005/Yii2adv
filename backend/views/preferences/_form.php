@@ -15,7 +15,7 @@ use kartik\datecontrol\DateControl;
 <div class="preferences-form">
 
     <?php $form = ActiveForm::begin([
-        'id'    => 'preferences-form',
+        'id'    => 'preferences-form',//确保ajax验证的时候还在Modal中
         'type'  => ActiveForm::TYPE_HORIZONTAL,
         'formConfig' => [
             'labelSpan' => 3,

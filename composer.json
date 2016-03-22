@@ -37,7 +37,11 @@
         "thiagotalma/yii2-jstree": "~1.0.0",
         "kartik-v/bootstrap-tabs-x": "@dev",
         "kartik-v/yii2-mpdf": "dev-master",
-        "kartik-v/yii2-dynagrid": "@dev"
+        "kartik-v/yii2-dynagrid": "@dev",
+        "liyunfang/yii2-contextmenu": "^1.0",
+        "zelenin/yii2-request-log-module": "dev-master",
+        "nhkey/yii2-activerecord-history": "*",
+        "bedezign/yii2-audit": "^1.0"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",

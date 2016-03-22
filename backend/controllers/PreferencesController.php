@@ -5,9 +5,11 @@ namespace backend\controllers;
 use Yii;
 use common\models\Preferences;
 use common\models\PreferencesSearch;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Response;
 
 /**
  * PreferencesController implements the CRUD actions for Preferences model.
@@ -51,7 +53,9 @@ class PreferencesController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            Yii::$app->session->setFlash('kv-detail-success', '数据更新成功！');
+            //return $this->redirect(['view', 'id' => $model->id]);
+            return $this->renderAjax('view', ['model' => $model]);
         } else {
             return $this->renderAjax('view', ['model' => $model]);
         }/*
@@ -100,7 +104,9 @@ class PreferencesController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            Yii::$app->session->setFlash('success', ['message' => '数据更新成功！']);
+            //return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['index', 'PreferencesSearch[classmark]' => $model->classmark, 'create-classmark' => $model->classmark]);
         } elseif(Yii::$app->request->isAjax) {
             return $this->renderAjax('_form', [
                 'model' => $model
@@ -153,6 +159,20 @@ class PreferencesController extends Controller
         } else {
             return '';
         }
+    }
+
+    public function actionJson($classmark = '')
+    {
+        if($classmark) {
+            $models = Preferences::find()->andFilterWhere(['classmark' => $classmark])->all();
+            $data = array_map(function($model) { return $model->attributes; }, $models);
+            $response = Yii::$app->response;
+            $response->format = Response::FORMAT_JSON;
+            $response->data = $data;
+            $response->send(); //等同于 return $response;
+        }
+
+        return '';
     }
 
 }

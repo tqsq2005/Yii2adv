@@ -71,6 +71,17 @@
                             ['label' => '系统使用帮助2', 'icon' => 'fa fa-question-circle', 'url' => ['/helpmenu'],],
                             ['label' => '系统权限设置', 'icon' => 'fa fa-users', 'url' => ['/admin'],],
                             ['label' => '系统参数配置', 'icon' => 'fa fa-wrench', 'url' => ['/preferences/index', 'per-page' => Yii::$app->params['backend.view_item_per_page']],],
+                            ['label' => '系统事件管理', 'icon' => 'fa fa-calendar-plus-o', 'url' => ['/events/index'],],
+                            ['label' => '系统提醒管理', 'icon' => 'fa fa-bell-o', 'url' => ['/reminders/index'],],
+
+                            [
+                                'label' => '系统日志管理', 'icon' => 'fa fa-history', 'url' => '#',
+                                'items' => [
+                                    ['label' => '系统日志审计', 'icon' => 'fa fa-hourglass-3', 'url' => ['/audit'],],
+                                    ['label' => '系统日志管理', 'icon' => 'fa fa-hourglass-1', 'url' => ['/log'],],
+                                    ['label' => '系统访问日志', 'icon' => 'fa fa-hourglass-2', 'url' => ['/request-log'],],
+                                ],
+                            ],
                         ],
                     ],
                 ],

@@ -3,6 +3,7 @@
 namespace backend\models;
 
 use Yii;
+use yii\helpers\Url;
 
 /**
  * This is the model class for table "{{%helpmenu}}".
@@ -95,12 +96,13 @@ class Helpmenu extends \yii\db\ActiveRecord
             foreach($data as &$arr) {
                 $arr['children']    = $this->isParent($arr['id']);
                 $arr['icon']        = $arr['children'] ? 'fa fa-book text-success' : 'fa fa-bookmark-o text-success';
+                $arr['url']         = Url::to(['detail', 'unitcode' => $arr['id']]);
             }
         }
         return $data;
     }
 
-    protected function isParent($unitcode)
+    public function isParent($unitcode)
     {
         $query = $this::find()->andFilterWhere([
             'upunitcode' => $unitcode,

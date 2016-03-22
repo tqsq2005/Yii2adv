@@ -4,9 +4,69 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "f622c2150d3a5abc3f5604dd56a086a6",
-    "content-hash": "ad7f1ff3d9c618cbcfaecfcc924e9368",
+    "hash": "11277973957ac89508d8460ab87fa076",
+    "content-hash": "665c85e0bef6847b4d629c3cabf98c1b",
     "packages": [
+        {
+            "name": "2amigos/yii2-chartjs-widget",
+            "version": "2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/2amigos/yii2-chartjs-widget.git",
+                "reference": "6637e1559cb4b365fcc3966e1776a67f03ba6c2a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://packagist.phpcomposer.com/files/2amigos/yii2-chartjs-widget/6637e1559cb4b365fcc3966e1776a67f03ba6c2a.zip",
+                "reference": "6637e1559cb4b365fcc3966e1776a67f03ba6c2a",
+                "shasum": ""
+            },
+            "require": {
+                "bower-asset/chartjs": "1.0.2",
+                "yiisoft/yii2": "*"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.*"
+            },
+            "type": "yii2-extension",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                },
+                "asset-installer-paths": {
+                    "bower-asset-library": "vendor/bower"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "dosamigos\\chartjs\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "2amigOS! Consulting Group",
+                    "email": "hola@2amigos.us",
+                    "homepage": "http://2amigos.us",
+                    "role": "Developer"
+                }
+            ],
+            "description": "ChartJs widget for Yii2.",
+            "homepage": "http://yiiwheels.com/extension/chartjs-widget",
+            "keywords": [
+                "2amigos",
+                "chartjs",
+                "extension",
+                "widget",
+                "yii",
+                "yii 2",
+                "yii2"
+            ],
+            "time": "2015-03-18 13:16:41"
+        },
         {
             "name": "2amigos/yii2-file-upload-widget",
             "version": "1.0.4",
@@ -230,6 +290,67 @@
                 "web"
             ],
             "time": "2015-10-23 14:50:49"
+        },
+        {
+            "name": "bedezign/yii2-audit",
+            "version": "1.0.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/bedezign/yii2-audit.git",
+                "reference": "c27c09f53f6c42384a2556447123a739ef7dd3fa"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://packagist.phpcomposer.com/files/bedezign/yii2-audit/c27c09f53f6c42384a2556447123a739ef7dd3fa.zip",
+                "reference": "c27c09f53f6c42384a2556447123a739ef7dd3fa",
+                "shasum": ""
+            },
+            "require": {
+                "2amigos/yii2-chartjs-widget": "2.*",
+                "ext-bcmath": "*",
+                "php": ">=5.4.0",
+                "phpspec/php-diff": "1.*",
+                "yiisoft/yii2": "2.*",
+                "yiisoft/yii2-debug": "2.*"
+            },
+            "type": "yii2-extension",
+            "extra": {
+                "bootstrap": "bedezign\\yii2\\audit\\Bootstrap"
+            },
+            "autoload": {
+                "psr-4": {
+                    "bedezign\\yii2\\audit\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD 3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Steve Guns",
+                    "email": "Steve@bedezign.com",
+                    "homepage": "http://bedezign.com/"
+                },
+                {
+                    "name": "Marc Hollander",
+                    "email": "marchollander@gmail.com",
+                    "homepage": "http://maruc.nl/"
+                },
+                {
+                    "name": "Brett O'Donnell",
+                    "email": "cornernote@gmail.com",
+                    "homepage": "https://mrphp.com.au/"
+                }
+            ],
+            "description": "Yii2 Audit records and displays web/cli requests, database changes, php/js errors and associated data.",
+            "keywords": [
+                "Audit",
+                "logging",
+                "trail",
+                "yii2"
+            ],
+            "time": "2016-03-12 17:53:43"
         },
         {
             "name": "bower-asset/adminlte",
@@ -679,6 +800,28 @@
                 "responsive",
                 "web"
             ]
+        },
+        {
+            "name": "bower-asset/chartjs",
+            "version": "v1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nnnick/Chart.js.git",
+                "reference": "930b16a0af59201dcfcd1594b0e7540db4d04c9f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nnnick/Chart.js/zipball/930b16a0af59201dcfcd1594b0e7540db4d04c9f",
+                "reference": "930b16a0af59201dcfcd1594b0e7540db4d04c9f",
+                "shasum": ""
+            },
+            "type": "bower-asset-library",
+            "extra": {
+                "bower-asset-main": [
+                    "Chart.js"
+                ]
+            },
+            "description": "Simple HTML5 Charts using the canvas element"
         },
         {
             "name": "bower-asset/fontawesome",
@@ -3327,6 +3470,50 @@
             "time": "2014-11-09 19:54:17"
         },
         {
+            "name": "liyunfang/yii2-contextmenu",
+            "version": "1.0.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpyii/yii2-contextmenu.git",
+                "reference": "cbc869ccd0964e9526adc5bea8361591938dd64a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://packagist.phpcomposer.com/files/phpyii/yii2-contextmenu/cbc869ccd0964e9526adc5bea8361591938dd64a.zip",
+                "reference": "cbc869ccd0964e9526adc5bea8361591938dd64a",
+                "shasum": ""
+            },
+            "require": {
+                "yiisoft/yii2": "*",
+                "yiisoft/yii2-bootstrap": "*"
+            },
+            "type": "yii2-extension",
+            "autoload": {
+                "psr-4": {
+                    "liyunfang\\contextmenu\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "liyunfang",
+                    "email": "381296986@qq.com"
+                }
+            ],
+            "description": "yii2 Extended for bootstrap-contextmenu plugin https://github.com/sydcanem/bootstrap-contextmenu",
+            "homepage": "https://github.com/liyunfang/yii2-contextmenu",
+            "keywords": [
+                "contextmenu",
+                "extension",
+                "yii2",
+                "yii2-contextmenu"
+            ],
+            "time": "2015-09-25 02:35:26"
+        },
+        {
             "name": "mdmsoft/yii2-admin",
             "version": "dev-3.master",
             "source": {
@@ -3376,6 +3563,47 @@
                 "yii"
             ],
             "time": "2015-09-07 07:59:54"
+        },
+        {
+            "name": "nhkey/yii2-activerecord-history",
+            "version": "1.1.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nhkey/yii2-activerecord-history.git",
+                "reference": "219916ed8195a20e21447fb266eb069edc565c14"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://packagist.phpcomposer.com/files/nhkey/yii2-activerecord-history/219916ed8195a20e21447fb266eb069edc565c14.zip",
+                "reference": "219916ed8195a20e21447fb266eb069edc565c14",
+                "shasum": ""
+            },
+            "require": {
+                "yiisoft/yii2": "*"
+            },
+            "type": "yii2-extension",
+            "autoload": {
+                "psr-4": {
+                    "nhkey\\arh\\": "src\\"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Mikhail Mikhalev",
+                    "email": "mail@mikhailmikhalev.ru"
+                }
+            ],
+            "description": "Storage history of changes to ActiveRecord",
+            "keywords": [
+                "activerecord",
+                "history",
+                "yii2"
+            ],
+            "time": "2015-10-14 13:16:41"
         },
         {
             "name": "pendalf89/yii2-filemanager",
@@ -3537,6 +3765,40 @@
                 "yii2"
             ],
             "time": "2015-08-07 19:20:42"
+        },
+        {
+            "name": "phpspec/php-diff",
+            "version": "v1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpspec/php-diff.git",
+                "reference": "30e103d19519fe678ae64a60d77884ef3d71b28a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpspec/php-diff/zipball/30e103d19519fe678ae64a60d77884ef3d71b28a",
+                "reference": "30e103d19519fe678ae64a60d77884ef3d71b28a",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Diff": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Chris Boulton",
+                    "homepage": "http://github.com/chrisboulton",
+                    "role": "Original developer"
+                }
+            ],
+            "description": "A comprehensive library for generating differences between two hashable objects (strings or arrays).",
+            "time": "2013-11-01 13:02:21"
         },
         {
             "name": "rmrevin/yii2-fontawesome",
@@ -4103,6 +4365,53 @@
             "time": "2016-02-06 00:49:24"
         },
         {
+            "name": "yiisoft/yii2-debug",
+            "version": "2.0.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/yiisoft/yii2-debug.git",
+                "reference": "1b302e67521d46feb2413d9d96ca94ed82b39b0e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/yiisoft/yii2-debug/zipball/1b302e67521d46feb2413d9d96ca94ed82b39b0e",
+                "reference": "1b302e67521d46feb2413d9d96ca94ed82b39b0e",
+                "shasum": ""
+            },
+            "require": {
+                "yiisoft/yii2": ">=2.0.4",
+                "yiisoft/yii2-bootstrap": "*"
+            },
+            "type": "yii2-extension",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "yii\\debug\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Qiang Xue",
+                    "email": "qiang.xue@gmail.com"
+                }
+            ],
+            "description": "The debugger extension for the Yii framework",
+            "keywords": [
+                "debug",
+                "debugger",
+                "yii2"
+            ],
+            "time": "2015-08-06 16:14:06"
+        },
+        {
             "name": "yiisoft/yii2-imagine",
             "version": "2.0.3",
             "source": {
@@ -4249,6 +4558,53 @@
                 "yii2"
             ],
             "time": "2015-05-10 22:12:32"
+        },
+        {
+            "name": "zelenin/yii2-request-log-module",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zelenin/yii2-request-log-module.git",
+                "reference": "34c66e5e605521e0c95196188c7fc605512b03ec"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://packagist.phpcomposer.com/files/zelenin/yii2-request-log-module/34c66e5e605521e0c95196188c7fc605512b03ec.zip",
+                "reference": "34c66e5e605521e0c95196188c7fc605512b03ec",
+                "shasum": ""
+            },
+            "require": {
+                "yiisoft/yii2": "~2"
+            },
+            "type": "yii2-extension",
+            "extra": {
+                "bootstrap": "Zelenin\\yii\\modules\\RequestLog\\Bootstrap"
+            },
+            "autoload": {
+                "psr-4": {
+                    "Zelenin\\yii\\modules\\RequestLog\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Aleksandr Zelenin",
+                    "email": "aleksandr@zelenin.me",
+                    "homepage": "http://zelenin.me",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Yii2 request log module",
+            "homepage": "https://github.com/zelenin/yii2-request-log-module",
+            "keywords": [
+                "log",
+                "request",
+                "yii2"
+            ],
+            "time": "2015-07-09 22:50:34"
         }
     ],
     "packages-dev": [
@@ -4332,40 +4688,6 @@
             "time": "2015-05-29 06:29:14"
         },
         {
-            "name": "phpspec/php-diff",
-            "version": "v1.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/phpspec/php-diff.git",
-                "reference": "30e103d19519fe678ae64a60d77884ef3d71b28a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/phpspec/php-diff/zipball/30e103d19519fe678ae64a60d77884ef3d71b28a",
-                "reference": "30e103d19519fe678ae64a60d77884ef3d71b28a",
-                "shasum": ""
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "Diff": "lib/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Chris Boulton",
-                    "homepage": "http://github.com/chrisboulton",
-                    "role": "Original developer"
-                }
-            ],
-            "description": "A comprehensive library for generating differences between two hashable objects (strings or arrays).",
-            "time": "2013-11-01 13:02:21"
-        },
-        {
             "name": "yiisoft/yii2-codeception",
             "version": "2.0.4",
             "source": {
@@ -4409,53 +4731,6 @@
                 "yii2"
             ],
             "time": "2015-05-10 22:08:30"
-        },
-        {
-            "name": "yiisoft/yii2-debug",
-            "version": "2.0.5",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/yiisoft/yii2-debug.git",
-                "reference": "1b302e67521d46feb2413d9d96ca94ed82b39b0e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-debug/zipball/1b302e67521d46feb2413d9d96ca94ed82b39b0e",
-                "reference": "1b302e67521d46feb2413d9d96ca94ed82b39b0e",
-                "shasum": ""
-            },
-            "require": {
-                "yiisoft/yii2": ">=2.0.4",
-                "yiisoft/yii2-bootstrap": "*"
-            },
-            "type": "yii2-extension",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.0.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "yii\\debug\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Qiang Xue",
-                    "email": "qiang.xue@gmail.com"
-                }
-            ],
-            "description": "The debugger extension for the Yii framework",
-            "keywords": [
-                "debug",
-                "debugger",
-                "yii2"
-            ],
-            "time": "2015-08-06 16:14:06"
         },
         {
             "name": "yiisoft/yii2-faker",
@@ -4570,7 +4845,8 @@
         "warrence/yii2-kartikgii": 20,
         "kartik-v/bootstrap-tabs-x": 20,
         "kartik-v/yii2-mpdf": 20,
-        "kartik-v/yii2-dynagrid": 20
+        "kartik-v/yii2-dynagrid": 20,
+        "zelenin/yii2-request-log-module": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

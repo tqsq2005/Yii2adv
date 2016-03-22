@@ -16,6 +16,56 @@ $this->registerJsFile('@web/plus/jsTree/jstree.min.js', ['depends' => 'yii\web\J
 
     <code><?= __FILE__ ?></code>
 </div>
+<?php
+$data = [
+    "red" => "red",
+    "green" => "green",
+    "blue" => "blue",
+    "orange" => "orange",
+    "white" => "white",
+    "black" => "black",
+    "purple" => "purple",
+    "cyan" => "cyan",
+    "teal" => "teal"
+];
+echo \kartik\widgets\Select2::widget([
+    'name' => 'color_3',
+    'value' => 'red', // initial value
+    'data' => $data,
+    'options' => ['placeholder' => 'Select a color ...'],
+    'pluginOptions' => [
+        'tags' => true,
+        'tokenSeparators' => [',', ' '],
+        'maximumInputLength' => 10
+    ],
+]);
+
+echo \kartik\widgets\Select2::widget([
+    'name'      => 'test',
+    'data'      => \yii\helpers\ArrayHelper::map(\dektrium\user\models\User::find()->all(), 'id', 'username'),
+    'value'     => Yii::$app->user->identity->getId(),
+    'options'   => [
+        'prompt' => '---请选择事件关联的用户---',
+
+    ],
+    'addon'         => [
+        'append'    => [
+            'content' => Html::button(\kartik\helpers\Html::icon('fa fa-user-plus', [], ''), [
+                'class' => 'btn btn-primary',
+                'title' => '请选择事件关联的用户',
+                'data-toggle' => 'tooltip',
+                'data-placement' => 'bottom',
+            ]),
+            'asButton' => true
+        ]
+    ],
+    'pluginOptions' => [
+        'tags' => true,
+        'tokenSeparators' => [',', ' '],
+        'maximumInputLength' => 3
+    ],
+]);
+?>
 <div class="row">
     <div class="col-md-3">
         <div id="tree1">
