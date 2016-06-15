@@ -1,6 +1,7 @@
 <?php
 namespace backend\controllers;
 
+use common\populac\helpers\Data;
 use common\traits\AjaxValidationTrait;
 use dosamigos\qrcode\QrCode;
 use Yii;
@@ -10,6 +11,7 @@ use yii\web\Controller;
 //use common\models\LoginForm;
 use dektrium\user\models\LoginForm;
 use yii\filters\VerbFilter;
+use yii\web\ViewAction;
 
 /**
  * Site controller
@@ -23,20 +25,6 @@ class SiteController extends Controller
     public function behaviors()
     {
         return [
-            'access' => [
-                'class' => AccessControl::className(),
-                'rules' => [
-                    [
-                        'actions' => ['login', 'error', 'qrcode', 'test', 'test2'],
-                        'allow' => true,
-                    ],
-                    [
-                        'actions' => ['logout', 'index'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                ],
-            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -63,6 +51,10 @@ class SiteController extends Controller
                 'maxLength' => 4,//验证码最大长度
                 'fontFile' => '@yii/captcha/BOTTF.TTF',//验证码字体库
                 'offset' => 2,//验证码字符间距
+            ],
+            //icon
+            'icon' => [
+                'class' => ViewAction::className(),
             ],
         ];
     }
@@ -131,10 +123,10 @@ class SiteController extends Controller
 
     public function actionTest2()
     {
-        $aliases = Yii::$aliases;
-        VarDumper::dump($aliases);
-        echo Yii::$app->getHomeUrl();
-        echo Yii::$app->getBasePath();
-        echo Yii::$app->getControllerPath();
+        $type = 'backend';
+        $assetPath = ($type === 'backend') ? Yii::$app->assetManager->basePath : str_replace('backend', 'frontend', Yii::$app->assetManager->basePath);
+        foreach(glob($assetPath . DIRECTORY_SEPARATOR . '*') as $asset){
+            echo $asset . '<br>';
+        }
     }
 }

@@ -21,7 +21,7 @@ use Yii;
 use yii\web\AssetBundle;
 
 class PopulacAsset extends AssetBundle{
-    public $sourcePath = '@common/static';
+    public $sourcePath = '@common/static/app';
     public $js = [
         //'js/bootstrap.min.js',
         //layer组件 http://layer.layui.com/
@@ -31,11 +31,11 @@ class PopulacAsset extends AssetBundle{
         //'js/jquery-ui/jquery-ui.zh-CN.js',
         //backstretch 背景更换组件
         'js/jquery.backstretch.min.js',
-        //cookie 组件
-        'js/jquery.cookie.js',
-        //moment 组件，时间比较 http://momentjs.com/
-        //'js/moment.min.js',
-        //'js/moment-with-locales.min.js',
+        //cookie 组件 https://github.com/js-cookie/js-cookie
+        'js/js.cookie.js',
+        //moment 组件，时间比较 http://momentjs.com/  data-tables-editor需要该插件支持
+        'js/moment.min.js',
+        'js/moment-with-locales.min.js',
         //工作计划组件
         //'js/fullcalendar.min.js',
         //表格排序
@@ -79,5 +79,9 @@ class PopulacAsset extends AssetBundle{
     public $depends = [
         'common\assets\IEhack',//IE8以下hack
         'common\assets\JquerySlimScroll',//jquery-slimscroll
+        'common\assets\Qtip',
+        'common\assets\JqueryContextMenu',
+        'common\assets\FormValidation',
+        'common\assets\FloatTheadAsset',
     ];
 }

@@ -71,8 +71,8 @@ $this->registerJsFile('@web/plus/jsTree/jstree.min.js', ['depends' => 'yii\web\J
         })
         .on('changed.jstree', function (e, data) {
             if(data && data.selected && data.selected.length) {
-                //console.log(data);
-                //console.log(data.selected);
+//                console.log(data);
+//                console.log(data.selected);
                 //$.pjax.reload({container:"#helpmenu-data",data: {'HelpmenuSearch[upunitcode]':data.selected.join(':')}});
                 $('.helpmenu-detail').load('<?= \yii\helpers\Url::to(['detail']) ?>',
                     { unitcode : data.selected, unitname : data.node.text },

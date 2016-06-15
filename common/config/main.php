@@ -39,15 +39,21 @@ $config = [
         'dynagrid'=> [
             'class'=>'\kartik\dynagrid\Module',
             // other module settings
+            'dbSettings' => [
+                'tableName' => 'populac_dynagrid',
+            ],
+            'dbSettingsDtl' => [
+                'tableName' => 'populac_dynagrid_dtl',
+            ],
         ],
 
         'datecontrol' =>  [
             'class' => 'kartik\datecontrol\Module',
             // format settings for displaying each date attribute
             'displaySettings' => [
-                'date' => 'd-m-Y',
-                'time' => 'H:i:s A',
-                'datetime' => 'd-m-Y H:i:s A',
+                'date' => 'Y-m-d',
+                'time' => 'H:i:s',
+                'datetime' => 'Y-m-d H:i:s',
             ],
             // format settings for saving each date attribute
             'saveSettings' => [
@@ -105,6 +111,7 @@ $config = [
             'dateFormat' => 'php:Y.m.d',
             'datetimeFormat' => 'php:Y.m.d H:i:s',
             'timeFormat' => 'php:H:i:s',
+            'defaultTimeZone' => 'Asia/Shanghai',
             //'decimalSeparator' => ',',//小数的分隔符 default to .
             //'thousandSeparator' => ' ',//千位分隔符 default to ,
             //'currencyCode' => 'CNY',
@@ -122,6 +129,49 @@ $config = [
             'theme' => [
                 'pathMap' => [
                     '@dektrium/user/views' => '@common/views/user'
+                ],
+            ],
+        ],
+        'assetManager' => [
+            'bundles' => [
+                //修改jui的themes为cupertino
+                'yii\jui\JuiAsset' => [
+                    'css' => [
+                        'themes/cupertino/jquery-ui.css',
+                    ]
+                ],
+                // Styling-DataTables supports several styling solutions,
+                // including Bootstrap, jQuery UI, Foundation.
+                'nullref\datatable\DataTableAsset' => [
+                    'styling' => \nullref\datatable\DataTableAsset::STYLING_JUI,
+                ],
+            ]
+        ],
+        'urlManager' => [
+            'rules' => [
+                'populac/<controller:\w+>-list' => 'populac/<controller>/index',
+                'populac/<module:\w+>/<controller:\w+>-list' => 'populac/<module:\w+>/<controller>/index',
+                'populac/<controller:\w+>/<action:[\w-]+>/<id:\d+>' => 'populac/<controller>/<action>',
+                'populac/<module:\w+>/<controller:\w+>/<action:[\w-]+>/<id:\d+>' => 'populac/<module>/<controller>/<action>',
+            ],
+        ],
+        'i18n' => [
+            'translations' => [
+                'easyii' => [
+                    'class' => 'yii\i18n\PhpMessageSource',
+                    'sourceLanguage' => 'en-US',
+                    'basePath' => '@common/messages',
+                    'fileMap' => [
+                        'easyii' => 'easyii.php',
+                    ]
+                ],
+                'yii2tech-admin' => [
+                    'class' => 'yii\i18n\PhpMessageSource',
+                    'sourceLanguage' => 'en-US',
+                    'basePath' => '@common/messages',
+                    'fileMap' => [
+                        'yii2tech-admin' => 'yii2tech-admin.php',
+                    ]
                 ],
             ],
         ],
@@ -144,8 +194,29 @@ if (!YII_ENV_TEST) {
     $config['modules']['gii'] = [
         //'class' => 'yii\gii\Module',
         'class' => 'yii\gii\Module',//yii2-kartikgii
-        'generators' => [
+        /*'generators' => [
             'kartikgii-crud' => ['class' => 'warrence\kartikgii\crud\Generator'],
+        ],*/
+        'generators' => [
+            'sintret' => [
+                'class' => 'sintret\gii\generators\crud\Generator',
+            ],
+            'sintretModel' => [
+                'class' => 'sintret\gii\generators\model\Generator'
+            ],
+            'kartikgii-crud' => ['class' => 'warrence\kartikgii\crud\Generator'],
+            'crud' => [
+                'class' => 'yii\gii\generators\crud\Generator',
+                'templates' => [
+                    'default' => '@common/components/gii/crud/default'
+                ]
+            ],
+            'adminMainFrame' => [
+                'class' => 'yii2tech\admin\gii\mainframe\Generator'
+            ],
+            'adminCrud' => [
+                'class' => 'yii2tech\admin\gii\crud\Generator'
+            ],
         ],
         'allowedIPs' => ['127.0.0.1', '::1', '192.168.*'],
     ];

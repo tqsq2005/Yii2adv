@@ -45,6 +45,19 @@ class HelpmenuController extends Controller
     }
 
     /**
+     * @inheritDoc
+     */
+    public function beforeAction($action)
+    {
+        //actionID 为 detail 的话就禁用CSRF保护
+        if(in_array($action->id, ['detail'])) {
+            $this->enableCsrfValidation = false;
+        }
+        return parent::beforeAction($action);
+    }
+
+
+    /**
      * Lists all Helpmenu models.
      * @return mixed
      */
@@ -182,12 +195,7 @@ class HelpmenuController extends Controller
             ]);
         } else {
             $model = Helpmenu::findOne(['unitcode' => $unitcode]);
-
-            if ($model->load(Yii::$app->request->post()) && $model->save()) {
-                return $this->renderAjax('_detail-help-info', ['model' => $model]);
-            } else {
-                return $this->renderAjax('_detail-help-info', ['model' => $model]);
-            }
+            return $this->renderAjax('_detail-help-info', ['model' => $model]);
         }
     }
 

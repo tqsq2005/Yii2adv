@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 
 use Yii;
+use yii\base\Exception;
 use yii\web\Controller;
 use app\models\UploadForm;
 use yii\data\ArrayDataProvider;
@@ -57,7 +58,7 @@ class BackuprestoreController extends Controller {
             $cmd1 = Yii::$app->db->createCommand($LastQuery);
             try {
                 $cmd1->execute();
-            } catch (CDbException $e) {
+            } catch (Exception $e) {
                 $message = $e->getMessage();
             }
         }

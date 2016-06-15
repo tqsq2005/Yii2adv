@@ -1,87 +1,71 @@
 <?php
-
+use yii\helpers\Url;
 use yii\helpers\Html;
+use yii\bootstrap\Modal;
 use kartik\grid\GridView;
-use yii\widgets\Pjax;
+use johnitvn\ajaxcrud\CrudAsset; 
+use johnitvn\ajaxcrud\BulkButtonWidget;
 
-/**
- * @var yii\web\View $this
- * @var yii\data\ActiveDataProvider $dataProvider
- * @var backend\models\HelpdocSearch $searchModel
- */
+/* @var $this yii\web\View */
+/* @var $searchModel backend\models\HelpdocSearch */
+/* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = '系统使用帮助';
 $this->params['breadcrumbs'][] = $this->title;
+
+CrudAsset::register($this);
+
 ?>
 <div class="helpdoc-index">
-    <div class="page-header hidden">
-            <h1><?= Html::encode($this->title) ?></h1>
-    </div>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
-    <p>
-        <?php /* echo Html::a('Create Helpdoc', ['create'], ['class' => 'btn btn-success'])*/  ?>
-    </p>
-    <div class="row">
-        <div class="col-md-3">
-            something
-        </div>
-        <div class="col-md-9">
-            <?php Pjax::begin(); echo GridView::widget([
-                'dataProvider' => $dataProvider,
-                'filterModel' => $searchModel,
-                'columns' => [
-                    [
-                        'class'         => 'yii\grid\CheckboxColumn',
-                        // 你可以在这配置更多的属性
-                        'header'        => '全选',
-                        'headerOptions' => ['class' => 'text-info'],
-                        'footer'        => '在底部了',
-                    ],
-                    [
-                        'class'         => 'yii\grid\SerialColumn',
-                        'header'        => '序号',
-                        'headerOptions' => ['class' => 'text-info'],
-                        'footer'        => '总计:' . $dataProvider->totalCount,
-                    ],
-                    //['class' => 'yii\grid\SerialColumn'],
-
-                    //'id',
-                    'title',
-                    'author',
-                    'content:ntext',
-                    'status',
-//            'upid',
-//            'created_at',
-//            'updated_at',
-
-                    [
-                        'class' => 'yii\grid\ActionColumn',
-                        'buttons' => [
-                            'update' => function ($url, $model) {
-                                return Html::a('<span class="glyphicon glyphicon-pencil"></span>', Yii::$app->urlManager->createUrl(['helpdoc/view','id' => $model->id,'edit'=>'t']), [
-                                    'title' => Yii::t('yii', 'Edit'),
-                                ]);}
-
-                        ],
-                    ],
+    <div id="ajaxCrudDatatable">
+        <?=GridView::widget([
+            'id'=>'crud-datatable',
+            'dataProvider' => $dataProvider,
+            'filterModel' => $searchModel,
+            'pjax'=>true,
+            'columns' => require(__DIR__.'/_columns.php'),
+            'toolbar'=> [
+                ['content'=>
+                    Html::a('<i class="glyphicon glyphicon-plus"></i>', ['create'],
+                    ['role'=>'modal-remote','title'=> '新增帮助','class'=>'btn btn-default']).
+                    Html::a('<i class="glyphicon glyphicon-repeat"></i>', [''],
+                    ['data-pjax'=>1, 'class'=>'btn btn-default', 'title'=>'刷新']).
+                    '{toggleData}'.
+                    '{export}'
                 ],
-                'responsive'=>true,
-                'hover'=>true,
-                'condensed'=>true,
-                'floatHeader'=>true,
-
-
-
-
-                'panel' => [
-                    'heading'=>'<h3 class="panel-title"><i class="glyphicon glyphicon-th-list"></i> '.Html::encode($this->title).' </h3>',
-                    'type'=>'info',
-                    'before'=>Html::a('<i class="glyphicon glyphicon-plus"></i> 添加', ['create'], ['class' => 'btn btn-success']),
-                    'after'=>Html::a('<i class="glyphicon glyphicon-repeat"></i> 重新排版', ['index'], ['class' => 'btn btn-info']),
-                    'showFooter'=>false
-                ],
-            ]); Pjax::end(); ?>
-        </div>
+            ],          
+            'striped' => true,
+            'condensed' => true,
+            'responsive' => true,          
+            'panel' => [
+                'type' => 'primary', 
+                'heading' => '<i class="glyphicon glyphicon-list"></i> Helpdocs listing',
+                'before'=>'<em>* 表格间距可以自由调整.</em>',
+                'after'=>Html::a('<i class="glyphicon glyphicon-trash"></i>&nbsp; 删除所有选中',
+                        ["bulk-delete"] ,
+                        [
+                            "class"=>"btn btn-danger btn-xs",
+                            'role'=>'modal-remote-bulk',
+                            'data-confirm'=>false, 'data-method'=>false,// for overide yii data api
+                            'data-request-method'=>'post',
+                            'data-confirm-title'=>'您确定吗?',
+                            'data-confirm-message'=>'您确定要删除这条信息吗？'
+                        ]).
+                        '<div class="clearfix"></div>',
+            ]
+        ])?>
     </div>
 </div>
+<?php Modal::begin([
+    "id"=>"ajaxCrudModal",
+    "footer"=>"",// always need it for jquery plugin
+])?>
+<?php Modal::end(); ?>
+
+<?php \common\widgets\JsBlock::begin(); ?>
+    <script type="text/javascript">
+        $(function() {
+            $.fn.modal.Constructor.prototype.enforceFocus = function() {};
+        });
+    </script>
+<?php \common\widgets\JsBlock::end(); ?>

@@ -26,7 +26,7 @@ use yii\web\AssetBundle;
  * @since:Yii2
  */
 class IEhack extends AssetBundle {
-    public $sourcePath = '@common/static';
+    public $sourcePath = '@common/static/app';
     public $js = [
         'js/html5shiv.min.js',
         'js/respond.min.js',

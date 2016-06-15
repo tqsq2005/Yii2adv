@@ -8,7 +8,7 @@ $params = array_merge(
 
 return [
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log'],
+    'bootstrap' => ['log', 'populac'],
     'controllerNamespace' => 'frontend\controllers',
     'modules' => [
         //yii2-user
@@ -16,6 +16,11 @@ return [
             // following line will restrict access to admin controller from frontend application
             'as frontend' => 'dektrium\user\filters\FrontendFilter',
         ],
+        //populac module
+        'populac' => [
+            'class' => 'common\populac\Populac',
+        ],
+
     ],
     'components' => [
         /*'user' => [
@@ -62,6 +67,25 @@ return [
                 ],
             ],
         ],*/
+        'view' =>array(
+            /*'theme' => array(
+                'pathMap' => array('@app/views' => '@webroot/themes/earth2'),
+                'baseUrl'   => '@web/themes/earth2'
+            ),
+            'theme' => array(
+                'pathMap' => array('@app/views' => '@webroot/themes/earth2'),
+                'baseUrl'   => '@web/themes/earth2'
+            )*/
+            /*'theme' => array(
+                'pathMap' => array('@app/views' => '@webroot/themes/metro'),
+                'baseUrl'   => '@web/themes/metro'
+            )*/
+            /*'theme' => array(
+                'pathMap' => array('@app/views' => '@webroot/themes/material-default'),
+                'baseUrl'   => '@web/themes/material-default'
+            )*/
+
+        ),
     ],
     'params' => $params,
 ];

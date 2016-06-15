@@ -12,6 +12,7 @@ use yii\widgets\Pjax;
 
 $this->title = '事件管理';
 $this->params['breadcrumbs'][] = $this->title;
+
 ?>
 <div class="events-index">
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -205,5 +206,16 @@ $this->params['breadcrumbs'][] = $this->title;
         }
         e.preventDefault();
     });
+    //新增完继续新增
+    /*$('form#events-form').on('beforeSubmit', function(e) {
+        var $form = $(this);
+        $.post(
+            $form.attr('action'),
+            $form.serialize()
+        ).done(function(result) {
+            console.log(result);
+        });
+    });*/
+
 </script>
 <?php \common\widgets\JsBlock::end(); ?>

@@ -41,29 +41,35 @@ return [
         //mdmsoft/yii2-admin
         'admin' => [
             'class' => 'mdm\admin\Module',
-            'layout' => '@app/views/layouts/main',
-            /*'layout' => 'left-menu', // it can be '@path/to/your/layout'.
+            //'layout' => '@app/views/layouts/main',
+            //'layout' => 'left-menu', // it can be '@path/to/your/layout'.
+            //'layout' => 'left-menu',//left-menu, right-menu, top-menu
+            'mainLayout' => '@app/views/layouts/main.php',
             'controllerMap' => [
                 'assignment' => [
                     'class' => 'mdm\admin\controllers\AssignmentController',
-                    'userClassName' => 'common\models\User',
-                    'idField' => 'user_id'
+                    'userClassName' => \dektrium\user\models\User::className(),
+                    'idField' => 'id'
                 ],
-                'other' => [
+                /*'other' => [
                     'class' => 'path\to\OtherController', // add another controller
-                ],
+                ],*/
             ],
             'menus' => [
                 'assignment' => [
-                    'label' => 'Grand Access' // change label
+                    'label' => '用户权限' // change label
                 ],
-                'route' => null, // disable menu route
-            ]*/
+                //'route' => null, // disable menu route
+            ]
         ],
-        //yii2-user
+        //dektrium/yii2-user
         'user' => [
             // following line will restrict access to profile, recovery, registration and settings controllers from backend
             'as backend' => 'dektrium\user\filters\BackendFilter',
+        ],
+        //dektrium/yii2-rbac
+        'rbac' => [
+            'class' => 'dektrium\rbac\Module',
         ],
         //setting
         'settings' => [
@@ -80,7 +86,7 @@ return [
             // List of actions to track. '*' is allowed as the last character to use as wildcard
             'trackActions' => ['*'],
             // Actions to ignore. '*' is allowed as the last character to use as wildcard (eg 'debug/*')
-            'ignoreActions' => ['audit/*', 'debug/*'],
+            'ignoreActions' => ['audit/*', 'debug/*', '/site/qrcode'],
             // Maximum age (in days) of the audit entries before they are truncated
             'maxAge' => '9999',
             // IP address or list of IP addresses with access to the viewer, null for everyone (if the IP matches)
@@ -95,28 +101,41 @@ return [
             //'userIdentifierCallback' => ['app\models\User', 'userIdentifierCallback'],
             // If the value is a simple string, it is the identifier of an internal to activate (with default settings)
             // If the entry is a '<key>' => '<string>|<array>' it is a new panel. It can optionally override a core panel or add a new one.
-            /*'panels' => [
-                'audit/request',
-                'audit/error',
-                'audit/trail',
-                'app/views' => [
-                    'class' => 'app\panels\ViewsPanel',
-                    // ...
-                ],
-            ],
-            'panelsMerge' => [
-                // ... merge data (see below)
-            ]*/
+//            'panels' => [
+//                'audit/request',
+//                'audit/error',
+//                'audit/trail',
+//                'app/views' => [
+//                    'class' => 'app\panels\ViewsPanel',
+//                    // ...
+//                ],
+//            ],
+//            'panelsMerge' => [
+//                // ... merge data (see below)
+//            ]
         ],
         //preferences
         'sysini' => [
             'class' => 'common\modules\preferences\Preferences',
         ],
+        //database
+        'database' => [
+            'class' => \backend\modules\database\Module::className(),
+        ],
+        //wechat
+        /*'wechat' => [ // 指定微信模块
+            'class' => \callmez\wechat\Module::className(),// 'callmez\wechat\Module',
+            'adminId' => 4 // 填写管理员ID, 该设置的用户将会拥有wechat最高权限, 如多个请填写数组 [1, 2]
+        ],*/
         //request-log
         /*'requestlog' => [
             'class' => \Zelenin\yii\modules\RequestLog\behaviors\RequestLogBehavior::className(),
             'usernameAttribute' => 'email',
         ],*/
+        //populac module
+        'populac' => [
+            'class' => 'common\populac\Populac',
+        ],
     ],
     'components' => [
         /*'user' => [
@@ -160,6 +179,11 @@ return [
                 ],
             ],
         ],*/
+        'request' => [
+            'parsers' => [ // 因为模块中有使用angular.js  所以该设置是为正常解析angular提交post数据
+                'application/json' => 'yii\web\JsonParser',
+          ],
+        ],
     ],
     'params' => $params,
     /*'on afterAction' => function($event) {
@@ -168,9 +192,9 @@ return [
     },*/
     //mdmsoft/yii2-admin
     'as access' => [
-        'class' => 'mdm\admin\classes\AccessControl',
+        'class' => \mdm\admin\components\AccessControl::className(),
         'allowActions' => [
-            'site/*',
+            //'site/*',
             'admin/*',
             //'some-controller/some-action',
             'debug/*',

@@ -25,6 +25,17 @@
             </div>
         </form>
         <!-- /.search form -->
+        <?php
+            $callback = function($menu){
+                return [
+                    'label' => $menu['name'],
+                    'url' => [$menu['route']],
+                    'icon' => $menu['data'],
+                    'active' => $menu['route'],
+                    'items' => $menu['children']
+                ];
+            };
+        ?>
 
         <?= dmstr\widgets\Menu::widget(
             [
@@ -68,9 +79,13 @@
                         'url' => '#',
                         'items' => [
                             ['label' => '系统使用帮助1', 'icon' => 'fa fa-question-circle', 'url' => ['/helpdoc'],],
-                            ['label' => '系统使用帮助2', 'icon' => 'fa fa-question-circle', 'url' => ['/helpmenu'],],
-                            ['label' => '系统权限设置', 'icon' => 'fa fa-users', 'url' => ['/admin'],],
+                            ['label' => '系统使用帮助2', 'icon' => 'fa fa-question-circle', 'url' => ['/helpmenu/main'],],
+                            [
+                                'label' => '系统权限设置', 'icon' => 'fa fa-users', 'url' => '#',
+                                'items' => \mdm\admin\components\MenuHelper::getAssignedMenu(Yii::$app->user->id, 14, $callback, true),
+                            ],
                             ['label' => '系统参数配置', 'icon' => 'fa fa-wrench', 'url' => ['/preferences/index', 'per-page' => Yii::$app->params['backend.view_item_per_page']],],
+                            ['label' => '系统事件管理', 'icon' => 'fa fa-calendar', 'url' => ['/event/index'],],
                             ['label' => '系统事件管理', 'icon' => 'fa fa-calendar-plus-o', 'url' => ['/events/index'],],
                             ['label' => '系统提醒管理', 'icon' => 'fa fa-bell-o', 'url' => ['/reminders/index'],],
 
@@ -83,8 +98,8 @@
                                 ],
                             ],
                         ],
-                    ],
-                ],
+                    ]
+                ]
             ]
         ) ?>
 

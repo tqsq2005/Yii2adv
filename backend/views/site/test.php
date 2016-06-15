@@ -15,6 +15,8 @@ $this->registerJsFile('@web/plus/jsTree/jstree.min.js', ['depends' => 'yii\web\J
     <p>This is the About page. You may modify the following file to customize its content:</p>
 
     <code><?= __FILE__ ?></code>
+    <?= Yii::getAlias('@web/storage'); ?>
+    <?= Yii::getAlias('@webroot/storage'); ?>
 </div>
 <?php
 $data = [

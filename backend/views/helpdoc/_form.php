@@ -1,45 +1,76 @@
 <?php
-
 use yii\helpers\Html;
-use kartik\widgets\ActiveForm;
-use kartik\builder\Form;
-use kartik\datecontrol\DateControl;
+use yii\widgets\ActiveForm;
 
-/**
- * @var yii\web\View $this
- * @var backend\models\Helpdoc $model
- * @var yii\widgets\ActiveForm $form
- */
+/* @var $this yii\web\View */
+/* @var $model backend\models\Helpdoc */
+/* @var $form yii\widgets\ActiveForm */
 ?>
 
 <div class="helpdoc-form">
 
-    <?php $form = ActiveForm::begin(['type'=>ActiveForm::TYPE_HORIZONTAL]); echo Form::widget([
+    <?php $form = ActiveForm::begin(); ?>
 
-    'model' => $model,
-    'form' => $form,
-    'columns' => 1,
-    'attributes' => [
+    <?= $form->field($model, 'upid')->widget(\kartik\widgets\Select2::className(), [
+        'data' => \yii\helpers\ArrayHelper::map(\backend\models\Helpdoc::findAll(['status' => 1]), 'id', 'title'),
+        'options' => ['placeholder' => '请选择上级标题'],
+        'pluginOptions' => [
+            'allowClear' => true,
+            'tags' => true,
+            'tokenSeparators' => [',', ' '],
+            'maximumInputLength' => 50,
+        ],
+    ]) ?>
 
-'author'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter 作者...', 'maxlength'=>30]], 
+    <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
 
-'title'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter 标题...', 'maxlength'=>100]], 
+    <?= $form->field($model, 'tagNames')->widget(\dosamigos\selectize\SelectizeTextInput::className(), [
+        // calls an action that returns a JSON object with matched
+        // tags
+        'loadUrl' => ['tag/list'],
+        'options' => ['class' => 'form-control'],
+        'clientOptions' => [
+            'plugins' => ['remove_button'],
+            'valueField' => 'name',
+            'labelField' => 'name',
+            'searchField' => ['name'],
+            'create' => true,
+        ],
+    ])->hint('提示：用逗号或者回车键分隔标签') ?>
 
-'content'=>['type'=> Form::INPUT_TEXTAREA, 'options'=>['placeholder'=>'Enter 内容...','rows'=> 6]], 
+    <?= $form->field($model, 'content')->widget(\kucha\ueditor\UEditor::className(), [
+        'clientOptions' => [
+            //编辑区域大小
+            'initialFrameHeight' => '200',
+            //设置语言
+            'lang' =>'zh-cn', //中文为 zh-cn
+            //定制菜单
+            'toolbars' => [
+                [
+                    'fullscreen', 'source', 'undo', 'redo', '|',
+                    'fontsize',
+                    'bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'removeformat',
+                    'formatmatch', 'autotypeset', 'blockquote', 'pasteplain', '|',
+                    'forecolor', 'backcolor', '|',
+                    'lineheight', '|',
+                    'indent', '|'
+                ],
+            ]
+        ]
+    ]) ?>
 
-'status'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter 是否启用...']], 
-
-'upid'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter 上级ID...']], 
-
-'created_at'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Created At...']], 
-
-'updated_at'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Updated At...']], 
-
-    ]
+    <?= $form->field($model, 'status')->dropDownList(
+        \yii\helpers\ArrayHelper::map(\common\models\Preferences::findAll(['classmark' => 'sStatus', 'status' => 1]), 'codes', 'name1')
+    ) ?>
 
 
-    ]);
-    echo Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']);
-    ActiveForm::end(); ?>
+  
+	<?php if (!Yii::$app->request->isAjax){ ?>
+	  	<div class="form-group">
+	        <?= Html::submitButton($model->isNewRecord ? '新增' : '更新', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+	    </div>
+	<?php } ?>
 
+    <?php ActiveForm::end(); ?>
+    
 </div>

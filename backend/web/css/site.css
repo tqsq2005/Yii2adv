@@ -2,6 +2,20 @@ html,
 body {
     /*height: 100%;*/
 }
+/* 单元格连续纯字母数字强制换行显示 */
+.populac-wordwrap{
+    word-wrap: break-word;
+    word-break: break-all;
+    overflow: hidden;
+}
+/* 超长文字单元格省略号显示 */
+.populac-ellipsis{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
+    vertical-align: middle;
+}
 
 .wrap {
     min-height: 100%;
@@ -89,3 +103,32 @@ a.desc:after {
     padding: 10px 20px;
     margin: 0 0 15px 0;
 }
+/*---datatable td editable---*/
+td.editable {
+    font-weight: bold;
+    color: #3c763d;
+}
+/* 表单信息栏系列样式定义 */
+.populac-datatable-info-block{
+    margin:0 0 10px 0;
+}
+
+.populac-datatable-info-content .prop-name {
+    float: left;
+    width: 120px;
+    text-align: right;
+    margin-right: 15px;
+    color: #8a6d3b;
+    font-size: 13px;
+    font-family: '宋体';
+}
+
+.populac-datatable-info-content .prop-value {
+    word-break: break-all;
+    word-wrap: break-word;
+    color: #3c763d;
+    font-size: 13px;
+    font-family: '微软雅黑';
+    vertical-align: middle;
+}
+/*---datatable td editable---*/

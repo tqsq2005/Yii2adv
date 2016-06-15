@@ -40,13 +40,15 @@ if (Yii::$app->controller->action->id === 'login') {
         <?= Html::csrfMetaTags() ?>
         <title><?= Html::encode($this->title) ?></title>
         <link rel="shortcut icon" href="<?php echo Yii::$app->getHomeUrl(); ?>/favicon.ico" type="image/x-icon" />
+        <?php $this->registerLinkTag(['rel' => 'canonical', 'url' => \yii\helpers\Url::canonical()]); ?>
+        <?php $this->registerCssFile(Yii::$app->getHomeUrl() . '/css/print.css', ['media' => 'print']) ?>
         <?php $this->head() ?>
     </head>
-    <body class="hold-transition skin-blue sidebar-mini">
+    <body class="hold-transition skin-blue sidebar-mini fixed">
     <?php $this->beginBody() ?>
 
     <!--//Get all flash messages and loop through them-->
-    <?php foreach (Yii::$app->session->getAllFlashes() as $message):; ?>
+    <?php foreach (Yii::$app->session->getAllFlashes() as $type => $message):; ?>
         <?php
         $icon_type = '';
         if(empty($message['icon']))
@@ -54,16 +56,16 @@ if (Yii::$app->controller->action->id === 'login') {
             $icon_type = "'icon_type'=> 'image',";
         }
         echo \kartik\growl\Growl::widget([
-            'type' => (!empty($message['type'])) ? $message['type'] : \kartik\growl\Growl::TYPE_INFO,////String, can only be set to danger, success, warning, info, and growl
+            'type' => (!empty($type)) ? $type : \kartik\growl\Growl::TYPE_INFO,////String, can only be set to danger, success, warning, info, and growl
             'title' => ((!empty($message['title'])) ? Html::encode($message['title']) : '<strong>计划生育信息管理系统</strong>&nbsp;<img src="'.Yii::getAlias('@web').'/images/js18.png" />'),
             'icon' => (!empty($message['icon'])) ? $message['icon'] : 'fa fa-cog fa-lg fa-fw fa-spin',
-            'body' => '&nbsp;<i class="fa fa-quote-left fa-pull-left"></i>&nbsp;<i class="fa fa-commenting-o fa-lg fa-fw fa-pull-right"></i>&nbsp;' . ((!empty($message['message'])) ? $message['message'] : '页面加载完成!<p></p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;当前系统时间：' . date('Y.m.d H:i:s')) . '&nbsp;&nbsp;<i class="fa fa-quote-right"></i>',
+            'body' => '&nbsp;<i class="fa fa-quote-left fa-pull-left"></i>&nbsp;<i class="fa fa-commenting-o fa-lg fa-fw fa-pull-right"></i>&nbsp;' . (!empty($message['message']) ? $message['message'] : $message) . '&nbsp;&nbsp;<i class="fa fa-quote-right"></i>',
             'showSeparator' => true,
-            'delay' => 1, //This delay is how long before the message shows
+            'delay' => 5, //This delay is how long before the message shows
             'pluginOptions' => [
                 //'icon_type'=> (!empty($message['icon'])) ? '1' : 'image',
                 //$icon_type,
-                'delay' => (!empty($message['duration'])) ? $message['duration'] : 3000, //This delay is how long the message shows for
+                'delay' => (!empty($message['duration'])) ? $message['duration'] : 10000, //This delay is how long the message shows for
                 'showProgressbar' => true,
                 'placement' => [
                     'from' => (!empty($message['positonY'])) ? $message['positonY'] : 'top',

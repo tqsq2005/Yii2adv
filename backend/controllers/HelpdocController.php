@@ -2,19 +2,24 @@
 
 namespace backend\controllers;
 
+use kucha\ueditor\UEditorAction;
 use Yii;
 use backend\models\Helpdoc;
 use backend\models\HelpdocSearch;
-use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use \yii\web\Response;
+use yii\helpers\Html;
 
 /**
  * HelpdocController implements the CRUD actions for Helpdoc model.
  */
 class HelpdocController extends Controller
 {
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         return [
@@ -22,16 +27,20 @@ class HelpdocController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['post'],
+                    'bulk-delete' => ['post'],
                 ],
             ],
-            'access' => [
-                'class' => AccessControl::className(),
-                'rules' => [
-                    [
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                ],
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function actions()
+    {
+        return [
+            'upload' => [
+                'class' => UEditorAction::className(),
             ],
         ];
     }
@@ -41,15 +50,16 @@ class HelpdocController extends Controller
      * @return mixed
      */
     public function actionIndex()
-    {
-        $searchModel = new HelpdocSearch;
-        $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
+    {    
+        $searchModel = new HelpdocSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-            'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
         ]);
     }
+
 
     /**
      * Displays a single Helpdoc model.
@@ -57,64 +67,203 @@ class HelpdocController extends Controller
      * @return mixed
      */
     public function actionView($id)
-    {
-        $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-        return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-        return $this->render('view', ['model' => $model]);
-}
-    }
-
-    /**
-     * Creates a new Helpdoc model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
-    public function actionCreate()
-    {
-        $model = new Helpdoc;
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
+    {   
+        $request = Yii::$app->request;
+        if($request->isAjax){
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return [
+                    'title'=> "Helpdoc #".$id,
+                    'content'=>$this->renderAjax('view', [
+                        'model' => $this->findModel($id),
+                    ]),
+                    'footer'=> Html::button('Close',['class'=>'btn btn-default pull-left','data-dismiss'=>"modal"]).
+                            Html::a('Edit',['update','id'=>$id],['class'=>'btn btn-primary','role'=>'modal-remote'])
+                ];    
+        }else{
+            return $this->render('view', [
+                'model' => $this->findModel($id),
             ]);
         }
     }
 
     /**
+     * Creates a new Helpdoc model.
+     * For ajax request will return json object
+     * and for non-ajax request if creation is successful, the browser will be redirected to the 'view' page.
+     * @return mixed
+     */
+    public function actionCreate()
+    {
+        $request = Yii::$app->request;
+        $model = new Helpdoc();  
+
+        if($request->isAjax){
+            /*
+            *   Process for ajax request
+            */
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            if($request->isGet){
+                return [
+                    'title'=> "新增帮助",
+                    'content'=>$this->renderAjax('create', [
+                        'model' => $model,
+                    ]),
+                    'footer'=> Html::button('关闭',['class'=>'btn btn-default pull-left','data-dismiss'=>"modal"]).
+                                Html::button('保存',['class'=>'btn btn-primary','type'=>"submit"])
+        
+                ];         
+            }else if($model->load($request->post()) && $model->save()){
+                return [
+                    'forceReload'=>'#crud-datatable-pjax',
+                    'title'=> "新增帮助",
+                    'content'=>'<span class="text-success">Create Helpdoc success</span>',
+                    'footer'=> Html::button('关闭',['class'=>'btn btn-default pull-left','data-dismiss'=>"modal"]).
+                            Html::a('继续新增',['create', 'upid' => $model->upid],['class'=>'btn btn-primary','role'=>'modal-remote'])
+        
+                ];         
+            }else{           
+                return [
+                    'title'=> "新增帮助",
+                    'content'=>$this->renderAjax('create', [
+                        'model' => $model,
+                    ]),
+                    'footer'=> Html::button('关闭',['class'=>'btn btn-default pull-left','data-dismiss'=>"modal"]).
+                                Html::button('保存',['class'=>'btn btn-primary','type'=>"submit"])
+        
+                ];         
+            }
+        }else{
+            /*
+            *   Process for non-ajax request
+            */
+            if ($model->load($request->post()) && $model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
+            } else {
+                return $this->render('create', [
+                    'model' => $model,
+                ]);
+            }
+        }
+       
+    }
+
+    /**
      * Updates an existing Helpdoc model.
-     * If update is successful, the browser will be redirected to the 'view' page.
+     * For ajax request will return json object
+     * and for non-ajax request if update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
+        $request = Yii::$app->request;
+        $model = $this->findModel($id);       
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+        if($request->isAjax){
+            /*
+            *   Process for ajax request
+            */
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            if($request->isGet){
+                return [
+                    'title'=> "Update Helpdoc #".$id,
+                    'content'=>$this->renderAjax('update', [
+                        'model' => $model,
+                    ]),
+                    'footer'=> Html::button('Close',['class'=>'btn btn-default pull-left','data-dismiss'=>"modal"]).
+                                Html::button('Save',['class'=>'btn btn-primary','type'=>"submit"])
+                ];         
+            }else if($model->load($request->post()) && $model->save()){
+                return [
+                    'forceReload'=>'#crud-datatable-pjax',
+                    'title'=> "Helpdoc #".$id,
+                    'content'=>$this->renderAjax('view', [
+                        'model' => $model,
+                    ]),
+                    'footer'=> Html::button('Close',['class'=>'btn btn-default pull-left','data-dismiss'=>"modal"]).
+                            Html::a('Edit',['update','id'=>$id],['class'=>'btn btn-primary','role'=>'modal-remote'])
+                ];    
+            }else{
+                 return [
+                    'title'=> "Update Helpdoc #".$id,
+                    'content'=>$this->renderAjax('update', [
+                        'model' => $model,
+                    ]),
+                    'footer'=> Html::button('Close',['class'=>'btn btn-default pull-left','data-dismiss'=>"modal"]).
+                                Html::button('Save',['class'=>'btn btn-primary','type'=>"submit"])
+                ];        
+            }
+        }else{
+            /*
+            *   Process for non-ajax request
+            */
+            if ($model->load($request->post()) && $model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
+            } else {
+                return $this->render('update', [
+                    'model' => $model,
+                ]);
+            }
         }
     }
 
     /**
-     * Deletes an existing Helpdoc model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * Delete an existing Helpdoc model.
+     * For ajax request will return json object
+     * and for non-ajax request if deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
      */
     public function actionDelete($id)
     {
+        $request = Yii::$app->request;
         $this->findModel($id)->delete();
 
-        return $this->redirect(['index']);
+        if($request->isAjax){
+            /*
+            *   Process for ajax request
+            */
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return ['forceClose'=>true,'forceReload'=>'#crud-datatable-pjax'];
+        }else{
+            /*
+            *   Process for non-ajax request
+            */
+            return $this->redirect(['index']);
+        }
+
+
+    }
+
+     /**
+     * Delete multiple existing Helpdoc model.
+     * For ajax request will return json object
+     * and for non-ajax request if deletion is successful, the browser will be redirected to the 'index' page.
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionBulkDelete()
+    {        
+        $request = Yii::$app->request;
+        $pks = explode(',', $request->post( 'pks' )); // Array or selected records primary keys
+        foreach ( $pks as $pk ) {
+            $model = $this->findModel($pk);
+            $model->delete();
+        }
+
+        if($request->isAjax){
+            /*
+            *   Process for ajax request
+            */
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return ['forceClose'=>true,'forceReload'=>'#crud-datatable-pjax'];
+        }else{
+            /*
+            *   Process for non-ajax request
+            */
+            return $this->redirect(['index']);
+        }
+       
     }
 
     /**

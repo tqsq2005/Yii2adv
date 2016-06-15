@@ -4,6 +4,8 @@
 
 use yii\helpers\Html;
 
+\common\assets\FullcalendarAsset::register($this);
+\common\populac\assets\AdminAsset::register($this);
 $this->title = 'About';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -13,8 +15,45 @@ $this->params['breadcrumbs'][] = $this->title;
     <p>This is the About page. You may modify the following file to customize its content:</p>
 
     <code><?= __FILE__ ?></code>
+
 </div>
+<div class="row-fluid">
+    <div class="span12">
+        <div class="btn-toolbar">
+            <div class="pull-right">
+                <div class="input-append">
+                    <input type="text" placeholder="模糊查询" id="fuzzy-search">
+                    <div class="btn-group">
+                        <button type="button" class="btn" id="btn-simple-search"><i class="fa fa-search"></i></button>
+                        <button type="button" class="btn" title="高级查询" id="toggle-advanced-search">
+                            <i class="fa fa-angle-double-down"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="btn btn-primary" id="btn-add"><i class="fa fa-plus"></i> 添加</button>
+            <button type="button" class="btn btn-danger" id="btn-del"><i class="fa fa-remove"></i> 批量删除</button>
+        </div>
+    </div>
+</div>
+<div>
+    <?= Html::checkbox('', true, [
+        'class' => 'switch',
+        'data-id' => 1,
+        'data-link' => \yii\helpers\Url::to(['/populac/modules/']),
+        'data-reload' => '1'
+    ]) ?>
+    <input type="checkbox" id="switchCheck1" name="switchCheck1" value="switchCheck1" />
+</div>
+<p></p>
+<p></p>
+<div id="calendar"></div>
 <div class="row">
+    <div class="col-md-4">
+        <a href="<?= \Yii::$app->homeUrl ?>" style="color: #0095dd; text-decoration: none;">计生管理系统 </a>
+        <p class="secondary" style="font-family: sans-serif; font-weight: normal; margin: 0; text-align: center; color: #8A9BA8; font-size: 11px; line-height: 13px; width: 310px !important; word-wrap:break-word">这是一封自动发送的邮件，请勿回复，欲了解更多信息，请访问 <a href="<?= \Yii::$app->homeUrl ?>" style="color: #0095dd; text-decoration: none;">计生管理系统 </a></p>
+        <?= \yii\helpers\Url::to(['/admin/populac/guestbook/a/view', 'id' => 11], true) ?>
+    </div>
     <div class="col-md-4">
         <tbody>
 
@@ -155,6 +194,85 @@ echo \kartik\tree\TreeView::widget([
     ]
 ]);
 ?>
+<?php \common\widgets\JsBlock::begin();  ?>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var switcher1 = $('#switchCheck1').switcher();
+            var switcher2 = $('.switch').switcher();
+            $('#switchCheck1').switcher().on('change', function() {
+                console.log(1111);
+            });
+            $('#calendar').fullCalendar({
+                theme: true,
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'month,agendaWeek,agendaDay'
+                },
+                defaultDate: '2016-01-12',
+                editable: true,
+                eventLimit: true, // allow "more" link when too many events
+                events: [
+                    {
+                        title: 'All Day Event',
+                        start: '2016-01-01'
+                    },
+                    {
+                        title: 'Long Event',
+                        start: '2016-01-07',
+                        end: '2016-01-10'
+                    },
+                    {
+                        id: 999,
+                        title: 'Repeating Event',
+                        start: '2016-01-09T16:00:00'
+                    },
+                    {
+                        id: 999,
+                        title: 'Repeating Event',
+                        start: '2016-01-16T16:00:00'
+                    },
+                    {
+                        title: 'Conference',
+                        start: '2016-01-11',
+                        end: '2016-01-13'
+                    },
+                    {
+                        title: 'Meeting',
+                        start: '2016-01-12T10:30:00',
+                        end: '2016-01-12T12:30:00'
+                    },
+                    {
+                        title: 'Lunch',
+                        start: '2016-01-12T12:00:00'
+                    },
+                    {
+                        title: 'Meeting',
+                        start: '2016-01-12T14:30:00'
+                    },
+                    {
+                        title: 'Happy Hour',
+                        start: '2016-01-12T17:30:00'
+                    },
+                    {
+                        title: 'Dinner',
+                        start: '2016-01-12T20:00:00'
+                    },
+                    {
+                        title: 'Birthday Party',
+                        start: '2016-01-13T07:00:00'
+                    },
+                    {
+                        title: 'Click for Google',
+                        url: 'http://google.com/',
+                        start: '2016-01-28'
+                    }
+                ]
+            });
+
+        });
+    </script>
+<?php \common\widgets\JsBlock::end();  ?>
 
 
 

@@ -228,19 +228,9 @@ class SiteController extends Controller
 
     public function actionSys()
     {
-        $dt = new \DateTime();
-        echo "当前时间:" . $dt->format('Y-m-d H:i:s');
-        echo "<br>当前时区:" . $dt->getTimezone()->getName();
-        //echo "<br>" . $dt->getTimezone()->getLocation();
-        var_dump($dt->getTimezone()->getLocation());
-        //echo "<br>" . $dt->getTimezone()->getOffset();
-        //echo "<br>" . $dt->getTimezone()->getTransitions();
-        echo "<br>" . $dt->getTimestamp();
-        //var_dump($dt->getTimezone());
-        echo "<br>";
-        $result = Yii::$app->db->createCommand("select now()")->queryColumn();
-        var_dump($result);
-        $rs = Yii::$app->db->createCommand("select * from unit order by unitcode limit 10;")->queryAll();
-        var_dump($rs);
+        //var_dump(Yii::$aliases);
+        echo Yii::$app->homeUrl;
+        var_dump(IS_ROOT);
+        echo Yii::$app->request->baseUrl;
     }
 }
