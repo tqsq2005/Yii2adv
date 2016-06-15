@@ -48,7 +48,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 msyh: {
                     normal: 'msyh.ttf',
                     bold: 'msyh.ttf',
-                    italics: 'msyh.ttf"',
+                    italics: 'msyh.ttf',
                     bolditalics: 'msyh.ttf',
                 }
             };

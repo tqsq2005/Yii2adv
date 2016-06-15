@@ -1,59 +1,49 @@
-<<<<<<< HEAD
-Yii 2 Advanced Project Template
-===============================
+Yii 2 项目阶段性小结
+=============
+### 2016.6.14小结： 修复 [datatable](https://www.datatables.net/) 中导出 [PDF](http://pdfmake.org/#/gettingstarted) 中文不支持的问题
+**解决步骤记录如下**
 
-Yii 2 Advanced Project Template is a skeleton [Yii 2](http://www.yiiframework.com/) application best for
-developing complex Web applications with multiple tiers.
+1. 下载 中文字体 [vfs_fonts.js](http://7xoed1.com1.z0.glb.clouddn.com/2015/vfs_fonts.js)
 
-The template includes three tiers: front end, back end, and console, each of which
-is a separate Yii application.
-
-The template is designed to work in a team development environment. It supports
-deploying the application in different environments.
-
-Documentation is at [docs/guide/README.md](docs/guide/README.md).
-
-[![Latest Stable Version](https://poser.pugx.org/yiisoft/yii2-app-advanced/v/stable.png)](https://packagist.org/packages/yiisoft/yii2-app-advanced)
-[![Total Downloads](https://poser.pugx.org/yiisoft/yii2-app-advanced/downloads.png)](https://packagist.org/packages/yiisoft/yii2-app-advanced)
-[![Build Status](https://travis-ci.org/yiisoft/yii2-app-advanced.svg?branch=master)](https://travis-ci.org/yiisoft/yii2-app-advanced)
-
-DIRECTORY STRUCTURE
--------------------
-
+2. 修改 `DataTableAsset.php` 文件，将 `vfs_fonts.js` 文件加入 `js` 包中
+```php
+    public $js = [
+        'datatables.min.js',
+        'pdfmake-0.1.18/build/vfs_fonts.js'//加入中文ttf
+    ];
 ```
-common
-    config/              contains shared configurations
-    mail/                contains view files for e-mails
-    models/              contains model classes used in both backend and frontend
-console
-    config/              contains console configurations
-    controllers/         contains console controllers (commands)
-    migrations/          contains database migrations
-    models/              contains console-specific model classes
-    runtime/             contains files generated during runtime
-backend
-    assets/              contains application assets such as JavaScript and CSS
-    config/              contains backend configurations
-    controllers/         contains Web controller classes
-    models/              contains backend-specific model classes
-    runtime/             contains files generated during runtime
-    views/               contains view files for the Web application
-    web/                 contains the entry script and Web resources
-frontend
-    assets/              contains application assets such as JavaScript and CSS
-    config/              contains frontend configurations
-    controllers/         contains Web controller classes
-    models/              contains frontend-specific model classes
-    runtime/             contains files generated during runtime
-    views/               contains view files for the Web application
-    web/                 contains the entry script and Web resources
-    widgets/             contains frontend widgets
-vendor/                  contains dependent 3rd-party packages
-environments/            contains environment-based overrides
-tests                    contains various tests for the advanced application
-    codeception/         contains tests developed with Codeception PHP Testing Framework
+3. js开头文件注册 该中文字体
+```javascript
+    window.pdfMake.fonts  = {
+        msyh: {
+            normal: 'msyh.ttf',
+            bold: 'msyh.ttf',
+            italics: 'msyh.ttf',
+            bolditalics: 'msyh.ttf',
+        }
+    };
 ```
-=======
-# Yii2adv
-Yii2adv demo
->>>>>>> bf57d71625d92b58a8c97045977748c518daef39
+4. `datatable` 的 `buttons` 中 `pdf` 的代码改为：
+```javascript
+    {
+        extend: 'pdf',
+        text: '全部导出PDF',
+        pageSize: 'A3',//default:LEGAL
+        exportOptions: {
+            columns: ':visible'//掩藏列不导出
+        },
+        customize: function ( doc ) {
+            doc.defaultStyle = {
+                font: 'msyh'
+            };
+        }
+    },
+```
+
+*参考资料*
+
+- [DataTables导出CSV、PDF中文乱码解决方法](http://www.yuyanping.com/datatables-export-csv-pdf-be-garbled/)  
+- [Changing your DataTable/PDFMake Font in PDF for right to left alignment](http://www.rudeprogrammer.com/2016/01/changing-your-datatablepdfmake-font-in-pdf-print-button-for-right-to-left/)
+- [markPDF官网](http://pdfmake.org/#/gettingstarted)
+- [PDF - page size and orientation](https://datatables.net/extensions/buttons/examples/html5/pdfPage.html)
+- [pdfHtml5](https://datatables.net/reference/button/pdfHtml5)
