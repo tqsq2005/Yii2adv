@@ -23,7 +23,6 @@ $this->title = '单位管理';
 $this->params['breadcrumbs'][] = $this->title;
 $this->registerCssFile('@web/plus/jsTree/themes/default/style.min.css');
 $this->registerJsFile('@web/plus/jsTree/jstree.min.js', ['depends' => 'yii\web\JqueryAsset',]);
-\common\assets\DataTableEditorAsset::register($this);
 ?>
 <div class="box box-primary">
     <div class="box-body" id="admin-body">

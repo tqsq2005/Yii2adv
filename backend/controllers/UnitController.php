@@ -135,17 +135,23 @@ class UnitController extends Controller
             ->getRawSql();
         $query2 = Unit::find()
             ->where('FIND_IN_SET (unitcode, :unitlist)', [':unitlist' => $parentlist])
+            ->andFilterWhere([
+                'logout' => 0,//在职
+            ])
+            ->andFilterWhere(['<>', 'flag', '01'])
             ->createCommand()
             ->getRawSql();
         echo $childlist . '<br>';
         echo $parentlist. '<br>';
         echo $query . '<br>';
         echo $query2 . '<br>';
+        echo date('Ymd', mktime(0, 0, 0, date("m")-3, date("d"), date("Y")));
         return '';
     }
 
     public function actionDetail()
     {
+        $this->layout = 'bank';
         $id = Yii::$app->request->post('id', '%');
         if($id == '0' || $id == '@')
             $id = '%';
@@ -153,7 +159,7 @@ class UnitController extends Controller
         $unit = new Unit();
 
         if($unit->isParent($id)) {
-            return $this->renderAjax('_detail', [
+            return $this->render('_detail', [
                 'parent' => $id,
                 'parentName' => $name,
                 'unitcode'  => Unit::getMaxunitcode($id),

@@ -43,7 +43,7 @@ div.DTE_Body div.DTE_Form_Content:after {
 }
 CSS;
 $this->registerCss($css);
-
+\common\assets\DataTableEditorAsset::register($this);
 ?>
 <div class="box box-success">
     <div class="box-header with-border">
@@ -57,9 +57,9 @@ $this->registerCss($css);
     <!-- /.box-header -->
     <div class="box-body">
         <div class="row">
-            <div class="col-md-12">
-                <span id="box-unit-info" class="text-purple">总人数为--人，流动人口为--人，已婚男性人数为--人，已婚女性人数为--人，未婚男性人数
-为--人，未婚女性人数为--人，已婚未育--人，已婚育一孩--人，已婚育二孩--人，近三个月内新入职--人，近三个月内离开单位--人。 </span>
+            <div class="col-md-12" style="height: 58px;">
+                <span id="box-unit-info"  class="text-purple">总人数为 -- 人，流动人口为 -- 人，已婚男性人数为 -- 人，已婚女性人数为 -- 人，未婚男性人数
+为 -- 人，未婚女性人数为 -- 人，已婚未育 -- 人，已婚育一孩 -- 人，已婚育二孩 -- 人，近三个月内新入职 -- 人，近三个月内离开单位 -- 人。 </span>
                 <!-- ./chart-responsive -->
             </div>
             <!-- /.col -->
@@ -87,6 +87,55 @@ $this->registerCss($css);
 </div>
 <?php \common\widgets\JsBlock::begin(); ?>
     <script type="text/javascript">
+        /**
+         * textPrint : 打印机文字特效
+         * @param string str
+         */
+        (function(a) {
+            a.fn.textPrint = function(speed) {
+                this.each(function() {
+                    var d = a(this),
+                        c = d.html(),
+                        b = 0;
+                    d.html("");
+                    var e = setInterval(function() {
+                            var f = c.substr(b, 1);
+                            if (f == "<") {
+                                b = c.indexOf(">", b) + 1
+                            } else {
+                                b++
+                            }
+                            d.html(c.substring(0, b) + (b & 1 ? "_": ""));
+                            if (b >= c.length) {
+                                clearInterval(e)
+                            }
+                        },
+                        speed)
+                });
+                return this;
+            }
+        })(jQuery);
+
+        function boxUnitInfo(unit) {
+            $.ajax({
+                url: '<?= \yii\helpers\Url::to(['personal/summary']) ?>',
+                type : 'get',
+                data : { unit: unit },
+                beforeSend: function () {
+                    layer.load();
+                },
+                complete: function () {
+                    layer.closeAll('loading');
+                },
+                error: function() {
+                    layer.msg("单位基本情况数据获取失败..",{icon: 5});
+                },
+                success: function(data, textStatus){
+                    $("#box-unit-info").html(data);
+                    $("#box-unit-info").textPrint(30);
+                }
+            });
+        }
         //var editor; // use a global for the submit and return data rendering in the examples
 
         $(document).ready(function() {
@@ -98,6 +147,8 @@ $this->registerCss($css);
                     bolditalics: 'msyh.ttf',
                 }
             };
+
+            boxUnitInfo('<?= $parent ?>');
 
             var editor = new $.fn.dataTable.Editor( {
                 ajax: {
@@ -543,6 +594,19 @@ $this->registerCss($css);
             table.buttons().container()
                 .append('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
                 .prependTo( $('.col-sm-6:eq(0) div.dataTables_length', table.table().container() ) );
+
+            $('#unit-list-data-<?=$unitcode?>')
+                .on("click","tr",function(event) { //行点击事件   td:first-child
+                    //获取该行对应的数据
+                    var item = table.row($(this).closest('tr')).data();
+                    console.log(item);
+                    if (item) {
+                        $("#box-unitname").html(item.unitname);
+                        $("#box-unitname").textPrint(30);
+                        boxUnitInfo(item.unitcode);
+                    }
+                    return ;
+                });
 
         } );
     </script>
