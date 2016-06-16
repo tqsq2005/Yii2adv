@@ -3,16 +3,16 @@ Yii 2 项目阶段性小结
 ### 2016.6.14小结： 修复 [datatable](https://www.datatables.net/) 中导出 [PDF](http://pdfmake.org/#/gettingstarted) 中文不支持的问题
 **解决步骤记录如下**
 
-1. 下载 中文字体 [vfs_fonts.js](http://7xoed1.com1.z0.glb.clouddn.com/2015/vfs_fonts.js)
+1.下载 中文字体 [vfs_fonts.js](http://7xoed1.com1.z0.glb.clouddn.com/2015/vfs_fonts.js)
 
-2. 修改 `DataTableAsset.php` 文件，将 `vfs_fonts.js` 文件加入 `js` 包中
+2.修改 `DataTableAsset.php` 文件，将 `vfs_fonts.js` 文件加入 `js` 包中
 ```php
     public $js = [
         'datatables.min.js',
         'pdfmake-0.1.18/build/vfs_fonts.js'//加入中文ttf
     ];
 ```
-3. js开头文件注册 该中文字体
+3.js开头文件注册 该中文字体
 ```javascript
     window.pdfMake.fonts  = {
         msyh: {
@@ -23,7 +23,7 @@ Yii 2 项目阶段性小结
         }
     };
 ```
-4. `datatable` 的 `buttons` 中 `pdf` 的代码改为：
+4.`datatable` 的 `buttons` 中 `pdf` 的代码改为：
 ```javascript
     {
         extend: 'pdf',
