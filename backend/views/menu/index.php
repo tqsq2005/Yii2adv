@@ -73,6 +73,15 @@ $this->registerJsFile('@web/plus/jsTree/jstree.min.js', ['depends' => 'yii\web\J
                         'url' : '<?= \yii\helpers\Url::to(['tree']) ?>',
                         'data' : function (node) {
                             return { 'id' : node.id };
+                        },
+                        beforeSend: function () {
+                            layer.load();
+                        },
+                        complete: function () {
+                            layer.closeAll('loading');
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            layer.alert('数据加载出错:' + textStatus + ' ' + errorThrown, {icon: 5});
                         }
                     },
                     "multiple" : false,//是否允许多选：默认为 true

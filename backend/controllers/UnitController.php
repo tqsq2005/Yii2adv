@@ -63,13 +63,14 @@ class UnitController extends Controller
             return $this->redirect(['index']);
         } else {
             $parentId           = Yii::$app->request->get('parentId');
-            $model->upunitcode  = ($parentId == '0') ? '%' : $parentId;
+            $parentId           = ($parentId == '0') ? '%' : $parentId;
+            $model->upunitcode  = $parentId;
             $model->upunitname  = Yii::$app->request->get('parentName');
             $model->corpflag    = strlen($parentId) > 1 ? '5' : '4';
             $model->unitcode    = Unit::getMaxunitcode($parentId);
             return $this->renderAjax('create', [
                 'model'     => $model,
-                'isParent'  => ($model->isParent($parentId)) ? "yes" : "no",
+                'isParent'  => intval($this->findModel($parentId)->corpflag) < 5 ? "yes" : "no", //判断下级能建单位还是部门
             ]);
         }
     }
@@ -124,10 +125,14 @@ class UnitController extends Controller
         echo json_encode($data);
     }
 
+    public function actionT() {
+        return $this->render('test');
+    }
+
     public function actionDetail()
     {
         $id = Yii::$app->request->post('id', '%');
-        if($id == '0')
+        if($id == '0' || $id == '@')
             $id = '%';
         $name = Yii::$app->request->post('name', '计生管理系统');
         $unit = new Unit();
@@ -136,6 +141,8 @@ class UnitController extends Controller
             return $this->renderAjax('_detail', [
                 'parent' => $id,
                 'parentName' => $name,
+                'unitcode'  => Unit::getMaxunitcode($id),
+                'isParent'  => intval($this->findModel($id)->corpflag) < 5 ? "yes" : "no",//判断下级能建单位还是部门
             ]);
         } else {
             return $this->renderAjax('view', [

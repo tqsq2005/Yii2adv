@@ -181,9 +181,17 @@ class Unit extends \yii\db\ActiveRecord
             'upunitcode' => ($unitcode == '0') ? '%' : $unitcode,
         ])->max('unitcode');
         if($maxunitcode) {
-            $unitcode   = ($unitcode == '0') ? substr($maxunitcode, 0, -2) : $unitcode;
+            $unitcode   = ($unitcode == '0' || $unitcode == '%') ? substr($maxunitcode, 0, -2) : $unitcode;
             return $unitcode . substr($maxunitcode+1, -2);
         }
         return $unitcode . '01';
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPersonals()
+    {
+        return $this->hasMany(Personal::className(), ['unit' => 'unitcode']);
     }
 }

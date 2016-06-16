@@ -270,6 +270,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 ajax: {
                     url:  "/admin/populac/preferences/index?type=fetch",
                     dataSrc: '',
+                    beforeSend: function () {
+                        layer.load();
+                    },
+                    complete: function () {
+                        layer.closeAll('loading');
+                    },
                     error: function() {
                         layer.msg("数据读取失败，请刷新重试!",{icon: 5});
                     }

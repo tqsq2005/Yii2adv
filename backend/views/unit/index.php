@@ -32,7 +32,16 @@ $this->registerJsFile('@web/plus/jsTree/jstree.min.js', ['depends' => 'yii\web\J
                 <div class="col-md-3">
                     <div class="panel panel-info">
                         <div class="panel-heading">
-                            <h3 class="panel-title"><i class="fa fa-asterisk fa-spin"></i> 单位列表 </h3>
+                            <h3 class="panel-title">
+                                <i class="fa fa-asterisk fa-spin"></i>
+                                单位列表
+                                <div class="pull-right">
+                                    <i class="fa fa-refresh fa-spin" id="unit-refresh" style="cursor: pointer"
+                                       title="点击更新单位列表"></i>&nbsp;
+                                    <i class="fa fa-question-circle" id="unit-help" style="cursor: pointer"
+                                       title="点击查看帮助"></i>
+                                </div>
+                            </h3>
                             <div class="clearfix"></div>
                         </div>
                         <div class="panel-body">
@@ -89,6 +98,15 @@ $this->registerJsFile('@web/plus/jsTree/jstree.min.js', ['depends' => 'yii\web\J
                         'url' : '<?= \yii\helpers\Url::to(['tree']) ?>',
                         'data' : function (node) {
                             return { 'id' : node.id };
+                        },
+                        beforeSend: function () {
+                            layer.load();
+                        },
+                        complete: function () {
+                            layer.closeAll('loading');
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            layer.alert('数据加载出错:' + textStatus + ' ' + errorThrown, {icon: 5});
                         }
                     },
                     "multiple" : false,//是否允许多选：默认为 true
@@ -186,6 +204,62 @@ $this->registerJsFile('@web/plus/jsTree/jstree.min.js', ['depends' => 'yii\web\J
                             }
                         });
                 }
+            });
+        //点击更新单位列表
+        $(document)
+            .on('click', '#unit-refresh', function() {
+                var shiftNum = [0, 1, 2, 3, 4, 5, 6];
+                layer.confirm('<span class="text-info">即将刷新单位列表，确定吗?</span>', {
+                    title: '系统信息',
+                    shift: shiftNum[Math.floor(Math.random()*shiftNum.length)],
+                    icon: 6,
+                    scrollbar: false
+                }, function(index) {
+                    $('#unit-tree').jstree('refresh');
+                    layer.close(index);
+                }, function(index) {
+                    layer.close(index);
+                });
+            })
+            .on('click', '#unit-help', function(e) {
+                var tour = new Tour({
+                    duration: 30000,
+                    backdrop: true,
+                    template: "<div class='popover tour'>" +
+                    "<div class='arrow'></div>" +
+                    "<h3 class='popover-title'></h3>" +
+                    "<div class='popover-content'></div>" +
+                    "<div class='popover-navigation'>" +
+                    "<button class='btn btn-default' data-role='prev'><i class='fa fa-hand-o-left'></i>前</button>" +
+                    "<span data-role='separator'>|</span>" +
+                    "<button class='btn btn-default' data-role='next'><i class='fa fa-hand-o-right'></i>后</button>" +
+                    "<button class='btn btn-default' data-role='end'>结束</button>" +
+                    "</div>" +
+                    "</div>",
+                    steps: [
+                        {
+                            element: "#unit-tree",
+                            title: "提示一",
+                            placement: "top",
+                            content: "单位列表区域，右键点击具体单位名称可以进行 新增、修改、删除操作！"
+                        },
+                        {
+                            element: "#unit-refresh",
+                            title: "提示二",
+                            content: "点击该按钮可以重新加载单位列表！"
+                        },
+                        {
+                            element: "div#unit-search input",
+                            title: "提示三",
+                            content: "搜索框输入信息，单位列表中如有单位名称与之相匹配，则以红色标识！"
+                        }
+                    ]});
+
+                // Initialize the tour
+                tour.init();
+
+                // Start the tour
+                tour.restart();
             });
     });
 

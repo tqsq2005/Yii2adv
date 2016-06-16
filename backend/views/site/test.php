@@ -18,139 +18,74 @@ $this->registerJsFile('@web/plus/jsTree/jstree.min.js', ['depends' => 'yii\web\J
     <?= Yii::getAlias('@web/storage'); ?>
     <?= Yii::getAlias('@webroot/storage'); ?>
 </div>
-<?php
-$data = [
-    "red" => "red",
-    "green" => "green",
-    "blue" => "blue",
-    "orange" => "orange",
-    "white" => "white",
-    "black" => "black",
-    "purple" => "purple",
-    "cyan" => "cyan",
-    "teal" => "teal"
-];
-echo \kartik\widgets\Select2::widget([
-    'name' => 'color_3',
-    'value' => 'red', // initial value
-    'data' => $data,
-    'options' => ['placeholder' => 'Select a color ...'],
-    'pluginOptions' => [
-        'tags' => true,
-        'tokenSeparators' => [',', ' '],
-        'maximumInputLength' => 10
-    ],
-]);
+<span role="presentation" class="dropdown">
+                                        <i id="dropdownMenu9" data-toggle="dropdown" aria-expanded="true" title="Actions" class="glyphicon glyphicon-menu-hamburger"></i>
+                                        <ul id="menu3" class="dropdown-menu" aria-labelledby="drop6">
+                                            <li><a href="#">Action</a></li>
+                                            <li><a href="#">Another action</a></li>
+                                            <li><a href="#">Something else here</a></li>
+                                            <li role="separator" class="divider"></li>
+                                            <li><a href="#">Separated link</a></li>
+                                        </ul>
+                                    </span>
 
-echo \kartik\widgets\Select2::widget([
-    'name'      => 'test',
-    'data'      => \yii\helpers\ArrayHelper::map(\dektrium\user\models\User::find()->all(), 'id', 'username'),
-    'value'     => Yii::$app->user->identity->getId(),
-    'options'   => [
-        'prompt' => '---请选择事件关联的用户---',
-
-    ],
-    'addon'         => [
-        'append'    => [
-            'content' => Html::button(\kartik\helpers\Html::icon('fa fa-user-plus', [], ''), [
-                'class' => 'btn btn-primary',
-                'title' => '请选择事件关联的用户',
-                'data-toggle' => 'tooltip',
-                'data-placement' => 'bottom',
-            ]),
-            'asButton' => true
-        ]
-    ],
-    'pluginOptions' => [
-        'tags' => true,
-        'tokenSeparators' => [',', ' '],
-        'maximumInputLength' => 3
-    ],
-]);
-?>
-<div class="row">
-    <div class="col-md-3">
-        <div id="tree1">
-
-        </div>
-    </div>
-    <div class="col-md-9">
-        <div id="treeview1">
-            <div class="content default" style="text-align:center;">Select a node from the tree.</div>
+<div class="box box-primary">
+    <div class="box-body" id="admin-body">
+        <div class="unit-index container-fluid" role="main">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                <i class="fa fa-asterisk fa-spin"></i>
+                                单位列表
+                                <div class="pull-right">
+                                    <i class="fa fa-refresh fa-spin" id="unit-refresh" style="cursor: pointer"
+                                       title="点击更新单位列表"></i>&nbsp;
+                                    <i class="fa fa-question-circle" id="unit-help" style="cursor: pointer"
+                                       title="点击查看帮助"></i>
+                                    <span role="presentation" class="dropdown">
+                                        <i id="dropdownMenu9" data-toggle="dropdown" aria-expanded="true" title="Actions" class="glyphicon glyphicon-menu-hamburger"></i>
+                                        <ul id="menu3" class="dropdown-menu" aria-labelledby="drop6">
+                                            <li><a href="#">Action</a></li>
+                                            <li><a href="#">Another action</a></li>
+                                            <li><a href="#">Something else here</a></li>
+                                            <li role="separator" class="divider"></li>
+                                            <li><a href="#">Separated link</a></li>
+                                        </ul>
+                                    </span>
+                                </div>
+                            </h3>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="panel-body">
+                            <div id="unit-search" style="margin-bottom: 10px;">
+                                <input type="text" value="" style="box-shadow:inset 0 0 4px #eee; width:150px; margin:0; padding:6px 12px; border-radius:4px; border:1px solid silver; font-size:1.1em;"
+                                       id="unit_q" placeholder="搜索.." />
+                            </div>
+                            <div id="unit-tree"></div>
+                        </div>
+                        <div class="panel-footer"></div>
+                    </div>
+                </div>
+                <div class="col-md-9 ">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                <h3 class="panel-title"><i class="glyphicon glyphicon-th-list"></i> 资料列表 </h3>
+                            </h3>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="panel-body">
+                            <div id="unit-detail"></div>
+                        </div>
+                        <div class="panel-footer"></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-<!-- 3 setup a container element -->
-<div id="jstree">
-    <!-- in this example the tree is populated from inline HTML -->
-    <ul>
-        <li>Root node 1
-            <ul>
-                <li id="child_node_1">Child node 1</li>
-                <li>Child node 2</li>
-            </ul>
-        </li>
-        <li>Root node 2</li>
-    </ul>
-</div>
-<button>demo button</button>
-<?php \common\widgets\JsBlock::begin(); ?>
-<script type="text/javascript">
-    $(function () {
-        // 6 create an instance when the DOM is ready
-        $('#jstree').jstree({
-            "plugins" : [ "contextmenu", "dnd", "search", "state", "types", "wholerow", "checkbox" ]
-        });
-        // 7 bind to events triggered on the tree
-        $('#jstree').on("changed.jstree", function (e, data) {
-            console.log(data.selected);
-        });
-        // 8 interact with the tree - either way is OK
-        $('button').on('click', function () {
-            $('#jstree').jstree(true).select_node('child_node_1');
-            $('#jstree').jstree('select_node', 'child_node_1');
-            $.jstree.reference('#jstree').select_node('child_node_1');
-        });
-        ////////
-        $(window).resize(function () {
-            var h = Math.max($(window).height() - 0, 420);
-            $('#row, #treeview1, #tree1, #treeview1 .content').height(h).filter('.default').css('lineHeight', h + 'px');
-        }).resize();
-        $('#tree1')
-            .jstree({
-                'core' : {
-                    'data' : {
-                        'url' : '<?= \yii\helpers\Url::to(['helpmenu/treenode']) ?>',
-                        'data' : function (node) {
-                            return { 'unitcode' : node.id };
-                        }
-                    },
-                    'check_callback' : true,
-                    'themes' : {
-                        'responsive' : false
-                    },
-                    'types' : {
-                        'default' : { 'icon' : 'fa fa-folder' },
-                        'file' : { 'valid_children' : [], 'icon' : 'fa fa-file' }
-                    }
-                },
-                'force_text' : true,
-                'plugins' : ['state','dnd','contextmenu']
-            }).on('changed.jstree', function (e, data) {
-                if(data && data.selected && data.selected.length) {
-                    $.get('<?= \yii\helpers\Url::to(['helpmenu/treenode']) ?>?unitcode=' + data.selected.join(':'), function (d) {
-                        //console.log(d);
-                        $('#treeview1 .default').html(d.text).show();
-                    });
-                }
-                else {
-                    $('#treeview1 .content').hide();
-                    $('#treeview1 .default').html('Select a file from the tree.').show();
-                }
-            });
-    });
-</script>
-<?php \common\widgets\JsBlock::end(); ?>
 
 
 
