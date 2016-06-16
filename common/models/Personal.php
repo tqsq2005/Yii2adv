@@ -2,7 +2,11 @@
 
 namespace common\models;
 
+use common\behaviors\ARLogBehavior;
 use Yii;
+use yii\behaviors\BlameableBehavior;
+use yii\behaviors\TimestampBehavior;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "personal".
@@ -104,6 +108,24 @@ class Personal extends \yii\db\ActiveRecord
             [['personal_id'], 'unique'],
             [['unit'], 'exist', 'skipOnError' => true, 'targetClass' => Unit::className(), 'targetAttribute' => ['unit' => 'unitcode']],
         ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function behaviors()
+    {
+        return ArrayHelper::merge(parent::behaviors(), [
+            'timestamp' => [
+                'class' => TimestampBehavior::className(),
+            ],
+            'blame' => [
+                'class' => BlameableBehavior::className(),
+            ],
+            'ARLog' => [
+                'class' => ARLogBehavior::className(),
+            ],
+        ]);
     }
 
     /**

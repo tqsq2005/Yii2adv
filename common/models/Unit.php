@@ -188,6 +188,30 @@ class Unit extends \yii\db\ActiveRecord
     }
 
     /**
+     * (false|null|string) getChildList : 返回所有下级单位，包含自身
+     * @static
+     * @param $unitcode
+     * @return false|null|string
+     */
+    public static function getChildList($unitcode)
+    {
+        return Yii::$app->db->createCommand('select getChildList(:unitcode)')
+            ->bindValue(':unitcode', $unitcode)->queryScalar();
+    }
+
+    /**
+     * (false|null|string) getChildList : 返回所有主管单位，不包含自身
+     * @static
+     * @param $unitcode
+     * @return false|null|string
+     */
+    public static function getParentList($unitcode)
+    {
+        return Yii::$app->db->createCommand('select getParentList(:unitcode)')
+            ->bindValue(':unitcode', $unitcode)->queryScalar();
+    }
+
+    /**
      * @return \yii\db\ActiveQuery
      */
     public function getPersonals()

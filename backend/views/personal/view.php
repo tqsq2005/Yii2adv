@@ -1,33 +1,30 @@
 <?php
 
 use yii\helpers\Html;
-use kartik\detail\DetailView;
-use kartik\datecontrol\DateControl;
+use yii\widgets\DetailView;
 
-/**
- * @var yii\web\View $this
- * @var backend\models\Personal $model
- */
+/* @var $this yii\web\View */
+/* @var $model common\models\Personal */
 
 $this->title = $model->title;
 $this->params['breadcrumbs'][] = ['label' => 'Personals', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="personal-view">
-    <div class="page-header">
-        <h1><?= Html::encode($this->title) ?></h1>
-    </div>
 
+    <p>
+        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
+            'class' => 'btn btn-danger',
+            'data' => [
+                'confirm' => 'Are you sure you want to delete this item?',
+                'method' => 'post',
+            ],
+        ]) ?>
+    </p>
 
     <?= DetailView::widget([
-            'model' => $model,
-            'condensed'=>false,
-            'hover'=>true,
-            'mode'=>Yii::$app->request->get('edit')=='t' ? DetailView::MODE_EDIT : DetailView::MODE_VIEW,
-            'panel'=>[
-            'heading'=>$this->title,
-            'type'=>DetailView::TYPE_INFO,
-        ],
+        'model' => $model,
         'attributes' => [
             'code1',
             'name1',
@@ -87,15 +84,11 @@ $this->params['breadcrumbs'][] = $this->title;
             'checktime',
             'audittime',
             'id',
+            'created_by',
+            'updated_by',
+            'created_at',
+            'updated_at',
         ],
-        'deleteOptions'=>[
-        'url'=>['delete', 'id' => $model->id],
-        'data'=>[
-        'confirm'=>Yii::t('app', 'Are you sure you want to delete this item?'),
-        'method'=>'post',
-        ],
-        ],
-        'enableEditMode'=>true,
     ]) ?>
 
 </div>

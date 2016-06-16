@@ -4,7 +4,7 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Unit;
-use common\models\UnitSearch;
+use yii\db\Expression;
 use yii\helpers\Json;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -126,7 +126,22 @@ class UnitController extends Controller
     }
 
     public function actionT() {
-        return $this->render('test');
+        $unitcode = '0000230400';
+        $childlist = Unit::getChildList('0000230400');
+        $parentlist = Unit::getParentList($unitcode);
+        $query = Unit::find()
+            ->where('FIND_IN_SET (unitcode, :unitlist)', [':unitlist' => $childlist])
+            ->createCommand()
+            ->getRawSql();
+        $query2 = Unit::find()
+            ->where('FIND_IN_SET (unitcode, :unitlist)', [':unitlist' => $parentlist])
+            ->createCommand()
+            ->getRawSql();
+        echo $childlist . '<br>';
+        echo $parentlist. '<br>';
+        echo $query . '<br>';
+        echo $query2 . '<br>';
+        return '';
     }
 
     public function actionDetail()

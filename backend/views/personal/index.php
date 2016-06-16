@@ -1,119 +1,93 @@
 <?php
 
 use yii\helpers\Html;
-use kartik\grid\GridView;
-use yii\widgets\Pjax;
+use yii\grid\GridView;
 
-/**
- * @var yii\web\View $this
- * @var yii\data\ActiveDataProvider $dataProvider
- * @var backend\models\PersonalSearch $searchModel
- */
+/* @var $this yii\web\View */
+/* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Personals';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="personal-index">
-    <div class="page-header">
-            <h1><?= Html::encode($this->title) ?></h1>
-    </div>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+
 
     <p>
-        <?php /* echo Html::a('Create Personal', ['create'], ['class' => 'btn btn-success'])*/  ?>
+        <?= Html::a('Create Personal', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
-    <?php Pjax::begin(); echo GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+    <div class="box box-primary">
+        <div class="box-body">
+            <?= GridView::widget([
+                'dataProvider' => $dataProvider,
+                'columns' => [
+                    'code1',
+                    'name1',
+                    'sex',
+                    'birthdate',
+                    'fcode',
+                    // 'mz',
+                    // 'marry',
+                    // 'marrydate',
+                    // 'address1',
+                    // 'hkaddr',
+                    // 'tel',
+                    // 'postcode',
+                    // 'hkxz',
+                    // 'work1',
+                    // 'whcd',
+                    // 'is_dy',
+                    // 'title',
+                    // 'zw',
+                    // 'grous',
+                    // 'obect1',
+                    // 'flag',
+                    // 'childnum',
+                    // 'unit',
+                    // 'jobdate',
+                    // 'ingoingdate',
+                    // 'memo1',
+                    // 'lhdate',
+                    // 'zhdate',
+                    // 'picture_name',
+                    // 'onlysign',
+                    // 'selfno',
+                    // 'ltunit',
+                    // 'ltaddr',
+                    // 'ltman',
+                    // 'lttel',
+                    // 'ltpostcode',
+                    // 'memo',
+                    // 'cztype',
+                    // 'carddate',
+                    // 'examinedate',
+                    // 'cardcode',
+                    // 'fzdw',
+                    // 'feeddate',
+                    // 'yzdate',
+                    // 'checkunit',
+                    // 'incity',
+                    // 'memo2',
+                    // 's_date',
+                    // 'logout',
+                    // 'e_date',
+                    // 'personal_id',
+                    // 'do_man',
+                    // 'marrowdate',
+                    // 'oldunit',
+                    // 'leavedate',
+                    // 'checktime',
+                    // 'audittime',
+                    // 'id',
+                    // 'created_by',
+                    // 'updated_by',
+                    // 'created_at',
+                    // 'updated_at',
 
-            'id',
-            'code1',
-            'name1',
-            'sex',
-            'birthdate',
-            'fcode',
-//            'mz', 
-//            'marry', 
-//            'marrydate', 
-//            'address1', 
-//            'hkaddr', 
-//            'tel', 
-//            'postcode', 
-//            'hkxz', 
-//            'work1', 
-//            'whcd', 
-//            'is_dy', 
-//            'title', 
-//            'zw', 
-//            'grous', 
-//            'obect1', 
-//            'flag', 
-//            'childnum', 
-//            'unit', 
-//            'jobdate', 
-//            'ingoingdate', 
-//            'memo1', 
-//            'lhdate', 
-//            'zhdate', 
-//            'picture_name', 
-//            'onlysign', 
-//            'selfno', 
-//            'ltunit', 
-//            'ltaddr', 
-//            'ltman', 
-//            'lttel', 
-//            'ltpostcode', 
-//            'memo', 
-//            'cztype', 
-//            'carddate', 
-//            'examinedate', 
-//            'cardcode', 
-//            'fzdw', 
-//            'feeddate', 
-//            'yzdate', 
-//            'checkunit', 
-//            'incity', 
-//            'memo2', 
-//            's_date', 
-//            'logout', 
-//            'e_date', 
-//            'personal_id', 
-//            'do_man', 
-//            'marrowdate', 
-//            'oldunit', 
-//            'leavedate', 
-//            'checktime', 
-//            'audittime', 
-//            'id', 
-
-            [
-                'class' => 'yii\grid\ActionColumn',
-                'buttons' => [
-                'update' => function ($url, $model) {
-                                    return Html::a('<span class="glyphicon glyphicon-pencil"></span>', Yii::$app->urlManager->createUrl(['personal/view','id' => $model->id,'edit'=>'t']), [
-                                                    'title' => Yii::t('yii', 'Edit'),
-                                                  ]);}
-
+                    ['class' => 'yii\grid\ActionColumn'],
                 ],
-            ],
-        ],
-        'responsive'=>true,
-        'hover'=>true,
-        'condensed'=>true,
-        'floatHeader'=>true,
-
-
-
-
-        'panel' => [
-            'heading'=>'<h3 class="panel-title"><i class="glyphicon glyphicon-th-list"></i> '.Html::encode($this->title).' </h3>',
-            'type'=>'info',
-            'before'=>Html::a('<i class="glyphicon glyphicon-plus"></i> Add', ['create'], ['class' => 'btn btn-success']),                                                                                                                                                          'after'=>Html::a('<i class="glyphicon glyphicon-repeat"></i> Reset List', ['index'], ['class' => 'btn btn-info']),
-            'showFooter'=>false
-        ],
-    ]); Pjax::end(); ?>
+            ]); ?>
+        </div>
+    </div>
 
 </div>

@@ -3,8 +3,7 @@
 namespace backend\controllers;
 
 use Yii;
-use backend\models\Personal;
-use backend\models\PersonalSearch;
+use common\models\Personal;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -33,12 +32,18 @@ class PersonalController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new PersonalSearch;
-        $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
+        $dataProvider = new ActiveDataProvider([
+            'query' => Personal::find(),
+            'sort' => [
+                'defaultOrder' => [
+                    'id' => SORT_DESC
+                ]
+            ]
+
+        ]);
 
         return $this->render('index', [
             'dataProvider' => $dataProvider,
-            'searchModel' => $searchModel,
         ]);
     }
 
@@ -49,13 +54,9 @@ class PersonalController extends Controller
      */
     public function actionView($id)
     {
-        $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-        return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-        return $this->render('view', ['model' => $model]);
-}
+        return $this->render('view', [
+            'model' => $this->findModel($id),
+        ]);
     }
 
     /**
@@ -65,7 +66,7 @@ class PersonalController extends Controller
      */
     public function actionCreate()
     {
-        $model = new Personal;
+        $model = new Personal();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -109,6 +110,17 @@ class PersonalController extends Controller
     }
 
     /**
+     * (void) actionSummary : 一个单位或部门的情况概述， eg:总人数为--人，流动人口为--人，已婚男性人数为--人，
+     * 已婚女性人数为--人，未婚男性人数 为--人，未婚女性人数为--人，已婚未育--人，已婚育一孩--人，已婚育二孩--人，
+     * 近三个月内新入职--人，近三个月内离开单位--人。
+     * @param string $unit 单位编码
+     */
+    public function actionSummary($unit='%')
+    {
+
+    }
+
+    /**
      * Finds the Personal model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
@@ -122,35 +134,5 @@ class PersonalController extends Controller
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
-    }
-
-    public function actionGrid()
-    {
-        /*if(!Yii::$app->user->can('')) {
-
-        }*/
-        $query = Personal::find();
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-            'pagination' => [
-                'pageSize' => 15,
-            ],
-        ]);
-
-        $searchModel = new Personal();
-        if(isset($_GET['Personal'])) {
-            //等价于 if($searchModel->load(Yii::$app->request->get())) {
-            if($searchModel->load(Yii::$app->request->getQueryParams())) {
-                $query->andFilterWhere(['like', 's_date', $_GET['Personal']['s_date']]);
-                //等价于
-                $query->andFilterWhere(['like', 'name1', $searchModel->name1]);
-                $query->andFilterWhere(['sex' => $searchModel->sex]);
-            }
-
-        }
-
-        $sumOfId = $query->sum('id');
-
-        return $this->render('grid', ['dataProvider' => $dataProvider, 'searchModel' => $searchModel, 't_sumOfId' => $sumOfId]);
     }
 }
