@@ -87,35 +87,6 @@ $this->registerCss($css);
 </div>
 <?php \common\widgets\JsBlock::begin(); ?>
     <script type="text/javascript">
-        /**
-         * textPrint : 打印机文字特效
-         * @param string str
-         */
-        (function(a) {
-            a.fn.textPrint = function(speed) {
-                this.each(function() {
-                    var d = a(this),
-                        c = d.html(),
-                        b = 0;
-                    d.html("");
-                    var e = setInterval(function() {
-                            var f = c.substr(b, 1);
-                            if (f == "<") {
-                                b = c.indexOf(">", b) + 1
-                            } else {
-                                b++
-                            }
-                            d.html(c.substring(0, b) + (b & 1 ? "_": ""));
-                            if (b >= c.length) {
-                                clearInterval(e)
-                            }
-                        },
-                        speed)
-                });
-                return this;
-            }
-        })(jQuery);
-
         function boxUnitInfo(unit) {
             $.ajax({
                 url: '<?= \yii\helpers\Url::to(['personal/summary']) ?>',
@@ -136,9 +107,17 @@ $this->registerCss($css);
                 }
             });
         }
-        //var editor; // use a global for the submit and return data rendering in the examples
+        var editor; // use a global for the submit and return data rendering in the examples
 
         $(document).ready(function() {
+            if (editor) {
+                editor.off('open')
+                    .off('preSubmit')
+                    .off('preBlur')
+                    .off('create')
+                    .off('edit')
+                    .off('remove');
+            }
             window.pdfMake.fonts  = {
                 msyh: {
                     normal: 'msyh.ttf',
@@ -150,7 +129,7 @@ $this->registerCss($css);
 
             boxUnitInfo('<?= $parent ?>');
 
-            var editor = new $.fn.dataTable.Editor( {
+            editor = new $.fn.dataTable.Editor( {
                 ajax: {
                     url:  "/admin/unit/data-tables?type=crud",
                     dataSrc: '',
@@ -169,17 +148,17 @@ $this->registerCss($css);
                 i18n: {
                     create: {
                         button: "新增",
-                        title:  "新增菜单",
+                        title:  "新增单位(部门)",
                         submit: "保存"
                     },
                     edit: {
                         button: "修改",
-                        title:  "修改菜单",
+                        title:  "修改单位(部门)",
                         submit: "保存"
                     },
                     remove: {
                         button: "删除",
-                        title:  "删除菜单",
+                        title:  "删除单位(部门)",
                         submit: "确认删除",
                         confirm: {
                             _: "确定要删除这 %d 条记录吗?",
@@ -351,6 +330,14 @@ $this->registerCss($css);
                     // On close, check if the values have changed and ask for closing confirmation if they have
                     if ( openVals !== JSON.stringify( editor.get() ) ) {
                         return confirm( '您有未保存的更改..确定要退出吗?' );
+                        /*layer.msg('您有未保存的更改，窗口已锁定，强烈建议先保存，如需强行退出请按键盘上的<kbd>ESC</kbd>键' +
+                            '或点击弹出层右上方的<kbd><i class="fa fa-times text-red" aria-hidden="true"></i>按钮</kbd>！',
+                            {
+                                icon: 6,
+                                shift: 6
+                            }
+                        );
+                        return false;*/
                     }
                 } )
                 //新增并保存成功事件
@@ -372,9 +359,6 @@ $this->registerCss($css);
                     layer.msg('记录已删除！', {icon: 6}, function () {
                         $('#unit-tree').jstree('refresh');
                     });
-                })
-                .on('close', function(e) {
-                    editor.one('preBlur');
                 });
 
             var table = $('#unit-list-data-<?=$unitcode?>').DataTable( {
@@ -409,10 +393,7 @@ $this->registerCss($css);
                     //序号，
                     {
                         width : '40px',
-                        data : function(row, type, set, meta) {
-                            //var c = meta.settings._iDisplayStart + meta.row + 1;
-                            return '';
-                        }
+                        data : null
                     },
                     {
                         data: null,
@@ -475,6 +456,30 @@ $this->registerCss($css);
             // Display the buttons
             new $.fn.dataTable.Buttons( table, [
                 { extend: "create", editor: editor },
+                {
+                    extend: "selectedSingle",
+                    text: '复制',
+                    action: function ( e, dt, node, config ) {
+                        // Place the selected row into edit mode (but hidden),
+                        // then get the values for all fields in the form
+                        var values = editor.edit(
+                            table.row( { selected: true } ).index(),
+                            false
+                            )
+                            .val();
+
+                        // Create a new entry (discarding the previous edit) and
+                        // set the values from the read values and customize self fields's default value
+                        values.unitcode = '<?= $unitcode?>';
+                        values.unitname = '';
+                        editor
+                            .create( {
+                                title: '复制的记录',
+                                buttons: '保 存'
+                            } )
+                            .set( values );
+                    }
+                },
                 { extend: "edit",   editor: editor },
                 { extend: "remove", editor: editor },
                 //column selector
@@ -592,14 +597,13 @@ $this->registerCss($css);
 
             //按钮组和每页页码选择框间隔开
             table.buttons().container()
-                .append('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
+                .append('&nbsp;&nbsp;&nbsp;&nbsp;')
                 .prependTo( $('.col-sm-6:eq(0) div.dataTables_length', table.table().container() ) );
 
             $('#unit-list-data-<?=$unitcode?>')
                 .on("click","tr",function(event) { //行点击事件   td:first-child
                     //获取该行对应的数据
                     var item = table.row($(this).closest('tr')).data();
-                    console.log(item);
                     if (item) {
                         $("#box-unitname").html(item.unitname);
                         $("#box-unitname").textPrint(30);

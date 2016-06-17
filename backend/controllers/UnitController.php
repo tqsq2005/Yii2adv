@@ -151,7 +151,7 @@ class UnitController extends Controller
 
     public function actionDetail()
     {
-        $this->layout = 'bank';
+        //$this->layout = 'bank';
         $id = Yii::$app->request->post('id', '%');
         if($id == '0' || $id == '@')
             $id = '%';
@@ -159,7 +159,7 @@ class UnitController extends Controller
         $unit = new Unit();
 
         if($unit->isParent($id)) {
-            return $this->render('_detail', [
+            return $this->renderAjax('_detail', [
                 'parent' => $id,
                 'parentName' => $name,
                 'unitcode'  => Unit::getMaxunitcode($id),

@@ -7,6 +7,34 @@
  * 4、Bootbox美化gii生成的删除按钮
  */
 jQuery(function($) {
+    /**
+     * textPrint : 打印机文字特效
+     * @param string str
+     */
+    (function(a) {
+        a.fn.textPrint = function(speed) {
+            this.each(function() {
+                var d = a(this),
+                    c = d.html(),
+                    b = 0;
+                d.html("");
+                var e = setInterval(function() {
+                        var f = c.substr(b, 1);
+                        if (f == "<") {
+                            b = c.indexOf(">", b) + 1
+                        } else {
+                            b++
+                        }
+                        d.html(c.substring(0, b) + (b & 1 ? "_": ""));
+                        if (b >= c.length) {
+                            clearInterval(e)
+                        }
+                    },
+                    speed)
+            });
+            return this;
+        }
+    })(jQuery);
     //moment
     moment.locale('zh-cn');
     //layer加载扩展模块

@@ -38,6 +38,9 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <button class="btn btn-danger" id="btn-view-delete" style="margin-right: 15px;">
                                         <i class="fa fa-remove"></i> 删除
                                     </button>
+                                    <button class="btn btn-success" id="btn-view-copy" style="margin-right: 15px;">
+                                        <i class="fa fa-copy"></i> 复制
+                                    </button>
                                     <button class="btn btn-primary" id="btn-view-edit">
                                         <i class="fa fa-edit"></i> 修改
                                     </button>
@@ -392,6 +395,30 @@ $this->params['breadcrumbs'][] = $this->title;
             new $.fn.dataTable.Buttons( table, [
                 { extend: "create", editor: editor },
                 {
+                    extend: "selectedSingle",
+                    text: '复制',
+                    action: function ( e, dt, node, config ) {
+                        // Place the selected row into edit mode (but hidden),
+                        // then get the values for all fields in the form
+                        var values = editor.edit(
+                            table.row( { selected: true } ).index(),
+                            false
+                            )
+                            .val();
+
+                        // Create a new entry (discarding the previous edit) and
+                        // set the values from the read values and customize self fields's default value
+                        values.codes = '';
+                        values.name1 = '';
+                        editor
+                            .create( {
+                                title: '复制的记录',
+                                buttons: '保 存'
+                            } )
+                            .set( values );
+                    }
+                },
+                {
                     extend: "edit",
                     editor: editor,
                     action: function () {
@@ -529,7 +556,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             //按钮组和每页页码选择框间隔开
             table.buttons().container()
-                .append('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
+                .append('&nbsp;&nbsp;&nbsp;&nbsp;')
                 .prependTo( $('.col-sm-6:eq(0) div.dataTables_length', table.table().container() ) );
 
             //Inline single cell editing on click
@@ -696,6 +723,31 @@ $this->params['breadcrumbs'][] = $this->title;
                     buttons: '保存'
                 });
             })
+                .on('click', '#btn-view-copy', function() {
+                    var lastVisitedId = '.last-visited-' + Cookies.get('last-visited-id'); //table.rows( {selected: true} ).indexes();
+                    if (!Cookies.get('last-visited-id')) {
+                        layer.msg('无法获取对象数据..请点击内容行再试！', {icon: 5});
+                        return;
+                    }
+                    //关闭所有的qtip
+                    $('.qtip.ui-tooltip').qtip('hide');
+                    var values = editor.edit(
+                        table.row(lastVisitedId).indexes(),
+                        false
+                        )
+                        .val();
+
+                    // Create a new entry (discarding the previous edit) and
+                    // set the values from the read values and customize self fields's default value
+                    values.codes = '';
+                    values.name1 = '';
+                    editor
+                        .create( {
+                            title: '复制的记录',
+                            buttons: '保 存'
+                        } )
+                        .set( values );
+                })
                 .on('click', '#btn-view-delete', function() {
                     var lastVisitedId = '.last-visited-' + Cookies.get('last-visited-id'); //table.rows( {selected: true} ).indexes();
                     if (!Cookies.get('last-visited-id')) {
