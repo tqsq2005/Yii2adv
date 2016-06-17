@@ -1,5 +1,14 @@
 Yii 2 项目阶段性小结
 =============
+>git日常操作
+
+> 1. $git add .
+> 2. $git commit -m '2016XXXX修改了什么'
+> 3. $git push origin master
+> 4. $git status -s 可以查看状态 $git log 查看历史
+> 5. $git branch 可以查看分支，一般是只有 `master` 这个分支
+> 6. $git remote 可以查看 远端仓库 $git remote -v 可以查看 远端仓库 详细地址
+
 ### 2016.6.14小结： 修复 [datatable](https://www.datatables.net/) 中导出 [PDF](http://pdfmake.org/#/gettingstarted) 中文不支持的问题
 **解决步骤记录如下**
 
