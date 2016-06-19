@@ -9,6 +9,7 @@ use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\helpers\Json;
 
 /**
  * PersonalController implements the CRUD actions for Personal model.
@@ -35,12 +36,6 @@ class PersonalController extends Controller
     {
         $dataProvider = new ActiveDataProvider([
             'query' => Personal::find(),
-            'sort' => [
-                'defaultOrder' => [
-                    'id' => SORT_DESC
-                ]
-            ]
-
         ]);
 
         return $this->render('index', [
@@ -55,9 +50,13 @@ class PersonalController extends Controller
      */
     public function actionView($id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
+        $model = $this->findModel($id);
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->id]);
+        } else {
+            return $this->render('view', ['model' => $model]);
+        }
     }
 
     /**
@@ -67,7 +66,7 @@ class PersonalController extends Controller
      */
     public function actionCreate()
     {
-        $model = new Personal();
+        $model = new Personal;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -111,10 +110,134 @@ class PersonalController extends Controller
     }
 
     /**
-     * (void) actionSummary : 一个单位或部门的情况概述， eg:总人数为--人，流动人口为--人，已婚男性人数为--人，
-     * 已婚女性人数为--人，未婚男性人数 为--人，未婚女性人数为--人，已婚未育--人，已婚育一孩--人，已婚育二孩--人，
-     * 近三个月内新入职--人，近三个月内离开单位--人。
+     * (string) actionDetail : 右侧区域信息
+     * @return string
+     * @throws NotFoundHttpException
+     */
+    public function actionDetail()
+    {
+        //$this->layout = 'bank';
+        $id = Yii::$app->request->post('id', '%');
+        if($id == '0' || $id == '@')
+            $id = '%';
+        $name = Yii::$app->request->post('name', '计生管理系统');
+
+        return $this->renderAjax('_list', [
+            'parent' => $id,
+            'parentName' => $name,
+            'code1'  => Personal::getMaxCode(),
+        ]);
+    }
+
+    /**
+     * (string) actionDataTables : datatable
+     * @return string
+     * @throws Exception
+     * @throws \Exception
+     * @throws \yii\db\Exception
+     */
+    public function actionDataTables()
+    {
+        $responseType = Yii::$app->request->get('type');
+        $returnData = [];
+        switch($responseType) {
+            case "fetch":
+                $returnData = Personal::find()->select(['*'])->where([
+                    'like','unit',Yii::$app->request->get('id')
+                ])->orderBy([
+                    'code1' => SORT_ASC,
+                ])->all();
+                return Json::encode($returnData);
+            case "crud":
+                $requestAction = Yii::$app->request->post('action');
+
+                switch($requestAction) {
+                    case "create":
+                        $requestID  = key(Yii::$app->request->post('data'));
+                        $requestData = Yii::$app->request->post('data')[$requestID];
+                        $model = new Personal();
+                        //块赋值
+                        $model->attributes = $requestData;
+                        //返回错误信息给datatable
+                        if(!$model->validate()) {
+                            $fieldErrors = [];
+                            foreach($model->errors as $name => $status) {
+                                $fieldErrors[] = [
+                                    'name' => $name,
+                                    'status' => Json::encode($status),
+                                ];
+                            }
+                            return Json::encode(['fieldErrors' => $fieldErrors, 'data' => []]);
+                        }
+                        if($model->save()) {
+                            $requestData['id'] = $model->id;
+                            $data = [];
+                            $data[] = $requestData;
+                            return Json::encode(['data' => $data]);
+                        } else {
+                            var_dump($model->errors);
+                            $error = '恢复操作发生意外！';
+                            throw new Exception($error);
+                        }
+                    case "edit":
+                        $editID = array_keys(Yii::$app->request->post('data'));
+                        //执行事务，保存必须都成功了才行
+                        $transaction = Personal::getDb()->beginTransaction();
+                        //返回值
+                        $data = [];
+                        try {
+                            foreach($editID as $requestID) {
+                                $requestData = Yii::$app->request->post('data')[$requestID];
+                                $model = Personal::findOne($requestID);
+                                //块赋值
+                                $model->attributes = $requestData;
+                                //返回错误信息给datatable
+                                if(!$model->validate()) {
+                                    $fieldErrors = [];
+                                    foreach($model->errors as $name => $status) {
+                                        $fieldErrors[] = [
+                                            'name' => $name,
+                                            'status' => Json::encode($status),
+                                        ];
+                                    }
+                                    return Json::encode(['fieldErrors' => $fieldErrors, 'data' => []]);
+                                }
+                                $model->save();
+                                //单个字段更新的时候
+                                if(count($requestData)==1 || !is_array($requestData)) {
+                                    $requestData = Personal::find()->select(['*'])->where([
+                                        'id' => $requestID,
+                                    ])->one();
+                                } else {
+                                    $requestData['id'] = $requestID;
+                                }
+                                $data[] = $requestData;
+                            }
+                            //提交事务
+                            $transaction->commit();
+                            return Json::encode(['data' => $data]);
+                        } catch (\Exception $e) {
+                            $transaction->rollBack();
+                            throw $e;
+                        }
+                    case "remove":
+                        //多选则删除全部 用deleteAll()不会触发 event： EVENT_BEFORE_DELETE 和 EVENT_AFTER_DELETE
+                        foreach(Yii::$app->request->post('data') as $removeID => $removeData) {
+                            Personal::findOne($removeID)->delete();
+                        }
+                        return Json::encode($returnData);
+                    default:
+                        return Json::encode($returnData);
+                };
+            default:
+                throw new \Exception('参数错误！');
+        }
+    }
+
+    /**
+     * (void) actionSummary : 一个单位或部门的情况概述.
      * @param string $unit 单位编码
+     * @return string
      */
     public function actionSummary($unit='%')
     {

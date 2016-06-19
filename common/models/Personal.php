@@ -134,56 +134,56 @@ class Personal extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'code1' => 'Code1',
-            'name1' => 'Name1',
-            'sex' => 'Sex',
-            'birthdate' => 'Birthdate',
-            'fcode' => 'Fcode',
-            'mz' => 'Mz',
-            'marry' => 'Marry',
-            'marrydate' => 'Marrydate',
-            'address1' => 'Address1',
-            'hkaddr' => 'Hkaddr',
-            'tel' => 'Tel',
-            'postcode' => 'Postcode',
-            'hkxz' => 'Hkxz',
-            'work1' => 'Work1',
-            'whcd' => 'Whcd',
-            'is_dy' => 'Is Dy',
-            'title' => 'Title',
-            'zw' => 'Zw',
-            'grous' => 'Grous',
-            'obect1' => 'Obect1',
-            'flag' => 'Flag',
-            'childnum' => 'Childnum',
-            'unit' => 'Unit',
-            'jobdate' => 'Jobdate',
-            'ingoingdate' => 'Ingoingdate',
-            'memo1' => 'Memo1',
-            'lhdate' => 'Lhdate',
-            'zhdate' => 'Zhdate',
+            'code1' => '个人编码',
+            'name1' => '姓名',
+            'sex' => '性别',
+            'birthdate' => '出生日期',
+            'fcode' => '身份证号',
+            'mz' => '民族',
+            'marry' => '婚姻状况',
+            'marrydate' => '初婚日期',
+            'address1' => '现住地址',
+            'hkaddr' => '户口地址',
+            'tel' => '联系电话',
+            'postcode' => '邮政编码',
+            'hkxz' => '户口性质',
+            'work1' => '编制',
+            'whcd' => '文化程度',
+            'is_dy' => '政治面貌',
+            'title' => '职称',
+            'zw' => '职务',
+            'grous' => '所属街道',
+            'obect1' => '重点对象',
+            'flag' => '户籍性质',
+            'childnum' => '现子女数',
+            'unit' => '所在单位',
+            'jobdate' => '工作日期',
+            'ingoingdate' => '入单位日期',
+            'memo1' => '管理对象',
+            'lhdate' => '离婚日期',
+            'zhdate' => '再婚日期',
             'picture_name' => 'Picture Name',
-            'onlysign' => 'Onlysign',
-            'selfno' => 'Selfno',
-            'ltunit' => 'Ltunit',
-            'ltaddr' => 'Ltaddr',
-            'ltman' => 'Ltman',
-            'lttel' => 'Lttel',
-            'ltpostcode' => 'Ltpostcode',
-            'memo' => 'Memo',
-            'cztype' => 'Cztype',
-            'carddate' => 'Carddate',
-            'examinedate' => 'Examinedate',
-            'cardcode' => 'Cardcode',
-            'fzdw' => 'Fzdw',
-            'feeddate' => 'Feeddate',
-            'yzdate' => 'Yzdate',
-            'checkunit' => 'Checkunit',
-            'incity' => 'Incity',
-            'memo2' => 'Memo2',
-            's_date' => 'S Date',
-            'logout' => 'Logout',
-            'e_date' => 'E Date',
+            'onlysign' => '是否独生',
+            'selfno' => '生育次数',
+            'ltunit' => '单位名称',
+            'ltaddr' => '单位地址',
+            'ltman' => '联系人',
+            'lttel' => '联系电话',
+            'ltpostcode' => '邮政编码',
+            'memo' => '备注',
+            'cztype' => '婚育证类型',
+            'carddate' => '领证日期',
+            'examinedate' => '到期日期',
+            'cardcode' => '证明号码',
+            'fzdw' => '发证单位',
+            'feeddate' => '流入日期',
+            'yzdate' => '验证日期',
+            'checkunit' => '验证单位',
+            'incity' => '配偶同来',
+            'memo2' => '备注',
+            's_date' => '登记日期',
+            'logout' => '注销原因',
+            'e_date' => '注销日期',
             'personal_id' => 'Personal ID',
             'do_man' => 'Do Man',
             'marrowdate' => 'Marrowdate',
@@ -197,6 +197,28 @@ class Personal extends \yii\db\ActiveRecord
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
+    }
+
+    /**
+     * (string) getMaxCode : 返回最大code1
+     * `select code1 from personal WHERE code1 REGEXP '^[0-9]+$'  ORDER BY code1 DESC LIMIT 1;`
+     * @static
+     * @return string
+     */
+    public static function getMaxCode()
+    {
+        $query = self::find()->select(['code1'])
+            ->where([
+                'REGEXP', 'code1', '^[0-9]+$'
+            ])->orderBy([
+                'code1' => SORT_DESC
+            ])->limit(1)->one();
+
+        if($query) {
+            return str_pad($query->code1 + 1, 6, '0', STR_PAD_LEFT);
+        } else {
+            return '000001';
+        }
     }
 
     /**

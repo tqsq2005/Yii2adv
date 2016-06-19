@@ -2,9 +2,25 @@
 /**
  * $FILE_NAME
  * ==============================================
- * 版权所有 2001-2016 http://www.zhmax.co
+ * 版权所有 2001-2016 http://www.zhmax.com
  * ----------------------------------------------
  * 这不是一个自由软件，未经授权不许任何使用和传播。
+ * ----------------------------------------------
+ * @date: 16-6-19 上午11:07
+ * @author: LocoRoco<tqsq2005@gmail.com>
+ * @version:v2016
+ * @since:Yii2
+ * ----------------------------------------------
+ * 程序文件简介：
+ * ==============================================
+ */
+
+/**
+ * $FILE_NAME
+ * ==============================================
+ * 版权所有 2001-2016 http://www.zhmax.co
+ * ----------------------------------------------
+ * 是一个自由软件，未经授权不许任何使用和传播。
  * ----------------------------------------------
  * @date: 16-6-13 下午2:59
  * @author: LocoRoco<tqsq2005@gmail.com>
@@ -21,7 +37,7 @@
 /* @var string $unitcode */
 /* @var integer $isParent */
 
-$this->title = '单位列表';
+$this->title = '人员列表';
 $this->params['breadcrumbs'][] = $this->title;
 $css = <<<CSS
 div.modal-dialog {
@@ -70,7 +86,7 @@ $this->registerCss($css);
 </div>
 <!-- /.box -->
 <div class="unit-list">
-    <table id="unit-list-data-<?=$unitcode?>" class="table table-striped table-bordered" cellspacing="0" width="100%">
+    <table id="unit-list-data" class="table table-striped table-bordered" cellspacing="0" width="100%">
         <thead>
             <tr>
                 <th style="width:30px;"></th>
@@ -135,7 +151,7 @@ $this->registerCss($css);
                         layer.msg("数据处理失败，请重试!",{icon: 5});
                     }
                 },
-                table: "#unit-list-data-<?=$unitcode?>",
+                table: "#unit-list-data",
                 idSrc:  'id',
                 i18n: {
                     create: {
@@ -342,7 +358,7 @@ $this->registerCss($css);
                     });
                 });
 
-            var table = $('#unit-list-data-<?=$unitcode?>').DataTable( {
+            var table = $('#unit-list-data').DataTable( {
                 //dom: "Bfrtip",
                 lengthChange: true,     //是否允许用户改变表格每页显示的记录数，默认为true
                 lengthMenu: [
@@ -461,8 +477,8 @@ $this->registerCss($css);
 
                         // Create a new entry (discarding the previous edit) and
                         // set the values from the read values and customize self fields's default value
-                        values.unitcode = '<?= $unitcode?>';
-                        values.unitname = '';
+                        values.code1 = '';
+                        values.name1 = '';
                         editor
                             .create( {
                                 title: '复制的记录',
@@ -583,7 +599,7 @@ $this->registerCss($css);
                 }).draw();
 
             // Edit record
-            $('#unit-list-data-<?=$unitcode?>').on('click', 'i.editor_edit', function (e) {
+            $('#unit-list-data').on('click', 'i.editor_edit', function (e) {
                 //e.preventDefault();
                 editor.edit( $(this).closest('tr'), {
                     title: '修改单位(部门)',
@@ -592,7 +608,7 @@ $this->registerCss($css);
             } );
 
             // Delete a record
-            $('#unit-list-data-<?=$unitcode?>').on('click', 'i.editor_remove', function (e) {
+            $('#unit-list-data').on('click', 'i.editor_remove', function (e) {
                 //e.preventDefault();
                 editor.remove( $(this).closest('tr'), {
                     title: '删除单位(部门)',

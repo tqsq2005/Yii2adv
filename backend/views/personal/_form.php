@@ -1,143 +1,153 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+use kartik\widgets\ActiveForm;
+use kartik\builder\Form;
+use kartik\datecontrol\DateControl;
 
-/* @var $this yii\web\View */
-/* @var $model common\models\Personal */
-/* @var $form yii\widgets\ActiveForm */
+/**
+ * @var yii\web\View $this
+ * @var common\models\Personal $model
+ * @var yii\widgets\ActiveForm $form
+ */
 ?>
 
 <div class="personal-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin(['type'=>ActiveForm::TYPE_HORIZONTAL]); echo Form::widget([
 
-    <?= $form->field($model, 'code1')->textInput(['maxlength' => true]) ?>
+        'model' => $model,
+        'form' => $form,
+        'columns' => 1,
+        'attributes' => [
 
-    <?= $form->field($model, 'name1')->textInput(['maxlength' => true]) ?>
+            'code1'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Code1...', 'maxlength'=>36]],
 
-    <?= $form->field($model, 'sex')->textInput(['maxlength' => true]) ?>
+            'name1'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Name1...', 'maxlength'=>50]],
 
-    <?= $form->field($model, 'birthdate')->textInput(['maxlength' => true]) ?>
+            'sex'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Sex...', 'maxlength'=>2]],
 
-    <?= $form->field($model, 'fcode')->textInput(['maxlength' => true]) ?>
+            'birthdate'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Birthdate...', 'maxlength'=>10]],
 
-    <?= $form->field($model, 'mz')->textInput(['maxlength' => true]) ?>
+            'fcode'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Fcode...', 'maxlength'=>18]],
 
-    <?= $form->field($model, 'marry')->textInput(['maxlength' => true]) ?>
+            'marry'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Marry...', 'maxlength'=>2]],
 
-    <?= $form->field($model, 'marrydate')->textInput(['maxlength' => true]) ?>
+            'unit'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Unit...', 'maxlength'=>30]],
 
-    <?= $form->field($model, 'address1')->textInput(['maxlength' => true]) ?>
+            'personal_id'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Personal ID...', 'maxlength'=>60]],
 
-    <?= $form->field($model, 'hkaddr')->textInput(['maxlength' => true]) ?>
+            'created_by'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Created By...']],
 
-    <?= $form->field($model, 'tel')->textInput(['maxlength' => true]) ?>
+            'updated_by'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Updated By...']],
 
-    <?= $form->field($model, 'postcode')->textInput(['maxlength' => true]) ?>
+            'created_at'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Created At...']],
 
-    <?= $form->field($model, 'hkxz')->textInput(['maxlength' => true]) ?>
+            'updated_at'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Updated At...']],
 
-    <?= $form->field($model, 'work1')->textInput(['maxlength' => true]) ?>
+            'childnum'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Childnum...']],
 
-    <?= $form->field($model, 'whcd')->textInput(['maxlength' => true]) ?>
+            'selfno'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Selfno...']],
 
-    <?= $form->field($model, 'is_dy')->textInput(['maxlength' => true]) ?>
+            'logout'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Logout...']],
 
-    <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
+            'tel'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Tel...', 'maxlength'=>50]],
 
-    <?= $form->field($model, 'zw')->textInput(['maxlength' => true]) ?>
+            'whcd'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Whcd...', 'maxlength'=>50]],
 
-    <?= $form->field($model, 'grous')->textInput(['maxlength' => true]) ?>
+            'is_dy'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Is Dy...', 'maxlength'=>50]],
 
-    <?= $form->field($model, 'obect1')->textInput(['maxlength' => true]) ?>
+            'title'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Title...', 'maxlength'=>50]],
 
-    <?= $form->field($model, 'flag')->textInput(['maxlength' => true]) ?>
+            'zw'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Zw...', 'maxlength'=>50]],
 
-    <?= $form->field($model, 'childnum')->textInput() ?>
+            'ltman'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Ltman...', 'maxlength'=>50]],
 
-    <?= $form->field($model, 'unit')->textInput(['maxlength' => true]) ?>
+            'lttel'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Lttel...', 'maxlength'=>50]],
 
-    <?= $form->field($model, 'jobdate')->textInput(['maxlength' => true]) ?>
+            'cardcode'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Cardcode...', 'maxlength'=>50]],
 
-    <?= $form->field($model, 'ingoingdate')->textInput(['maxlength' => true]) ?>
+            'do_man'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Do Man...', 'maxlength'=>50]],
 
-    <?= $form->field($model, 'memo1')->textInput(['maxlength' => true]) ?>
+            'mz'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Mz...', 'maxlength'=>2]],
 
-    <?= $form->field($model, 'lhdate')->textInput(['maxlength' => true]) ?>
+            'hkxz'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Hkxz...', 'maxlength'=>2]],
 
-    <?= $form->field($model, 'zhdate')->textInput(['maxlength' => true]) ?>
+            'work1'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Work1...', 'maxlength'=>2]],
 
-    <?= $form->field($model, 'picture_name')->textInput(['maxlength' => true]) ?>
+            'obect1'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Obect1...', 'maxlength'=>2]],
 
-    <?= $form->field($model, 'onlysign')->textInput(['maxlength' => true]) ?>
+            'flag'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Flag...', 'maxlength'=>2]],
 
-    <?= $form->field($model, 'selfno')->textInput() ?>
+            'memo1'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Memo1...', 'maxlength'=>2]],
 
-    <?= $form->field($model, 'ltunit')->textInput(['maxlength' => true]) ?>
+            'onlysign'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Onlysign...', 'maxlength'=>2]],
 
-    <?= $form->field($model, 'ltaddr')->textInput(['maxlength' => true]) ?>
+            'cztype'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Cztype...', 'maxlength'=>2]],
 
-    <?= $form->field($model, 'ltman')->textInput(['maxlength' => true]) ?>
+            'incity'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Incity...', 'maxlength'=>2]],
 
-    <?= $form->field($model, 'lttel')->textInput(['maxlength' => true]) ?>
+            'checktime'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Checktime...', 'maxlength'=>2]],
 
-    <?= $form->field($model, 'ltpostcode')->textInput(['maxlength' => true]) ?>
+            'marrydate'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Marrydate...', 'maxlength'=>10]],
 
-    <?= $form->field($model, 'memo')->textInput(['maxlength' => true]) ?>
+            'postcode'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Postcode...', 'maxlength'=>10]],
 
-    <?= $form->field($model, 'cztype')->textInput(['maxlength' => true]) ?>
+            'jobdate'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Jobdate...', 'maxlength'=>10]],
 
-    <?= $form->field($model, 'carddate')->textInput(['maxlength' => true]) ?>
+            'ingoingdate'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Ingoingdate...', 'maxlength'=>10]],
 
-    <?= $form->field($model, 'examinedate')->textInput(['maxlength' => true]) ?>
+            'lhdate'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Lhdate...', 'maxlength'=>10]],
 
-    <?= $form->field($model, 'cardcode')->textInput(['maxlength' => true]) ?>
+            'zhdate'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Zhdate...', 'maxlength'=>10]],
 
-    <?= $form->field($model, 'fzdw')->textInput(['maxlength' => true]) ?>
+            'ltpostcode'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Ltpostcode...', 'maxlength'=>10]],
 
-    <?= $form->field($model, 'feeddate')->textInput(['maxlength' => true]) ?>
+            'carddate'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Carddate...', 'maxlength'=>10]],
 
-    <?= $form->field($model, 'yzdate')->textInput(['maxlength' => true]) ?>
+            'examinedate'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Examinedate...', 'maxlength'=>10]],
 
-    <?= $form->field($model, 'checkunit')->textInput(['maxlength' => true]) ?>
+            'feeddate'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Feeddate...', 'maxlength'=>10]],
 
-    <?= $form->field($model, 'incity')->textInput(['maxlength' => true]) ?>
+            'yzdate'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Yzdate...', 'maxlength'=>10]],
 
-    <?= $form->field($model, 'memo2')->textInput(['maxlength' => true]) ?>
+            's_date'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter S Date...', 'maxlength'=>10]],
 
-    <?= $form->field($model, 's_date')->textInput(['maxlength' => true]) ?>
+            'e_date'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter E Date...', 'maxlength'=>10]],
 
-    <?= $form->field($model, 'logout')->textInput() ?>
+            'marrowdate'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Marrowdate...', 'maxlength'=>10]],
 
-    <?= $form->field($model, 'e_date')->textInput(['maxlength' => true]) ?>
+            'leavedate'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Leavedate...', 'maxlength'=>10]],
 
-    <?= $form->field($model, 'personal_id')->textInput(['maxlength' => true]) ?>
+            'audittime'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Audittime...', 'maxlength'=>10]],
 
-    <?= $form->field($model, 'do_man')->textInput(['maxlength' => true]) ?>
+            'address1'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Address1...', 'maxlength'=>80]],
 
-    <?= $form->field($model, 'marrowdate')->textInput(['maxlength' => true]) ?>
+            'hkaddr'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Hkaddr...', 'maxlength'=>80]],
 
-    <?= $form->field($model, 'oldunit')->textInput(['maxlength' => true]) ?>
+            'ltunit'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Ltunit...', 'maxlength'=>80]],
 
-    <?= $form->field($model, 'leavedate')->textInput(['maxlength' => true]) ?>
+            'ltaddr'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Ltaddr...', 'maxlength'=>80]],
 
-    <?= $form->field($model, 'checktime')->textInput(['maxlength' => true]) ?>
+            'fzdw'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Fzdw...', 'maxlength'=>80]],
 
-    <?= $form->field($model, 'audittime')->textInput(['maxlength' => true]) ?>
+            'checkunit'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Checkunit...', 'maxlength'=>80]],
 
-    <?= $form->field($model, 'created_by')->textInput() ?>
+            'grous'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Grous...', 'maxlength'=>30]],
 
-    <?= $form->field($model, 'updated_by')->textInput() ?>
+            'oldunit'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Oldunit...', 'maxlength'=>30]],
 
-    <?= $form->field($model, 'created_at')->textInput() ?>
+            'picture_name'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Picture Name...', 'maxlength'=>100]],
 
-    <?= $form->field($model, 'updated_at')->textInput() ?>
+            'memo2'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Memo2...', 'maxlength'=>100]],
 
-    <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
-    </div>
+            'memo'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Memo...', 'maxlength'=>254]],
 
-    <?php ActiveForm::end(); ?>
+        ]
+
+    ]);
+
+    echo Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']);
+    ActiveForm::end(); ?>
 
 </div>

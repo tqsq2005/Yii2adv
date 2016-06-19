@@ -125,30 +125,11 @@ class UnitController extends Controller
         echo json_encode($data);
     }
 
-    public function actionT() {
-        $unitcode = '0000230400';
-        $childlist = Unit::getChildList('0000230400');
-        $parentlist = Unit::getParentList($unitcode);
-        $query = Unit::find()
-            ->where('FIND_IN_SET (unitcode, :unitlist)', [':unitlist' => $childlist])
-            ->createCommand()
-            ->getRawSql();
-        $query2 = Unit::find()
-            ->where('FIND_IN_SET (unitcode, :unitlist)', [':unitlist' => $parentlist])
-            ->andFilterWhere([
-                'logout' => 0,//在职
-            ])
-            ->andFilterWhere(['<>', 'flag', '01'])
-            ->createCommand()
-            ->getRawSql();
-        echo $childlist . '<br>';
-        echo $parentlist. '<br>';
-        echo $query . '<br>';
-        echo $query2 . '<br>';
-        echo date('Ymd', mktime(0, 0, 0, date("m")-3, date("d"), date("Y")));
-        return '';
-    }
-
+    /**
+     * (string) actionDetail : 右侧区域信息
+     * @return string
+     * @throws NotFoundHttpException
+     */
     public function actionDetail()
     {
         //$this->layout = 'bank';
@@ -172,6 +153,13 @@ class UnitController extends Controller
         }
     }
 
+    /**
+     * (string) actionDataTables : datatable
+     * @return string
+     * @throws Exception
+     * @throws \Exception
+     * @throws \yii\db\Exception
+     */
     public function actionDataTables()
     {
         $responseType = Yii::$app->request->get('type');
@@ -241,9 +229,7 @@ class UnitController extends Controller
                                 $model->save();
                                 //单个字段更新的时候
                                 if(count($requestData)==1 || !is_array($requestData)) {
-                                    $requestData = Unit::find()->select([
-                                        'id', 'name', 'parent', 'route', 'order', 'data'
-                                    ])->where([
+                                    $requestData = Unit::find()->select(['*'])->where([
                                         'id' => $requestID,
                                     ])->one();
                                 } else {

@@ -103,7 +103,15 @@ $this->params['breadcrumbs'][] = $this->title;
                 .on('preBlur', function ( e ) {
                     // On close, check if the values have changed and ask for closing confirmation if they have
                     if ( openVals !== JSON.stringify( editor.get() ) ) {
-                        return confirm( '您有未保存的更改..确定要退出吗?' );
+                        //return confirm( '您有未保存的更改..确定要退出吗?' );
+                        layer.msg('您有未保存的更改，窗口已锁定，强烈建议先保存，如需强行退出请按键盘上的<kbd>ESC</kbd>键' +
+                            '或点击弹出层右上方的<kbd><i class="fa fa-times text-red" aria-hidden="true"></i>按钮</kbd>！',
+                            {
+                                icon: 6,
+                                shift: 6
+                            }
+                        );
+                        return false;
                     }
                 } )
                 //新增并保存成功事件
