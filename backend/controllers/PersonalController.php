@@ -3,6 +3,7 @@
 namespace backend\controllers;
 
 use common\models\Unit;
+use common\populac\models\Preferences;
 use Yii;
 use common\models\Personal;
 use yii\data\ActiveDataProvider;
@@ -109,6 +110,14 @@ class PersonalController extends Controller
         return $this->redirect(['index']);
     }
 
+    public function actionTest()
+    {
+        $sex  = Preferences::getByClassmark('psex');
+        return $this->render('test', [
+            'sex' => Json::encode($sex),
+        ]);
+    }
+
     /**
      * (string) actionDetail : 右侧区域信息
      * @return string
@@ -120,12 +129,19 @@ class PersonalController extends Controller
         $id = Yii::$app->request->post('id', '%');
         if($id == '0' || $id == '@')
             $id = '%';
-        $name = Yii::$app->request->post('name', '计生管理系统');
+        $name   = Yii::$app->request->post('name', '计生管理系统');
+        /*配置参数*/
+        $preferences            = [];
+        $preferences['sex']     = Preferences::getByClassmark('psex');
+        $preferences['marry']   = Preferences::getByClassmark('pmarry');
+        $preferences['flag']    = Preferences::getByClassmark('pflag');
+        $preferences['work1']   = Preferences::getByClassmark('pwork1');
 
         return $this->renderAjax('_list', [
-            'parent' => $id,
-            'parentName' => $name,
-            'code1'  => Personal::getMaxCode(),
+            'parent'        => $id,
+            'parentName'    => $name,
+            'code1'         => Personal::getMaxCode(),//获取最大的6位数字code1
+            'preferences'   => Json::encode($preferences),
         ]);
     }
 
@@ -142,9 +158,83 @@ class PersonalController extends Controller
         $returnData = [];
         switch($responseType) {
             case "fetch":
-                $returnData = Personal::find()->select(['*'])->where([
-                    'like','unit',Yii::$app->request->get('id')
-                ])->orderBy([
+                //前三个月日期
+                $dateThreeMonthAgo = date('Ymd', mktime(0, 0, 0, date("m")-3, date("d"), date("Y")));
+                $unitlist = Unit::getChildList(Yii::$app->request->get('id'));
+                $returnData = Personal::find()
+                    ->select(['*'])
+                    ->where('FIND_IN_SET (unit, :unitlist)', [':unitlist' => $unitlist]);
+                //extra_filter
+                $extra_filter = Yii::$app->request->get('extra_filter');
+                switch($extra_filter) {
+                    case "包含历史资料":
+                        break;
+                    case "流动人口":
+                        $returnData->andFilterWhere(['<>', 'flag', '01'])
+                            ->andFilterWhere(['<=', 'logout', 0]);
+                        break;
+                    case "已婚男性":
+                        $returnData->andFilterWhere(['sex' => '01'])
+                            ->andFilterWhere(['<>', 'marry', '10'])
+                            ->andFilterWhere(['<=', 'logout', 0]);
+                        break;
+                    case "已婚女性":
+                        $returnData->andFilterWhere(['sex' => '02'])
+                            ->andFilterWhere(['<>', 'marry', '10'])
+                            ->andFilterWhere(['<=', 'logout', 0]);
+                        break;
+                    case "已婚人员":
+                        $returnData->andFilterWhere(['<>', 'marry', '10'])
+                            ->andFilterWhere(['<=', 'logout', 0]);
+                        break;
+                    case "未婚人员":
+                        $returnData->andFilterWhere(['marry' => '10'])
+                            ->andFilterWhere(['<=', 'logout', 0]);
+                        break;
+                    case "未婚男性":
+                        $returnData->andFilterWhere(['sex' => '01'])
+                            ->andFilterWhere(['marry' => '10'])
+                            ->andFilterWhere(['<=', 'logout', 0]);
+                        break;
+                    case "未婚女性":
+                        $returnData->andFilterWhere(['sex' => '02'])
+                            ->andFilterWhere(['marry' => '10'])
+                            ->andFilterWhere(['<=', 'logout', 0]);
+                        break;
+                    case "已婚未育":
+                        $returnData->andFilterWhere(['childnum' => '0'])
+                            ->andFilterWhere(['<>', 'marry', '10'])
+                            ->andFilterWhere(['<=', 'logout', 0]);
+                        break;
+                    case "已婚育一孩":
+                        $returnData->andFilterWhere(['childnum' => '1'])
+                            ->andFilterWhere(['<>', 'marry', '10'])
+                            ->andFilterWhere(['<=', 'logout', 0]);
+                        break;
+                    case "已婚育二孩":
+                        $returnData->andFilterWhere(['childnum' => '2'])
+                            ->andFilterWhere(['<>', 'marry', '10'])
+                            ->andFilterWhere(['<=', 'logout', 0]);
+                        break;
+                    case "已婚育三孩及以上":
+                        $returnData->andFilterWhere(['>=', 'childnum', '3'])
+                            ->andFilterWhere(['<>', 'marry', '10'])
+                            ->andFilterWhere(['<=', 'logout', 0]);
+                        break;
+                    case "三个月内入职":
+                        $returnData->andFilterWhere(['>=', 'ingoingdate', $dateThreeMonthAgo])
+                            ->andFilterWhere(['<=', 'logout', 0]);
+                        break;
+                    case "三个月内离开单位":
+                        $returnData->andFilterWhere(['>', 'logout', 0]) //离职，系统内调动的不算在内
+                            ->andFilterWhere(['>=', 'e_date', $dateThreeMonthAgo]);
+                        break;
+                    default:
+                        $returnData->andFilterWhere(['<=', 'logout', 0]);
+                        break;
+                }
+
+                $returnData = $returnData->orderBy([
                     'code1' => SORT_ASC,
                 ])->all();
                 return Json::encode($returnData);
@@ -330,12 +420,21 @@ class PersonalController extends Controller
             ->count(1);
         //近三个月内离开单位
         $num12 = Personal::find()->where('FIND_IN_SET (unit, :unitlist)', [':unitlist' => $unitlist])
-            ->andFilterWhere(['<>', 'logout', 0]) //离职，系统内调动的不算在内
+            ->andFilterWhere(['>', 'logout', 0]) //离职，系统内调动的不算在内
             ->andFilterWhere(['>=', 'e_date', $dateThreeMonthAgo])
             ->count(1);
-        $data = "总人数为<span class='text-red'> {$num1} </span>人，流动人口为<span class='text-red'> {$num2} </span>人，已婚男性人数为<span class='text-red'> {$num3} </span>人，已婚女性人数为<span class='text-red'> {$num4} </span>人，" .
-            "未婚男性人数 为<span class='text-red'> {$num5} </span>人，未婚女性人数为<span class='text-red'> {$num6} </span>人，已婚未育<span class='text-red'> {$num7} </span>人，已婚育一孩<span class='text-red'> {$num8} </span>人，已婚育二孩<span class='text-red'> {$num9} </span>人，" .
-            "已婚育三孩及以上<span class='text-red'> {$num10} </span>人，近三个月内新入职<span class='text-red'> {$num11} </span>人，近三个月内离开单位<span class='text-red'> {$num12} </span>人";
+        $data = "总人数为<span data-toggle='tooltip' data-filter='无过滤条件' title='总人数' class='text-red p-extra-filter'> {$num1} </span>人，" .
+            "流动人口为<span data-toggle='tooltip' data-filter='流动人口' title='流动人口' class='text-red p-extra-filter'> {$num2} </span>人，" .
+            "已婚男性人数为<span data-toggle='tooltip' data-filter='已婚男性' title='已婚男性人数' class='text-red p-extra-filter'> {$num3} </span>人，" .
+            "已婚女性人数为<span data-toggle='tooltip' data-filter='已婚女性' title='已婚女性人数' class='text-red p-extra-filter'> {$num4} </span>人，" .
+            "未婚男性人数为<span data-toggle='tooltip' data-filter='未婚男性' title='未婚男性人数' class='text-red p-extra-filter'> {$num5} </span>人，" .
+            "未婚女性人数为<span data-toggle='tooltip' data-filter='未婚女性' title='未婚女性人数' class='text-red p-extra-filter'> {$num6} </span>人，" .
+            "已婚未育<span data-toggle='tooltip' data-filter='已婚未育' title='已婚未育' class='text-red p-extra-filter'> {$num7} </span>人，" .
+            "已婚育一孩<span data-toggle='tooltip' data-filter='已婚育一孩' title='已婚育一孩' class='text-red p-extra-filter'> {$num8} </span>人，" .
+            "已婚育二孩<span data-toggle='tooltip' data-filter='已婚育二孩' title='已婚育二孩' class='text-red p-extra-filter'> {$num9} </span>人，" .
+            "已婚育三孩及以上<span data-toggle='tooltip' data-filter='已婚育三孩及以上' title='已婚育三孩及以上' class='text-red p-extra-filter'> {$num10} </span>人，" .
+            "近三个月内新入职<span data-toggle='tooltip' data-filter='近三个月内新入职' title='近三个月内新入职' class='text-red p-extra-filter'> {$num11} </span>人，" .
+            "近三个月内离开单位<span data-toggle='tooltip' data-filter='近三个月内离开单位' title='近三个月内离开单位' class='text-red p-extra-filter'> {$num12} </span>人";
         return $data;
     }
 

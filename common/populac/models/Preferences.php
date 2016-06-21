@@ -149,7 +149,7 @@ class Preferences extends ActiveRecord
     }
 
     /**
-     * (null) getByClassmark : 通过classmark及codes获取相关参数名称
+     * (null) getByClassmark : 通过classmark返回codes=>name1的数组
      * @static
      * @param $classmark : 参数类型
      * @param $codes : 参数编码

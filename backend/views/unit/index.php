@@ -187,7 +187,7 @@ $this->registerJsFile('@web/plus/jsTree/jstree.min.js', ['depends' => 'yii\web\J
 //                console.log(data.selected);
                     //$.pjax.reload({container:"#unit-data",data: {'unitSearch[upid]':data.selected.join(':')}});
                     //data.selected 是Array类型
-                    $('#unit-detail').load('<?= \yii\helpers\Url::to(['/personal/detail']) ?>',
+                    $('#unit-detail').load('<?= \yii\helpers\Url::to(['/unit/detail']) ?>',
                         { id : data.selected.join(':'), name : data.node.text },
                         function(response, status, xhr) {
                             if (status == 'error') {
@@ -195,7 +195,7 @@ $this->registerJsFile('@web/plus/jsTree/jstree.min.js', ['depends' => 'yii\web\J
                             }
                         });
                 } else {
-                    $('#unit-detail').load('<?= \yii\helpers\Url::to(['/personal/detail']) ?>',
+                    $('#unit-detail').load('<?= \yii\helpers\Url::to(['/unit/detail']) ?>',
                         { id : '@', name : '计生管理系统单位列表' },
                         function(response, status, xhr) {
                             if (status == 'error') {

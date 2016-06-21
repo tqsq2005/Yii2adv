@@ -15,27 +15,11 @@
  * ==============================================
  */
 
-/**
- * $FILE_NAME
- * ==============================================
- * 版权所有 2001-2016 http://www.zhmax.co
- * ----------------------------------------------
- * 是一个自由软件，未经授权不许任何使用和传播。
- * ----------------------------------------------
- * @date: 16-6-13 下午2:59
- * @author: LocoRoco<tqsq2005@gmail.com>
- * @version:v2016
- * @since:Yii2
- * ----------------------------------------------
- * 程序文件简介：
- * ==============================================
- */
-
 /* @var $this yii\web\View */
 /* @var integer $parent */
 /* @var string $parentName */
-/* @var string $unitcode */
-/* @var integer $isParent */
+/* @var string $code1 */
+/* @var object $preferences jsondata */
 
 $this->title = '人员列表';
 $this->params['breadcrumbs'][] = $this->title;
@@ -56,6 +40,10 @@ div.DTE_Body div.DTE_Form_Content:after {
     content: ' ';
     display: block;
     clear: both;
+}
+
+span.p-extra-filter {
+    cursor: pointer;
 }
 CSS;
 $this->registerCss($css);
@@ -85,17 +73,21 @@ $this->registerCss($css);
     <!-- /.box-body -->
 </div>
 <!-- /.box -->
-<div class="unit-list">
-    <table id="unit-list-data" class="table table-striped table-bordered" cellspacing="0" width="100%">
+<div class="person-list">
+    <table id="person-list-data" class="table table-striped table-bordered" cellspacing="0" width="100%">
         <thead>
             <tr>
                 <th style="width:30px;"></th>
                 <th>序号</th>
-                <th>单位名称</th>
-                <th>通讯地址</th>
-                <th>专干姓名</th>
-                <th>联系电话</th>
-                <th>邮政编码</th>
+                <th>所在部门</th>
+                <th>姓名</th>
+                <th>性别</th>
+                <th>出生日期</th>
+                <th>婚姻状况</th>
+                <th>现子女数</th>
+                <th>户籍性质</th>
+                <th>编制</th>
+                <th>登记日期</th>
                 <th style="width:30px;">操作</th>
             </tr>
         </thead>
@@ -124,22 +116,25 @@ $this->registerCss($css);
             });
         }
         var editor = null; // use a global for the submit and return data rendering in the examples
+        var preferences = $.parseJSON('<?= $preferences ?>');
+        window.pdfMake.fonts  = {
+            msyh: {
+                normal: 'msyh.ttf',
+                bold: 'msyh.ttf',
+                italics: 'msyh.ttf',
+                bolditalics: 'msyh.ttf',
+            }
+        };
 
         $(document).ready(function() {
-            window.pdfMake.fonts  = {
-                msyh: {
-                    normal: 'msyh.ttf',
-                    bold: 'msyh.ttf',
-                    italics: 'msyh.ttf',
-                    bolditalics: 'msyh.ttf',
-                }
-            };
+
+            layer.closeAll('tips');
 
             boxUnitInfo('<?= $parent ?>');
 
             editor = new $.fn.dataTable.Editor( {
                 ajax: {
-                    url:  "/admin/unit/data-tables?type=crud",
+                    url:  "/admin/personal/data-tables?type=crud",
                     dataSrc: '',
                     beforeSend: function () {
                         layer.load();
@@ -151,22 +146,22 @@ $this->registerCss($css);
                         layer.msg("数据处理失败，请重试!",{icon: 5});
                     }
                 },
-                table: "#unit-list-data",
+                table: "#person-list-data",
                 idSrc:  'id',
                 i18n: {
                     create: {
                         button: "新增",
-                        title:  "新增单位(部门)",
+                        title:  "新增员工档案",
                         submit: "保存"
                     },
                     edit: {
                         button: "修改",
-                        title:  "修改单位(部门)",
+                        title:  "修改员工档案",
                         submit: "保存"
                     },
                     remove: {
                         button: "删除",
-                        title:  "删除单位(部门)",
+                        title:  "删除员工档案",
                         submit: "确认删除",
                         confirm: {
                             _: "确定要删除这 %d 条记录吗?",
@@ -190,176 +185,67 @@ $this->registerCss($css);
                 },
                 fields: [
                     {
-                        label: "主管单位编码:",
-                        name: "upunitcode",
+                        label: "所在部门:",
+                        name: "unit",
                         type: "readonly",
-                        id: "unit-upunitcode",
-                        def: "<?= $parent ?>"
+                        id: "p-unit",
+                        def: "<?= $parent ?>",
+                        fieldInfo: "<?= $parentName ?>"
                     },
                     {
-                        label: "主管单位名称:",
-                        name: "upunitname",
-                        type: "readonly",
-                        def: "<?= $parentName ?>"
+                        label: "登记日期:",
+                        name: "s_date",
+                        def: moment(new Date).format('YYYYMMDD')
                     },
                     {
-                        label: "单位编码:",
-                        name: "unitcode",
-                        id: "unit-unitcode",
-                        def: "<?= $unitcode ?>"
+                        label: "个人编码:",
+                        name: "code1",
+                        def: "<?= $code1 ?>"
                     },
                     {
-                        label: "单位名称:",
-                        name: "unitname",
-                        id: "unit-unitname"
+                        label: "姓名:",
+                        name: "name1",
                     },
                     {
-                        label: "类型:",
-                        name: "corpflag",
+                        label: "性别:",
+                        name: "sex",
                         type: "select",
-                        id: "unit-corpflag",
                         ipOpts: [
-                            { "label": "部门", "value": "5" },
-                            { "label": "单位", "value": "4"}
+                            { "label": "男", "value": "01" },
+                            { "label": "女", "value": "02"}
                         ]
-                    },
-                    {
-                        label: "专干姓名:",
-                        name: "oname"
-                    },
-                    {
-                        label: "联系电话:",
-                        name: "tel"
-                    },
-                    {
-                        label: "通讯地址:",
-                        name: "address1"
-                    },
-                    {
-                        label: "所属街道:",
-                        name: "office"
-                    },
-                    {
-                        label: "邮政编码:",
-                        name: "postcode"
-                    },
-                    {
-                        label: "传真:",
-                        name: "fax"
-                    },
-                    {
-                        label: "人事姓名:",
-                        name: "date1"
-                    },
-                    {
-                        label: "法人代表:",
-                        id: "unit-corporation",
-                        name: "corporation"
-                    },
-                    {
-                        label: "党政一把手:",
-                        id: "unit-leader",
-                        name: "leader"
-                    },
-                    {
-                        label: "党政联系电话:",
-                        id: "unit-leadertel",
-                        name: "leadertel"
                     }
                 ]
             } );
 
-            editor.dependent( 'corpflag', function ( val ) {
-                return val === '5' ?
-                { hide: ['corporation', 'leader', 'leadertel'] } :
-                { show: ['corporation', 'leader', 'leadertel'] };
-            } );
-
-            //修改过字段如果退出则警告
-            var openVals;
             editor
-                .on('open', function () {
-                    openVals = JSON.stringify( editor.get() );
-                    //如果主管单位编码是'%'则类型锁定为'单位'
-                    if (editor.get().upunitcode == '%') {
-                        editor.field('corpflag').set( 4 );
-                        $('div.DTE_Field_Name_corpflag #unit-corpflag').attr('readOnly', true);
-                        $('div.DTE_Field_Name_corpflag #unit-corpflag option:not(:selected)').attr('disabled', true);
-                    }
-                    //如果主管单位类型是'部门'则类型锁定为'部门'
-                    if ('<?= $isParent ?>' == 'no') {
-                        $('div.DTE_Field_Name_corpflag #unit-corpflag').attr('readOnly', true);
-                        $('div.DTE_Field_Name_corpflag #unit-corpflag option:not(:selected)').attr('disabled', true);
-                    }
-                } )
-                //添加前置验证
-                .on( 'preSubmit', function ( e, o, action ) {
-                    if ( action !== 'remove' ) {
-                        var unitcode = editor.field( 'unitcode' );
-                        if ( ! unitcode.isMultiValue() ) {
-                            if ( ! unitcode.val() ) {
-                                unitcode.error( '请输入单位编码..' );
-                            }
-
-                            if ( unitcode.val().length >= 30 ) {
-                                unitcode.error( '单位编码长度请控制在30以内..' );
-                            }
-                        }
-
-                        var unitname = editor.field( 'unitname' );
-                        if ( ! unitname.isMultiValue() ) {
-                            if ( ! unitname.val() ) {
-                                unitname.error( '请输入单位名称..' );
-                            }
-
-                            if ( unitname.val().length >= 40 ) {
-                                unitname.error( '单位名称长度请控制在40字以内..' );
-                            }
-                        }
-
-                        // If any error was reported, cancel the submission so it can be corrected
-                        if ( this.inError() ) {
-                            return false;
-                        }
-                    }
-                } )
-                .on('preBlur', function ( e ) {
-                    // On close, check if the values have changed and ask for closing confirmation if they have
-                    if ( openVals !== JSON.stringify( editor.get() ) ) {
-                        //return confirm( '您有未保存的更改..确定要退出吗?' );
-                        layer.msg('您有未保存的更改，窗口已锁定，强烈建议先保存，如需强行退出请按键盘上的<kbd>ESC</kbd>键' +
-                            '或点击弹出层右上方的<kbd><i class="fa fa-times text-red" aria-hidden="true"></i>按钮</kbd>！',
-                            {
-                                icon: 6,
-                                shift: 6
-                            }
-                        );
-                        return false;
-                    }
-                } )
-                //新增并保存成功事件
-                .on('create', function(e, json, data) {
-                    //table.search( data.unitname ).draw();
-                    layer.msg('记录已新增！', {icon: 6}, function () {
-                        $('#unit-tree').jstree('refresh');
-                    });
-                })
-                //修改并保存成功事件
-                .on('edit', function(e, json, data) {
-                    //table.search( data.unitname ).draw();
-                    layer.msg('记录已修改！', {icon: 6}, function () {
-                        $('#unit-tree').jstree('refresh');
-                    });
-                })
-                //删除并保存成功事件
+            //删除并保存成功事件
                 .on('remove', function(e, json, data) {
-                    layer.msg('记录已删除！', {icon: 6}, function () {
-                        $('#unit-tree').jstree('refresh');
-                    });
+                    layer.msg('记录已删除！', {icon: 6, time: 2000});
                 });
 
-            var table = $('#unit-list-data').DataTable( {
-                //dom: "Bfrtip",
+            // Edit record
+            $('#person-list-data').on('click', 'i.editor_edit', function (e) {
+                //e.preventDefault();
+                var item = table.row($(this).closest('tr')).data();
+                layer.msg('进入个人档案修改界面..', {icon: 6, time: 1000}, function(index) {
+                    window.open('<?= \yii\helpers\Url::to(['/personal/update']) ?>/' + item.id, '_blank');
+                });
+            } );
+
+            // Delete a record
+            $('#person-list-data').on('click', 'i.editor_remove', function (e) {
+                //e.preventDefault();
+                editor.remove( $(this).closest('tr'), {
+                    title: '删除员工档案',
+                    message: '确定要删除该条记录吗?',
+                    buttons: '确认删除'
+                } );
+            } );
+
+            var table = $('#person-list-data').DataTable( {
+                //dom: "bfrtip",
+                dom:"<'row'<'col-md-9'l><'col-md-3'f>r>tip",
                 lengthChange: true,     //是否允许用户改变表格每页显示的记录数，默认为true
                 lengthMenu: [
                     [10, 8, 15, 20, 25, 50, 100, -1],
@@ -367,7 +253,11 @@ $this->registerCss($css);
                 ],//每页显示条数设置
                 stateSave: true,        //保存状态，如果当前页面是第五页，刷新还是在第五页，默认为false
                 ajax: {
-                    url:  "/admin/unit/data-tables?type=fetch&id=<?= $parent ?>",
+                    url:  "/admin/personal/data-tables?type=fetch&id=<?= $parent ?>",
+                    data: function ( d ) {
+                        //添加额外的参数传给服务器
+                        d.extra_filter = $("span#p-filter-data").text();
+                    },
                     dataSrc: '',
                     beforeSend: function () {
                         layer.load();
@@ -394,17 +284,58 @@ $this->registerCss($css);
                         className: 'text-center',
                         orderable: false
                     },
+                    { data: "unit" },
                     {
                         data: null,
                         render: function ( data, type, row ) {
                             // Combine the first and last names into a single table field
-                            return '(' + data.unitcode + ')' + data.unitname;
+                            return '(' + data.code1 + ')' + data.name1;
                         }
                     },
-                    { data: "address1" },
-                    { data: "oname" },
-                    { data: "tel" },
-                    { data: "postcode" },
+                    {
+                        data: null,
+                        className: 'text-center',
+                        render: function ( data, type, row ) {
+                            // Combine the first and last names into a single table field
+                            return preferences.sex[data.sex];
+                        }
+                    },
+                    {
+                        data: "birthdate",
+                        className: 'text-center'
+                    },
+                    {
+                        data: null,
+                        className: 'text-center',
+                        render: function ( data, type, row ) {
+                            // Combine the first and last names into a single table field
+                            return preferences.marry[data.marry];
+                        }
+                    },
+                    {
+                        data: "childnum",
+                        className: 'text-center'
+                    },
+                    {
+                        data: null,
+                        className: 'text-center',
+                        render: function ( data, type, row ) {
+                            // Combine the first and last names into a single table field
+                            return preferences.flag[data.flag];
+                        }
+                    },
+                    {
+                        data: null,
+                        className: 'text-center',
+                        render: function ( data, type, row ) {
+                            // Combine the first and last names into a single table field
+                            return preferences.work1[data.work1];
+                        }
+                    },
+                    {
+                        data: "s_date",
+                        className: 'text-center'
+                    },
                     {
                         data: null,
                         className: "text-center",
@@ -420,7 +351,7 @@ $this->registerCss($css);
                         "targets": [0,1]
                     }
                 ],
-                order: [[ 2, "asc" ]],//初始排序
+                order: [[ 3, "asc" ]],//初始排序
                 //deferRender: true, //当处理大数据时，延迟渲染数据，有效提高Datatables处理能力
                 select: {
                     style: 'multi'
@@ -434,6 +365,22 @@ $this->registerCss($css);
                     selector: 'td:first-child',
                     blurable: true
                 },*/
+                createdRow: function( row, data, dataIndex ) {
+                    if ( data.sex == '01' && data.marry > '10' ) {
+                        $(row).addClass( 'text-purple' );
+                        return;
+                    }
+                    if ( data.sex == '02' && data.marry > '10' ) {
+                        $(row).addClass( 'text-red' );
+                        return;
+                    }
+                    if ( data.logout > 0 ) {
+                        $(row).addClass( 'text-muted' );
+                        return;
+                    }
+                    //$(row).addClass( 'text-black' );
+                    //return;
+                },
                 language: {
                     "sProcessing": "处理中...",
                     "sLengthMenu": "显示 _MENU_ 项结果",
@@ -446,6 +393,7 @@ $this->registerCss($css);
                     "sUrl": "",
                     "sEmptyTable": "表中数据为空",
                     "sLoadingRecords": "载入中...",
+                    "processing":     "处理中...",
                     "sInfoThousands": ",",
                     "oPaginate": {
                         "sFirst": "首页",
@@ -461,37 +409,127 @@ $this->registerCss($css);
             } );
 
             // Display the buttons
-            new $.fn.dataTable.Buttons( table, [
-                { extend: "create", editor: editor },
-                {
-                    extend: "selectedSingle",
-                    text: '复制',
-                    action: function ( e, dt, node, config ) {
-                        // Place the selected row into edit mode (but hidden),
-                        // then get the values for all fields in the form
-                        var values = editor.edit(
-                            table.row( { selected: true } ).index(),
-                            false
-                            )
-                            .val();
+            var e_p_btn_add = function (e) {
+                //e.preventDefault();
+                layer.msg('进入个人档案录入界面..', {icon: 6, time: 1000}, function(index) {
+                    window.open('<?= \yii\helpers\Url::to(['/personal/create']) ?>', '_blank');
+                });
+            };
 
-                        // Create a new entry (discarding the previous edit) and
-                        // set the values from the read values and customize self fields's default value
-                        values.code1 = '';
-                        values.name1 = '';
-                        editor
-                            .create( {
-                                title: '复制的记录',
-                                buttons: '保 存'
-                            } )
-                            .set( values );
-                    }
+            var e_p_btn_edit = function (e) {
+                //e.preventDefault();
+                var str = '';
+                table.rows('.selected').data().each(function (i, o) {
+                    str += i.id;
+                    str += ",";
+                });
+                console.log(str);
+                /*$("input[name='checkList']:checked").each(function (i, o) {
+                 str += $(this).val();
+                 str += ",";
+                 });
+                 if (str.length > 0) {
+                 var IDS = str.substr(0, str.length - 1);
+                 alert("你要删除的数据集id为" + IDS);
+                 } else {
+                 alert("至少选择一条记录操作");
+                 }*/
+            };
+
+            var e_p_filter = function (e, dt, node, config) {
+                var text = '<i class="fa fa-check-square-o text-red"></i> <span class="text-red">' + $(node).text() + '</span>';
+                $("span#p-filter-data").text($(node).text());
+                $("#box-unitname").trigger('click');
+                layer.msg('根据当前过滤条件：' + text + ', 数据重新生成..', {icon: 6, time: 1000}, function(index) {
+                    table.ajax.reload();
+                    var s_unitname =  '<?= $parentName ?>-基本情况 &nbsp;&nbsp;<span class="text-info">[ 当前过滤条件为：' + text +' ]</span>';
+                    $("#box-unitname").html(s_unitname);
+                    $("#box-unitname").textPrint(100);
+                    layer.tips('当前过滤条件为：' + text, 'i.p-filter', {
+                        tips: [1, '#000'], //还可配置颜色
+                        time: 3000000
+                    });
+                });
+            };
+            new $.fn.dataTable.Buttons( table, [
+                {
+                    text: '<i class="fa fa-plus"></i> 新增',
+                    action: e_p_btn_add
+                },
+                {
+                    text: '<i class="fa fa-edit"></i> 修改',
+                    action: e_p_btn_edit
+                },
+                {
+                    extend: 'collection',
+                    text: '<i class="fa fa-filter p-filter"></i> 过滤<span class="hidden" id="p-filter-data">无过滤条件</span>',
+                    buttons: [
+                        {
+                            text: '无过滤条件',
+                            action: e_p_filter
+                        },
+                        {
+                            text: '包含历史资料',
+                            action: e_p_filter
+                        },
+                        {
+                            text: '流动人口',
+                            action: e_p_filter
+                        },
+                        {
+                            text: '已婚人员',
+                            action: e_p_filter
+                        },
+                        {
+                            text: '已婚男性',
+                            action: e_p_filter
+                        },
+                        {
+                            text: '已婚女性',
+                            action: e_p_filter
+                        },
+                        {
+                            text: '未婚人员',
+                            action: e_p_filter
+                        },
+                        {
+                            text: '未婚男性',
+                            action: e_p_filter
+                        },
+                        {
+                            text: '未婚女性',
+                            action: e_p_filter
+                        },
+                        {
+                            text: '已婚未育',
+                            action: e_p_filter
+                        },
+                        {
+                            text: '已婚育一孩',
+                            action: e_p_filter
+                        },
+                        {
+                            text: '已婚育二孩',
+                            action: e_p_filter
+                        },
+                        {
+                            text: '已婚育三孩及以上',
+                            action: e_p_filter
+                        },
+                        {
+                            text: '三个月内入职',
+                            action: e_p_filter
+                        },
+                        {
+                            text: '三个月内离开单位',
+                            action: e_p_filter
+                        }
+                    ]
                 },
                 {
                     extend: 'collection',
                     text: '更多操作',
                     buttons: [
-                        { extend: "edit",   editor: editor },
                         { extend: "remove", editor: editor },
                         { extend: "selectAll", text: '全选' },
                         { extend: "selectNone", text: '取消全选' }
@@ -598,24 +636,7 @@ $this->registerCss($css);
                     });
                 }).draw();
 
-            // Edit record
-            $('#unit-list-data').on('click', 'i.editor_edit', function (e) {
-                //e.preventDefault();
-                editor.edit( $(this).closest('tr'), {
-                    title: '修改单位(部门)',
-                    buttons: '保存'
-                } );
-            } );
 
-            // Delete a record
-            $('#unit-list-data').on('click', 'i.editor_remove', function (e) {
-                //e.preventDefault();
-                editor.remove( $(this).closest('tr'), {
-                    title: '删除单位(部门)',
-                    message: '确定要删除该条记录吗?',
-                    buttons: '确认删除'
-                } );
-            } );
 
             /*table.buttons().container()
                 .appendTo( $('.col-sm-6:eq(0)', table.table().container() ) );*/
@@ -623,19 +644,8 @@ $this->registerCss($css);
             //按钮组和每页页码选择框间隔开
             table.buttons().container()
                 .append('&nbsp;&nbsp;&nbsp;&nbsp;')
-                .prependTo( $('.col-sm-6:eq(0) div.dataTables_length', table.table().container() ) );
+                .prependTo( $('.col-md-9:eq(0) div.dataTables_length', table.table().container() ) );
 
-            var oItem;
-            table.on('select', function ( e, dt, type, indexes ) {
-                var item = table.row(indexes).data();
-                if (item != oItem) {
-                    oItem = table.row(indexes).data();
-                    $("#box-unitname").html(item.unitname);
-                    $("#box-unitname").textPrint(30);
-                    boxUnitInfo(item.unitcode);
-                }
-                return ;
-            });
 
         } );
     </script>

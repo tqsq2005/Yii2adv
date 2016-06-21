@@ -2,6 +2,8 @@
 
 namespace backend\controllers;
 
+use common\models\Personal;
+use common\populac\models\Preferences;
 use Yii;
 use common\models\Unit;
 use yii\db\Expression;
@@ -139,7 +141,9 @@ class UnitController extends Controller
         $name = Yii::$app->request->post('name', '计生管理系统');
         $unit = new Unit();
 
-        if($unit->isParent($id)) {
+        $p_num = Personal::find()->where(['unit' => $id])->count(1);
+
+        if($unit->isParent($id) && $p_num <= 0) {
             return $this->renderAjax('_detail', [
                 'parent' => $id,
                 'parentName' => $name,
@@ -147,8 +151,16 @@ class UnitController extends Controller
                 'isParent'  => intval($this->findModel($id)->corpflag) < 5 ? "yes" : "no",//判断下级能建单位还是部门
             ]);
         } else {
-            return $this->renderAjax('view', [
-                'model' => $this->findModel($id),
+            $preferences            = [];
+            $preferences['sex']     = Preferences::getByClassmark('psex');
+            $preferences['marry']   = Preferences::getByClassmark('pmarry');
+            $preferences['flag']    = Preferences::getByClassmark('pflag');
+            $preferences['work1']   = Preferences::getByClassmark('pwork1');
+            return $this->renderAjax('/personal/_list', [
+                'parent'        => $id,
+                'parentName'    => $name,
+                'code1'         => Personal::getMaxCode(),//获取最大的6位数字code1
+                'preferences'   => Json::encode($preferences),
             ]);
         }
     }
