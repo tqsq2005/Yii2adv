@@ -49,9 +49,32 @@ CSS;
 $this->registerCss($css);
 \common\assets\DataTableEditorAsset::register($this);
 ?>
+<div class="box box-warning collapsed-box">
+    <div class="box-header with-border">
+        <span class="box-title text-orange"><i class="fa fa-search-plus" aria-hidden="true"></i> 多功能查询</span>
+
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
+            </button>
+        </div>
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body">
+        <div class="row">
+            <div class="col-md-12" style="height: 58px;">
+                <span id="box-p-adv-search"  class="text-purple">总人数为 -- 人，流动人口为 -- 人，已婚男性人数为 -- 人，已婚女性人数为 -- 人，未婚男性人数
+为 -- 人，未婚女性人数为 -- 人，已婚未育 -- 人，已婚育一孩 -- 人，已婚育二孩 -- 人，近三个月内新入职 -- 人，近三个月内离开单位 -- 人。 </span>
+                <!-- ./chart-responsive -->
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.box-body -->
+</div>
 <div class="box box-success">
     <div class="box-header with-border">
-        <span class="box-title text-green" id="box-unitname"><?= $parentName ?>-基本情况</span>
+        <span class="box-title text-green" id="box-unitname"><i class="fa fa-info-circle" aria-hidden="true"></i> <?= $parentName ?>-基本情况</span>
 
         <div class="box-tools pull-right">
             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
@@ -95,6 +118,24 @@ $this->registerCss($css);
 </div>
 <?php \common\widgets\JsBlock::begin(); ?>
     <script type="text/javascript">
+        //获取查询参数
+        function getQueryCondition(data)
+        {
+            var param = {};
+            //组装查询参数
+            param.name = $("#name-search").val();
+            param.position = $("#position-search").val();
+            param.office = $("#office-search").val();
+            param.extn = $("#extn-search").val();
+            param.status = $("#status-search").val();
+            param.role = $("#role-search").val();
+            //组装分页参数
+            param.startIndex = data.start;
+            param.pageSize = data.length;
+
+            return param;
+        }
+
         function boxUnitInfo(unit) {
             $.ajax({
                 url: '<?= \yii\helpers\Url::to(['/personal/summary']) ?>',
@@ -134,7 +175,7 @@ $this->registerCss($css);
 
             editor = new $.fn.dataTable.Editor( {
                 ajax: {
-                    url:  "/admin/personal/data-tables?type=crud",
+                    url:  "<?=Yii::$app->homeUrl?>/personal/data-tables?type=crud",
                     dataSrc: '',
                     beforeSend: function () {
                         layer.load();
@@ -253,7 +294,7 @@ $this->registerCss($css);
                 ],//每页显示条数设置
                 stateSave: true,        //保存状态，如果当前页面是第五页，刷新还是在第五页，默认为false
                 ajax: {
-                    url:  "/admin/personal/data-tables?type=fetch&id=<?= $parent ?>",
+                    url:  "<?=Yii::$app->homeUrl?>/personal/data-tables?type=fetch&id=<?= $parent ?>",
                     data: function ( d ) {
                         //添加额外的参数传给服务器
                         d.extra_filter = $("span#p-filter-data").text();
@@ -297,7 +338,7 @@ $this->registerCss($css);
                         className: 'text-center',
                         render: function ( data, type, row ) {
                             // Combine the first and last names into a single table field
-                            return preferences.sex[data.sex];
+                            return preferences.sex[data.sex] ? preferences.sex[data.sex] : '未知' ;
                         }
                     },
                     {
@@ -309,7 +350,7 @@ $this->registerCss($css);
                         className: 'text-center',
                         render: function ( data, type, row ) {
                             // Combine the first and last names into a single table field
-                            return preferences.marry[data.marry];
+                            return preferences.marry[data.marry] ? preferences.marry[data.marry] : '未知';
                         }
                     },
                     {
@@ -321,7 +362,7 @@ $this->registerCss($css);
                         className: 'text-center',
                         render: function ( data, type, row ) {
                             // Combine the first and last names into a single table field
-                            return preferences.flag[data.flag];
+                            return preferences.flag[data.flag] ? preferences.flag[data.flag] : '未知';
                         }
                     },
                     {
@@ -329,7 +370,7 @@ $this->registerCss($css);
                         className: 'text-center',
                         render: function ( data, type, row ) {
                             // Combine the first and last names into a single table field
-                            return preferences.work1[data.work1];
+                            return preferences.work1[data.work1] ? preferences.work1[data.work1] : '未知';
                         }
                     },
                     {

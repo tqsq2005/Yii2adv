@@ -6,6 +6,22 @@
  * ----------------------------------------------
  * 这不是一个自由软件，未经授权不许任何使用和传播。
  * ----------------------------------------------
+ * @date: 16-6-22 下午3:25
+ * @author: LocoRoco<tqsq2005@gmail.com>
+ * @version:v2016
+ * @since:Yii2
+ * ----------------------------------------------
+ * 程序文件简介：
+ * ==============================================
+ */
+
+/**
+ * $FILE_NAME
+ * ==============================================
+ * 版权所有 2001-2016 http://www.zhmax.com
+ * ----------------------------------------------
+ * 这不是一个自由软件，未经授权不许任何使用和传播。
+ * ----------------------------------------------
  * @date: 16-6-3 下午3:2@author: LocoRoco<tqsq2005@gmail.com>
  * @version:v2016
  * @since:Yii2
@@ -27,13 +43,13 @@ $this->params['breadcrumbs'][] = $this->title;
 <?= $this->render('_menu'); ?>
 <div class="box box-primary">
     <div class="box-body" id="admin-body">
-        <div class="preferences-index">
+        <div class="col-table-index">
             <?php
             $toolbars = [
                 ['content' =>
                     Html::button('<i class="fa fa-question-circle"></i> 操作指引', ['type' => 'button', 'title' => '操作指引-' . $this->title, 'class' => 'btn btn-warning', 'id' => 'helpButton']) . '&nbsp;&nbsp;' .
                     Html::button('<i class="fa fa-history"></i> 恢复记录', ['type' => 'button', 'title' => '恢复记录-' . $this->title, 'class' => 'btn btn-success', 'id' => 'retrieveSelected']) . '&nbsp;&nbsp;' .
-                    Html::a('<i class="glyphicon glyphicon-repeat"></i>', ['preferences/history','p_reset'=>true], ['data-pjax' => 0, 'class' => 'btn btn-default', 'title' => 'Reset Grid']). ' '
+                    Html::a('<i class="glyphicon glyphicon-repeat"></i>', ['col-table/history','p_reset'=>true], ['data-pjax' => 0, 'class' => 'btn btn-default', 'title' => 'Reset Grid']). ' '
 
 
                 ],
@@ -130,13 +146,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     'format' => 'raw',
                     'width'=>'54%',
                     'content' => function ($model, $key, $index, $column) {
-                        return "<div class='preferences_old_value populac-ellipsis'>{$model->old_value}</div>";
+                        return "<div class='col-table_old_value populac-ellipsis'>{$model->old_value}</div>";
                     },
                 ]
             ];
 
             $dynagrid = DynaGrid::begin([
-                'id' => 'preferences-history-grid',
+                'id' => 'col-table-history-grid',
                 'columns' => $columns,
                 'theme' => 'panel-info',
                 'showPersonalize' => true,
@@ -154,7 +170,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'toolbar' => $toolbars,
                     'hover' => true,
                 ],
-                'options' => ['id' => 'preferences-history-'.Yii::$app->user->identity->id] // a unique identifier is important
+                'options' => ['id' => 'col-table-history-'.Yii::$app->user->identity->id] // a unique identifier is important
             ]);
 
             DynaGrid::end();
@@ -171,7 +187,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 icon: 6,
                 time: 20000
             });*/
-            $('.preferences_old_value').slimScroll({
+            $('.col-table_old_value').slimScroll({
                 height: '40px',
                 width: '600px'
             });
@@ -225,7 +241,7 @@ $this->params['breadcrumbs'][] = $this->title;
             $(".simple").each(function(index){
                 if($(this).prop("checked")){
                     array += $(this).val()+",";
-                    data.push($(this).parents('tr').find('div.preferences_old_value').html());
+                    data.push($(this).parents('tr').find('div.col-table_old_value').html());
                 }
             });
             if(array==""){
@@ -242,13 +258,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     }, function(index) {
                         $.ajax({
                             type: "POST",
-                            url: "<?= Yii::$app->urlManager->createUrl(['/populac/preferences/retrieve']); ?>",
-                            data: {oldPreferences:data},
+                            url: "<?= Yii::$app->urlManager->createUrl(['/populac/col-table/retrieve']); ?>",
+                            data: {oldColTable:data},
                             success: function(response){
                                 var resData = $.parseJSON(response);
                                 if (resData.status == 'success') {
                                     layer.msg(resData.message, {icon: 6, time: 6000, title: '5秒后将跳转至[列表]界面'}, function() {
-                                        location.href="<?= Yii::$app->urlManager->createUrl(['/populac/preferences/index']); ?>";
+                                        location.href="<?= Yii::$app->urlManager->createUrl(['/populac/col-table/index']); ?>";
                                     });
                                 }
                             },

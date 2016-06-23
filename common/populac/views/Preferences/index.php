@@ -22,82 +22,79 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <?= $this->render('_menu') ?>
-<div class="box box-primary">
-    <div class="box-body" id="admin-body">
-        <div class="populac-datatable-info-block" id="populac-datatable-view">
-            <table class="populac-datatable-data-info" width="100%">
-                <tr>
-                    <td>
-                        <div class="panel panel-info">
-                            <div class="panel-heading">
-                                <h3 class="panel-title pull-left" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;
-                                line-height: normal;width: 75%;padding-top: 5px;">
-                                    项目配置参数详情
-                                </h3>
-                                <div class="pull-right">
-                                    <button class="btn btn-danger" id="btn-view-delete" style="margin-right: 15px;">
-                                        <i class="fa fa-remove"></i> 删除
-                                    </button>
-                                    <button class="btn btn-success" id="btn-view-copy" style="margin-right: 15px;">
-                                        <i class="fa fa-copy"></i> 复制
-                                    </button>
-                                    <button class="btn btn-primary" id="btn-view-edit">
-                                        <i class="fa fa-edit"></i> 修改
-                                    </button>
-                                </div>
-                                <div class="clearfix"></div>
-                            </div>
-                            <div class="panel-body populac-datatable-info-content">
-                                <div class="row-fluid">
-                                    <div class="col-md-4">
-                                        <label class="prop-name">ID号:</label>
-                                        <div class="prop-value" id="primary-id"></div>
-                                    </div>
+<div class="box box-primary populac-datatable-info-block" id="populac-datatable-view">
+    <div class="box-header with-border">
+        <i class="fa fa-info-circle text-purple"></i>
+        <h3 class="box-title text-purple">项目配置参数详情</h3>
+        <!-- tools box -->
+        <div class="pull-right box-tools">
+            <button type="button" class="btn btn-danger btn-sm" id="btn-view-delete" data-toggle="tooltip" title="删除该条记录">
+                <i class="fa fa-remove"></i> 删除
+            </button>
+            <button type="button" class="btn btn-success btn-sm" id="btn-view-copy" data-toggle="tooltip" title="复制该条记录">
+                <i class="fa fa-copy"></i> 复制
+            </button>
+            <button type="button" class="btn btn-primary btn-sm" id="btn-view-edit" data-toggle="tooltip" title="修改该条记录">
+                <i class="fa fa-edit"></i> 修改
+            </button>
+            <button type="button" class="btn btn-success btn-sm" data-widget="collapse" data-toggle="tooltip" title="折叠">
+                <i class="fa fa-minus"></i>
+            </button>
+        </div>
+        <!-- /. tools -->
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body populac-datatable-info-content">
+        <div class="row-fluid">
+            <div class="col-md-4">
+                <label class="prop-name">ID号:</label>
+                <div class="prop-value" id="primary-id"></div>
+            </div>
 
-                                    <div class="col-md-4">
-                                        <label class="prop-name">项目名称-中文:</label>
-                                        <div class="prop-value" id="classmarkcn"></div>
-                                    </div>
+            <div class="col-md-4">
+                <label class="prop-name">项目名称-中文:</label>
+                <div class="prop-value" id="classmarkcn"></div>
+            </div>
 
-                                    <div class="col-md-4">
-                                        <label class="prop-name">项目名称-英文:</label>
-                                        <div class="prop-value" id="classmark"></div>
-                                    </div>
-
-                                </div>
-                                <div class="row-fluid">
-                                    <div class="col-md-4">
-                                        <label class="prop-name">参数编码:</label>
-                                        <div class="prop-value" id="codes"></div>
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <label class="prop-name">参数名称:</label>
-                                        <div class="prop-value" id="name1"></div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="prop-name">状态:</label>
-                                        <div class="prop-value" id="status"></div>
-                                    </div>
-
-                                </div>
-                                <div class="row-fluid">
-                                    <div class="col-md-4">
-                                        <label class="prop-name">新增时间:</label>
-                                        <div class="prop-value" id="created_at"></div>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <label class="prop-name">最后一次修改时间:</label>
-                                        <div class="prop-value" id="updated_at"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-            </table>
+            <div class="col-md-4">
+                <label class="prop-name">项目名称-英文:</label>
+                <div class="prop-value" id="classmark"></div>
+            </div>
 
         </div>
+        <div class="row-fluid">
+            <div class="col-md-4">
+                <label class="prop-name">参数编码:</label>
+                <div class="prop-value" id="codes"></div>
+            </div>
+
+            <div class="col-md-4">
+                <label class="prop-name">参数名称:</label>
+                <div class="prop-value" id="name1"></div>
+            </div>
+            <div class="col-md-4">
+                <label class="prop-name">状态:</label>
+                <div class="prop-value" id="status"></div>
+            </div>
+
+        </div>
+        <div class="row-fluid">
+            <div class="col-md-4">
+                <label class="prop-name">新增时间:</label>
+                <div class="prop-value" id="created_at"></div>
+            </div>
+            <div class="col-md-8">
+                <label class="prop-name">最后一次修改时间:</label>
+                <div class="prop-value" id="updated_at"></div>
+            </div>
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.box-body -->
+</div>
+<!-- /.box -->
+<div class="box box-default">
+    <div class="box-body" id="admin-body">
         <table id="preferences-data" class="table table-striped table-bordered" cellspacing="0" width="100%">
             <thead>
                 <tr>
@@ -132,7 +129,7 @@ $this->params['breadcrumbs'][] = $this->title;
             };
             editor = new $.fn.dataTable.Editor( {
                 ajax: {
-                    url:  "/admin/populac/preferences/index?type=crud",
+                    url:  "<?=Yii::$app->homeUrl?>/populac/preferences/index?type=crud",
                     dataSrc: '',
                     error: function() {
                         layer.msg("数据处理失败，请重试!",{icon: 5});
@@ -271,7 +268,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],//每页显示条数设置
                 stateSave: true,        //保存状态，如果当前页面是第五页，刷新还是在第五页，默认为false
                 ajax: {
-                    url:  "/admin/populac/preferences/index?type=fetch",
+                    url:  "<?=Yii::$app->homeUrl?>/populac/preferences/index?type=fetch",
                     dataSrc: '',
                     beforeSend: function () {
                         layer.load();

@@ -86,7 +86,7 @@ return [
             // List of actions to track. '*' is allowed as the last character to use as wildcard
             'trackActions' => ['*'],
             // Actions to ignore. '*' is allowed as the last character to use as wildcard (eg 'debug/*')
-            'ignoreActions' => ['audit/*', 'debug/*', '/site/qrcode'],
+            'ignoreActions' => ['audit/*', 'debug/*', 'site/qrcode'],
             // Maximum age (in days) of the audit entries before they are truncated
             'maxAge' => '9999',
             // IP address or list of IP addresses with access to the viewer, null for everyone (if the IP matches)
@@ -194,12 +194,12 @@ return [
     'as access' => [
         'class' => \mdm\admin\components\AccessControl::className(),
         'allowActions' => [
-            //'site/*',
-            'admin/*',
+            'site/qrcode',
+            //'admin/*',
             //'some-controller/some-action',
             'debug/*',
             'gii/*',
-            'user/*',
+            //'user/*',
             //'audit/*'
 
             // The actions listed here will be allowed to everyone including guests.

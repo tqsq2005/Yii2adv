@@ -22,10 +22,12 @@ use yii\base\Behavior;
 
 class SortableController extends Behavior
 {
-    public $model;
+    public $model;//类名
+    public $ordercol = 'order_num';//排序字段名
 
     public function move($id, $direction, $condition = [])
     {
+        $ordercol   = $this->ordercol;
         $modelClass = $this->model;
         $success = '';
         if (($model = $modelClass::findOne($id))) {
@@ -37,9 +39,9 @@ class SortableController extends Behavior
                 $orderDir = 'DESC';
             }
 
-            $query = $modelClass::find()->orderBy('order_num ' . $orderDir)->limit(1);
+            $query = $modelClass::find()->orderBy("$ordercol " . $orderDir)->limit(1);
 
-            $where = [$eq, 'order_num', $model->order_num];
+            $where = [$eq, $ordercol, $model->$ordercol];
             if (count($condition)) {
                 $where = ['and', $where];
                 foreach ($condition as $key => $value) {
@@ -49,12 +51,12 @@ class SortableController extends Behavior
             $modelSwap = $query->where($where)->one();
 
             if (!empty($modelSwap)) {
-                $newOrderNum = $modelSwap->order_num;
+                $newOrderNum = $modelSwap->$ordercol;
 
-                $modelSwap->order_num = $model->order_num;
+                $modelSwap->$ordercol = $model->$ordercol;
                 $modelSwap->update();
 
-                $model->order_num = $newOrderNum;
+                $model->$ordercol = $newOrderNum;
                 $model->update();
 
                 $success = ['swap_id' => $modelSwap->primaryKey];

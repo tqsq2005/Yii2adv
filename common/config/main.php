@@ -149,10 +149,10 @@ $config = [
         ],
         'urlManager' => [
             'rules' => [
-                'populac/<controller:\w+>-list' => 'populac/<controller>/index',
-                'populac/<module:\w+>/<controller:\w+>-list' => 'populac/<module:\w+>/<controller>/index',
-                'populac/<controller:\w+>/<action:[\w-]+>/<id:\d+>' => 'populac/<controller>/<action>',
-                'populac/<module:\w+>/<controller:\w+>/<action:[\w-]+>/<id:\d+>' => 'populac/<module>/<controller>/<action>',
+                'populac/<controller:[a-zA-Z0-9_\-]+>-list' => 'populac/<controller>/index',
+                'populac/<module:[a-zA-Z0-9_\-]+>/<controller:[a-zA-Z0-9_\-]+>-list' => 'populac/<module>/<controller>/index',
+                'populac/<controller:[a-zA-Z0-9_\-]+>/<action:[\w-]+>/<id:\d+>' => 'populac/<controller>/<action>',
+                'populac/<module:[a-zA-Z0-9_\-]+>/<controller:[a-zA-Z0-9_\-]+>/<action:[\w-]+>/<id:\d+>' => 'populac/<module>/<controller>/<action>',
             ],
         ],
         'i18n' => [

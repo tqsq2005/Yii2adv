@@ -6,7 +6,7 @@
  * ----------------------------------------------
  * 这不是一个自由软件，未经授权不许任何使用和传播。
  * ----------------------------------------------
- * @date: 16-5-27 下午4:52
+ * @date: 16-6-22 下午3:19
  * @author: LocoRoco<tqsq2005@gmail.com>
  * @version:v2016
  * @since:Yii2
@@ -18,15 +18,28 @@
 namespace common\populac\controllers;
 
 use bedezign\yii2\audit\models\AuditTrailSearch;
+use common\populac\behaviors\SortableController;
 use Yii;
 use yii\base\Exception;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
-use yii\widgets\ActiveForm;
-use common\populac\models\Preferences;
+use common\populac\models\ColTable;
 
-class PreferencesController extends \common\populac\components\Controller
+class ColTableController extends \common\populac\components\Controller
 {
-    public $rootActions = ['create', 'delete'];
+    /**
+     * @inheritDoc
+     */
+    public function behaviors()
+    {
+        return ArrayHelper::merge(parent::behaviors(), [
+            [
+                'class'     => SortableController::className(),
+                'model'     => ColTable::className(),
+                'ordercol'  => 'sort_no',
+            ]
+        ]);
+    }
 
     public function actionIndex()
     {
@@ -34,11 +47,9 @@ class PreferencesController extends \common\populac\components\Controller
         $returnData = [];
         switch($responseType) {
             case "fetch":
-                $returnData = Preferences::find()->select([
-                    'id', 'codes', 'name1', 'classmark', 'classmarkcn', 'status', 'created_at', 'updated_at'
-                ])->orderBy([
-                    'classmark' => SORT_ASC,
-                    'codes'     => SORT_ASC,
+                $returnData = ColTable::find()->select(['*'])->orderBy([
+                    'pbc_tnam'  => SORT_ASC,
+                    'sort_no'   => SORT_ASC,
                 ])->all();
                 return Json::encode($returnData);
             case "crud":
@@ -48,7 +59,7 @@ class PreferencesController extends \common\populac\components\Controller
                     case "create":
                         $requestID  = key(Yii::$app->request->post('data'));
                         $requestData = Yii::$app->request->post('data')[$requestID];
-                        $model = new Preferences();
+                        $model = new ColTable();
                         //块赋值
                         $model->attributes = $requestData;
                         //返回错误信息给datatable
@@ -76,13 +87,13 @@ class PreferencesController extends \common\populac\components\Controller
                     case "edit":
                         $editID = array_keys(Yii::$app->request->post('data'));
                         //执行事务，保存必须都成功了才行
-                        $transaction = Preferences::getDb()->beginTransaction();
+                        $transaction = ColTable::getDb()->beginTransaction();
                         //返回值
                         $data = [];
                         try {
                             foreach($editID as $requestID) {
                                 $requestData = Yii::$app->request->post('data')[$requestID];
-                                $model = Preferences::findOne($requestID);
+                                $model = ColTable::findOne($requestID);
                                 //块赋值
                                 $model->attributes = $requestData;
                                 //返回错误信息给datatable
@@ -99,9 +110,7 @@ class PreferencesController extends \common\populac\components\Controller
                                 $model->save();
                                 //单个字段更新的时候
                                 if(count($requestData)==1 || !is_array($requestData)) {
-                                    $requestData = Preferences::find()->select([
-                                        'id', 'codes', 'name1', 'classmark', 'classmarkcn', 'status', 'created_at', 'updated_at'
-                                    ])->where([
+                                    $requestData = ColTable::find()->select(['*'])->where([
                                         'id' => $requestID,
                                     ])->one();
                                 } else {
@@ -121,7 +130,7 @@ class PreferencesController extends \common\populac\components\Controller
                     case "remove":
                         //多选则删除全部 用deleteAll()不会触发 event： EVENT_BEFORE_DELETE 和 EVENT_AFTER_DELETE
                         foreach(Yii::$app->request->post('data') as $removeID => $removeData) {
-                            Preferences::findOne($removeID)->delete();
+                            ColTable::findOne($removeID)->delete();
                         }
                         return Json::encode($returnData);
                     default:
@@ -133,7 +142,7 @@ class PreferencesController extends \common\populac\components\Controller
     }
 
     /**
-     * History lists all Preferences models.
+     * History lists all ColTable models.
      * @return mixed
      */
     public function actionHistory()
@@ -142,7 +151,7 @@ class PreferencesController extends \common\populac\components\Controller
         $searchFilter = [
             'AuditTrailSearch' => [
                 'action' => 'DELETE',
-                'model' => 'common\populac\models\Preferences'
+                'model' => 'common\populac\models\ColTable'
             ]
         ];
         $dataProvider = $searchModel->search(\yii\helpers\ArrayHelper::merge(Yii::$app->request->get(), $searchFilter));
@@ -161,15 +170,15 @@ class PreferencesController extends \common\populac\components\Controller
      */
     public function actionRetrieve()
     {
-        $oldPreferences = Yii::$app->request->post('oldPreferences');
+        $oldColTable = Yii::$app->request->post('oldColTable');
         $error = '';
         $message = '';
-        foreach($oldPreferences as $preferences) {
-            $model = new Preferences();
+        foreach($oldColTable as $coltable) {
+            $model = new ColTable();
             //转化为[attr1 => val1, attr2 => val2, attr3 => val3, ..] 数据格式进行块赋值
-            $model->attributes = \yii\helpers\Json::decode($preferences);
+            $model->attributes = \yii\helpers\Json::decode($coltable);
             if($model->save()) {
-                $message .= "<li>系统配置参数<{$model->name1}({$model->codes})>恢复成功；</li>";
+                $message .= "<li>系统表字段配置<{$model->pbc_tnam}({$model->pbc_cnam})>恢复成功；</li>";
             } else {
                 $error = '恢复操作发生意外,错误信息:' . \yii\helpers\Json::encode($model->errors);
                 throw new Exception($error);
@@ -187,4 +196,29 @@ class PreferencesController extends \common\populac\components\Controller
             ]);
         }
     }
+
+    /**
+     * (mixed) actionUp : sort_no + 1
+     * @param $id
+     * @return mixed
+     */
+    public function actionUp($id)
+    {
+        $pbc_tnam = Yii::$app->request->post('pbc_tnam', '');
+        $condition = $pbc_tnam ? ['pbc_tnam' => $pbc_tnam] : [];
+        return $this->move($id, 'up', $condition);
+    }
+
+    /**
+     * (mixed) actionDown : sort_no - 1
+     * @param $id
+     * @return mixed
+     */
+    public function actionDown($id)
+    {
+        $pbc_tnam = Yii::$app->request->post('pbc_tnam', '');
+        $condition = $pbc_tnam ? ['pbc_tnam' => $pbc_tnam] : [];
+        return $this->move($id, 'down', $condition);
+    }
+
 }

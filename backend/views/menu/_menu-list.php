@@ -32,7 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
         $(document).ready(function() {
             editor = new $.fn.dataTable.Editor( {
                 ajax: {
-                    url:  "/admin/menu/data-tables?type=crud",
+                    url:  "<?=Yii::$app->homeUrl?>/menu/data-tables?type=crud",
                     dataSrc: '',
                     error: function() {
                         layer.msg("数据处理失败，请重试!",{icon: 5});
@@ -133,7 +133,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 //dom: "Bfrtip",
                 lengthChange: false,
                 ajax: {
-                    url:  "/admin/menu/data-tables?type=fetch&id=<?= $parent ?>",
+                    url:  "<?=Yii::$app->homeUrl?>/menu/data-tables?type=fetch&id=<?= $parent ?>",
                     dataSrc: '',
                     beforeSend: function () {
                         layer.load();

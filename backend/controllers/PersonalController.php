@@ -112,9 +112,32 @@ class PersonalController extends Controller
 
     public function actionTest()
     {
-        $sex  = Preferences::getByClassmark('psex');
+        $preferences            = [];
+        $preferences['sex']     = Preferences::getByClassmark('psex');
+        $preferences['marry']   = Preferences::getByClassmark('pmarry');
+        $preferences['flag']    = Preferences::getByClassmark('pflag');
+        $preferences['work1']   = Preferences::getByClassmark('pwork1');
+        //echo Json::encode($preferences);
+        echo Yii::$app->homeUrl;
+        //$urlRule = new \yii\web\UrlRule();
+        echo \yii\helpers\Url::to(['populac/modules/']);
+        echo '<br>';
+        echo \yii\helpers\Url::to(['/unit/']);
+        echo '<br>';
+        echo \yii\helpers\Url::to(['populac/col-table/']);
+        echo '<br>';
+        Yii::$app->getUrlManager()->addRules([
+            'populac/<controller:[a-zA-Z0-9_\-]+>/<action:[\w+]+>/<id:\d+>' => 'populac/<controller>/<action>',
+            //'populac/col-table/up/<id:\d+>' => 'populac/col-table/up',
+        ], false);
+        echo \yii\helpers\Url::to(['populac/col-table/up', 'id' => 22]);
+        echo '<br>';
+        echo \yii\helpers\Url::$urlManager;
+        echo '<br>';
+        //echo \yii\web\UrlRule::parseRequest('');
+        return;
         return $this->render('test', [
-            'sex' => Json::encode($sex),
+            'preferences'   => Json::encode($preferences),
         ]);
     }
 

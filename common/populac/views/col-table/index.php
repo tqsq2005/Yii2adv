@@ -6,7 +6,7 @@
  * ----------------------------------------------
  * 这不是一个自由软件，未经授权不许任何使用和传播。
  * ----------------------------------------------
- * @date: 16-5-27 下午5:05
+ * @date: 16-6-22 下午3:26
  * @author: LocoRoco<tqsq2005@gmail.com>
  * @version:v2016
  * @since:Yii2
@@ -14,104 +14,140 @@
  * 程序文件简介：
  * ==============================================
  */
+/* @var $this yii\web\View */
 
-$this->title = Yii::t('easyii', 'Preferences');
+$this->title = '系统表字段配置管理';
 \common\assets\DataTableEditorAsset::register($this);
 \common\assets\Qtip::register($this);
 $this->params['breadcrumbs'][] = $this->title;
+
+$css = <<<CSS
+tr.row_selected td{background-color:#89cbff !important;}
+CSS;
+
+$this->registerCss($css);
 ?>
 
 <?= $this->render('_menu') ?>
-<div class="box box-primary">
-    <div class="box-body" id="admin-body">
-        <div class="populac-datatable-info-block" id="populac-datatable-view">
-            <table class="populac-datatable-data-info" width="100%">
-                <tr>
-                    <td>
-                        <div class="panel panel-info">
-                            <div class="panel-heading">
-                                <h3 class="panel-title pull-left" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;
-                                line-height: normal;width: 75%;padding-top: 5px;">
-                                    项目配置参数详情
-                                </h3>
-                                <div class="pull-right">
-                                    <button class="btn btn-danger" id="btn-view-delete" style="margin-right: 15px;">
-                                        <i class="fa fa-remove"></i> 删除
-                                    </button>
-                                    <button class="btn btn-success" id="btn-view-copy" style="margin-right: 15px;">
-                                        <i class="fa fa-copy"></i> 复制
-                                    </button>
-                                    <button class="btn btn-primary" id="btn-view-edit">
-                                        <i class="fa fa-edit"></i> 修改
-                                    </button>
-                                </div>
-                                <div class="clearfix"></div>
-                            </div>
-                            <div class="panel-body populac-datatable-info-content">
-                                <div class="row-fluid">
-                                    <div class="col-md-4">
-                                        <label class="prop-name">ID号:</label>
-                                        <div class="prop-value" id="primary-id"></div>
-                                    </div>
+<div class="box box-primary populac-datatable-info-block" id="populac-datatable-view">
+    <div class="box-header with-border">
+        <i class="fa fa-info-circle text-purple"></i>
+        <h3 class="box-title text-purple">系统表字段配置详情</h3>
+        <!-- tools box -->
+        <div class="pull-right box-tools">
+            <button type="button" class="btn btn-info btn-sm" id="btn-view-search" data-toggle="tooltip" title="可以单独对表名或字段名搜索">
+                <i class="fa fa-search"></i> <span id="btn-view-search-title">显示高级搜索</span>
+            </button>
+            <button type="button" class="btn btn-danger btn-sm" id="btn-view-delete" data-toggle="tooltip" title="删除该条记录">
+                <i class="fa fa-remove"></i> 删除
+            </button>
+            <button type="button" class="btn btn-success btn-sm" id="btn-view-copy" data-toggle="tooltip" title="复制该条记录">
+                <i class="fa fa-copy"></i> 复制
+            </button>
+            <button type="button" class="btn btn-primary btn-sm" id="btn-view-edit" data-toggle="tooltip" title="修改该条记录">
+                <i class="fa fa-edit"></i> 修改
+            </button>
+            <button type="button" class="btn btn-success btn-sm" data-widget="collapse" data-toggle="tooltip" title="折叠">
+                <i class="fa fa-minus"></i>
+            </button>
+        </div>
+        <!-- /. tools -->
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body populac-datatable-info-content">
+        <div class="row-fluid">
+            <div class="col-md-4">
+                <label class="prop-name">ID号:</label>
+                <div class="prop-value" id="primary-id"></div>
+            </div>
 
-                                    <div class="col-md-4">
-                                        <label class="prop-name">项目名称-中文:</label>
-                                        <div class="prop-value" id="classmarkcn"></div>
-                                    </div>
+            <div class="col-md-4">
+                <label class="prop-name">表名:</label>
+                <div class="prop-value" id="pbc_tnam"></div>
+            </div>
 
-                                    <div class="col-md-4">
-                                        <label class="prop-name">项目名称-英文:</label>
-                                        <div class="prop-value" id="classmark"></div>
-                                    </div>
-
-                                </div>
-                                <div class="row-fluid">
-                                    <div class="col-md-4">
-                                        <label class="prop-name">参数编码:</label>
-                                        <div class="prop-value" id="codes"></div>
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <label class="prop-name">参数名称:</label>
-                                        <div class="prop-value" id="name1"></div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="prop-name">状态:</label>
-                                        <div class="prop-value" id="status"></div>
-                                    </div>
-
-                                </div>
-                                <div class="row-fluid">
-                                    <div class="col-md-4">
-                                        <label class="prop-name">新增时间:</label>
-                                        <div class="prop-value" id="created_at"></div>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <label class="prop-name">最后一次修改时间:</label>
-                                        <div class="prop-value" id="updated_at"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-            </table>
+            <div class="col-md-4">
+                <label class="prop-name">字段名:</label>
+                <div class="prop-value" id="pbc_cnam"></div>
+            </div>
 
         </div>
-        <table id="preferences-data" class="table table-striped table-bordered" cellspacing="0" width="100%">
+        <div class="row-fluid">
+            <div class="col-md-4">
+                <label class="prop-name">中文标签:</label>
+                <div class="prop-value" id="pbc_labl"></div>
+            </div>
+
+            <div class="col-md-4">
+                <label class="prop-name">参数配置:</label>
+                <div class="prop-value" id="pbc_classmark"></div>
+            </div>
+            <div class="col-md-4">
+                <label class="prop-name">状态:</label>
+                <div class="prop-value" id="status"></div>
+            </div>
+
+        </div>
+        <div class="row-fluid">
+            <div class="col-md-4">
+                <label class="prop-name">排序:</label>
+                <div class="prop-value" id="sort_no"></div>
+            </div>
+            <div class="col-md-4">
+                <label class="prop-name">新增时间:</label>
+                <div class="prop-value" id="created_at"></div>
+            </div>
+            <div class="col-md-4">
+                <label class="prop-name">最后一次修改时间:</label>
+                <div class="prop-value" id="updated_at"></div>
+            </div>
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.box-body -->
+</div>
+<!-- /.box -->
+<div class="box box-default box-view-search hidden">
+    <div class="box-body">
+        <div class="row-fluid text-center">
+            <form class="form-inline">
+                <div class="form-group">
+                    <label class="sr-only" for="box-view-pbc_tnam">表名</label>
+                    <div class="input-group">
+                        <div class="input-group-addon text-green"><i class="fa fa-check-square-o" aria-hidden="true"></i> 表名</div>
+                        <input type="text" class="form-control" data-column="3" id="box-view-pbc_tnam" data-toggle="tooltip" title="请输入表名过滤" placeholder="请输入表名过滤..">
+                    </div>
+                </div>
+                <div class="form-group" style="margin-left: 20px;">
+                    <label class="sr-only" for="box-view-pbc_cnam">字段名</label>
+                    <div class="input-group">
+                        <div class="input-group-addon text-green"><i class="fa fa-check-square-o" aria-hidden="true"></i> 字段名</div>
+                        <input type="text" class="form-control" data-column="4" id="box-view-pbc_cnam" data-toggle="tooltip" title="请输入字段名过滤" placeholder="请输入字段名过滤..">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="box box-default">
+    <div class="box-body" id="admin-body">
+
+        <table id="col-table-data" class="table table-striped table-bordered" cellspacing="0" width="100%">
             <thead>
                 <tr>
                     <th style="width:50px; ">
                         全选<input type="checkbox" id="checkAll"></th>
                     <th>序号</th>
-                    <th>项目ID</th>
-                    <th>项目名称(中文)</th>
-                    <th>项目名称(英文)</th>
-                    <th>参数编码</th>
-                    <th>参数名称</th>
+                    <th>ID</th>
+                    <th>表名</th>
+                    <th>字段名</th>
+                    <th>中文标签</th>
+                    <th>参数配置</th>
                     <th>状态</th>
                     <th>添加时间</th>
                     <th>最后一次修改时间</th>
+                    <th>排序</th>
+                    <th>操作</th>
                 </tr>
             </thead>
         </table>
@@ -132,28 +168,28 @@ $this->params['breadcrumbs'][] = $this->title;
             };
             editor = new $.fn.dataTable.Editor( {
                 ajax: {
-                    url:  "/admin/populac/preferences/index?type=crud",
+                    url:  "<?=Yii::$app->homeUrl?>/populac/col-table/index?type=crud",
                     dataSrc: '',
                     error: function() {
                         layer.msg("数据处理失败，请重试!",{icon: 5});
                     }
                 },
-                table: "#preferences-data",
+                table: "#col-table-data",
                 idSrc:  'id',
                 i18n: {
                     create: {
                         button: "新增",
-                        title:  "新增系统配置参数",
+                        title:  "新增系统表字段配置",
                         submit: "保存"
                     },
                     edit: {
                         button: "修改",
-                        title:  "修改系统配置参数",
+                        title:  "修改系统表字段配置",
                         submit: "保存"
                     },
                     remove: {
                         button: "删除",
-                        title:  "删除系统配置参数",
+                        title:  "删除系统表字段配置",
                         submit: "确认删除",
                         confirm: {
                             _: "确定要删除这 %d 条记录吗?",
@@ -176,17 +212,20 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 },
                 fields: [ {
-                    label: "项目名称(中文):",
-                    name: "classmarkcn"
+                    label: "表名:",
+                    name: "pbc_tnam"
                 }, {
-                    label: "项目名称(英文):",
-                    name: "classmark"
+                    label: "字段名:",
+                    name: "pbc_cnam"
                 }, {
-                    label: "参数编码:",
-                    name: "codes"
+                    label: "中文标签:",
+                    name: "pbc_labl"
                 }, {
-                    label: "参数名称:",
-                    name: "name1"
+                    label: "参数配置:",
+                    name: "pbc_classmark"
+                }, {
+                    label: "顺序:",
+                    name: "sort_no"
                 }, {
                     label: "状态:",
                     name: "status",
@@ -215,12 +254,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 } )
                 //新增并保存成功事件
                 .on('create', function(e, json, data) {
-                    table.search( data.classmark ).draw();
+                    table.search( data.pbc_tnam ).draw();
                     layer.msg('记录已新增..如当前页没显示，请在搜索框中输入相关信息过滤查看！', {icon: 6});
                 })
                 //修改并保存成功事件
                 .on('edit', function(e, json, data) {
-                    table.search( data.classmark ).draw();
+                    table.search( data.pbc_tnam ).draw();
                     layer.msg('记录已修改..如当前页没显示，请在搜索框中输入相关信息过滤查看！', {icon: 6});
                 })
                 //删除并保存成功事件
@@ -233,7 +272,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         yes: function(index){
                             layer.close(index);
                             layer.msg('5秒后将跳转至[历史数据]界面..请按提示恢复误删记录！', {icon: 6, time: 5000, title: '系统提示'}, function() {
-                                location.href="<?= Yii::$app->urlManager->createUrl(['/populac/preferences/history']); ?>";
+                                location.href="<?= Yii::$app->urlManager->createUrl(['/populac/col-table/history']); ?>";
                             });
                         }
                     });
@@ -248,7 +287,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 return data;
             };
 
-            var table = $('#preferences-data').DataTable( {
+            var table = $('#col-table-data').DataTable( {
                 /**
                  * DOM positioning default set:lfrtip
                  * l - Length changing
@@ -271,7 +310,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],//每页显示条数设置
                 stateSave: true,        //保存状态，如果当前页面是第五页，刷新还是在第五页，默认为false
                 ajax: {
-                    url:  "/admin/populac/preferences/index?type=fetch",
+                    url:  "<?=Yii::$app->homeUrl?>/populac/col-table/index?type=fetch",
                     dataSrc: '',
                     beforeSend: function () {
                         layer.load();
@@ -301,10 +340,10 @@ $this->params['breadcrumbs'][] = $this->title;
                         }
                     },
                     { data: "id" },
-                    { data: "classmarkcn" },
-                    { data: "classmark" },
-                    { data: "codes", className: 'editable', render: editIcon },
-                    { data: "name1", className: 'editable', render: editIcon },
+                    { data: "pbc_tnam" },
+                    { data: "pbc_cnam" },
+                    { data: "pbc_labl", className: 'editable', render: editIcon },
+                    { data: "pbc_classmark", className: 'editable', render: editIcon },
                     { data: "status", className: 'editable', render: function ( data, type, full ) {
                         if(data) {
                             return '<i class="fa fa-check text-success"></i>';
@@ -326,7 +365,18 @@ $this->params['breadcrumbs'][] = $this->title;
                             return (mDate && mDate.isValid()) ? mDate.fromNow() : "";
                         }
                         return "";
-                    } }
+                    }
+                    },
+                    { data: "sort_no" },
+                    {
+                        data: null,
+                        className: "text-center",
+                        defaultContent: '<i class="fa fa-arrow-up text-success editor_up" id="btn-view-up" data-toggle="tooltip" title="上移" style="cursor: pointer;"></i> &nbsp;' +
+                        '<i class="fa fa-arrow-down text-success editor_down" id="btn-view-down" data-toggle="tooltip" title="下移" style="cursor: pointer;"></i> &nbsp;' +
+                        '<i class="fa fa-copy text-success editor_copy" id="btn-view-copy" data-toggle="tooltip" title="复制" style="cursor: pointer;"></i> &nbsp;' +
+                        '<i class="fa fa-pencil text-success editor_edit" id="btn-view-edit" data-toggle="tooltip" title="修改" style="cursor: pointer;"></i> &nbsp;' +
+                        '<i class="fa fa-trash text-success editor_remove" id="btn-view-delete" data-toggle="tooltip" title="删除" style="cursor: pointer;"></i>'
+                    }
                 ],
                 //隐藏ID列
                 columnDefs: [
@@ -341,16 +391,19 @@ $this->params['breadcrumbs'][] = $this->title;
                         "targets": 1
                     },
                     {
-                        "targets": 2,//隐藏系统配置参数ID
+                        "targets": [2,10],//隐藏系统表字段配置ID
                         "visible": false,
                         "searchable": false
                     }
                 ],
-                order: [[ 4, "asc" ]],//初始排序
+                order: [[ 3, "asc" ], [ 10, "asc"]],//初始排序
                 //https://datatables.net/reference/option/deferRender
                 //当处理大数据时，延迟渲染数据，多页记录时只渲染当页，有效提高Datatables处理能力,但有个坏处就是影响了排序代码。
                 //deferRender: true,
                 //select: true,
+                /*select: {
+                    style: 'multi'
+                },*/
                 keys: {
                     columns: ':not(:first-child)',
                     editor:  editor
@@ -408,8 +461,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
                         // Create a new entry (discarding the previous edit) and
                         // set the values from the read values and customize self fields's default value
-                        values.codes = '';
-                        values.name1 = '';
+                        values.pbc_cnam = '';
+                        values.pbc_labl = '';
                         editor
                             .create( {
                                 title: '复制的记录',
@@ -425,7 +478,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         var indexes = table.rows( {selected: true} ).indexes();
 
                         editor.edit( indexes, {
-                            title: '修改系统配置参数',
+                            title: '修改系统表字段配置',
                             buttons: indexes.length === 1 ?
                                 backNext :
                                 '保存'
@@ -536,10 +589,10 @@ $this->params['breadcrumbs'][] = $this->title;
             $("#checkAll").on("click", function () {
                 if ($(this).prop("checked") === true) {
                     $("input[name='checkList']").prop("checked", $(this).prop("checked"));
-                    $('#preferences-data tbody tr').addClass('selected');
+                    $('#col-table-data tbody tr').addClass('selected');
                 } else {
                     $("input[name='checkList']").prop("checked", false);
-                    $('#preferences-data tbody tr').removeClass('selected');
+                    $('#col-table-data tbody tr').removeClass('selected');
                 }
             });
 
@@ -560,7 +613,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 .prependTo( $('.col-sm-6:eq(0) div.dataTables_length', table.table().container() ) );
 
             //Inline single cell editing on click
-            $('#preferences-data')
+            $('#col-table-data')
                 .on( 'click', 'tbody td.editable', function (e) {
                     //editor.inline( this );
                     //editor.bubble( this );
@@ -577,24 +630,35 @@ $this->params['breadcrumbs'][] = $this->title;
                         return;
                     var content = '<table class="table table-striped">' +
                             '<tr>'+
-                                '<td align="right">项目ID:</td>'+
-                                '<td>'+(item?item.id:'')+'</td>'+
+                                '<td align="right">ID:</td>'+
+                                '<td>' +
+                                    (item?item.id:'') +
+                                    ' <i class="fa fa-copy text-success editor_copy" id="btn-view-copy" data-toggle="tooltip" data-placement="right"  title="复制" style="cursor: pointer;"></i> &nbsp;' +
+                                '</td>'+
                             '</tr>'+
                             '<tr>'+
-                                '<td align="right">项目名称-中文:</td>'+
-                                '<td>'+item.classmarkcn+'</td>'+
+                                '<td align="right">表名:</td>'+
+                                '<td>'+item.pbc_tnam+'</td>'+
                             '</tr>'+
                             '<tr>'+
-                                '<td align="right">项目名称-英文:</td>'+
-                                '<td>'+item.classmark+'</td>'+
+                                '<td align="right">字段名:</td>'+
+                                '<td>'+item.pbc_cnam+'</td>'+
                             '</tr>'+
                             '<tr>'+
-                                '<td align="right">参数编码:</td>'+
-                                '<td>'+item.codes+'</td>'+
+                                '<td align="right">中文标签:</td>'+
+                                '<td>'+item.pbc_labl+'</td>'+
                             '</tr>'+
                             '<tr>'+
-                                '<td align="right">参数名称:</td>'+
-                                '<td>'+item.name1+'</td>'+
+                                '<td align="right">参数配置:</td>'+
+                                '<td>'+item.pbc_classmark+'</td>'+
+                            '</tr>'+
+                        '<tr>'+
+                                '<td align="right">排序:</td>'+
+                                '<td>' +
+                                    item.sort_no +
+                                    ' <i class="fa fa-arrow-up text-success editor_up" id="btn-view-up" data-toggle="tooltip" title="上移" style="cursor: pointer;"></i> &nbsp;' +
+                                    '<i class="fa fa-arrow-down text-success editor_down" id="btn-view-down" data-toggle="tooltip" title="下移" style="cursor: pointer;"></i> &nbsp;' +
+                                '</td>'+
                             '</tr>'+
                             '<tr>'+
                                 '<td align="right">状态:</td>'+
@@ -630,7 +694,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         position: {
                             at: 'right center', //center center
                             my: 'left center',
-                            viewport: $('#preferences-data')
+                            viewport: $('#col-table-data')
                         },
                         show: 'click',
                         hide: 'unfocus',
@@ -652,19 +716,23 @@ $this->params['breadcrumbs'][] = $this->title;
                         return;
                     }
                     $("#primary-id").text(item.id);
-                    $("#classmarkcn").text(item.classmarkcn);
-                    $("#classmark").text(item.classmark);
-                    $("#codes").text(item.codes);
-                    $("#name1").text(item.name1);
+                    $("#pbc_tnam").text(item.pbc_tnam);
+                    $("#pbc_cnam").text(item.pbc_cnam);
+                    $("#pbc_labl").text(item.pbc_labl);
+                    $("#pbc_classmark").text(item.pbc_classmark);
+                    var updown = ' <i class="fa fa-arrow-up text-success editor_up" id="btn-view-up" data-toggle="tooltip" title="上移" style="cursor: pointer;"></i> &nbsp;' +
+                        '<i class="fa fa-arrow-down text-success editor_down" id="btn-view-down" data-toggle="tooltip" title="下移" style="cursor: pointer;"></i> &nbsp;';
+                    $("#sort_no").html(item.sort_no + updown);
                     $("#status").html(item.status? '<i class="fa fa-check text-success"></i>':'<i class="fa fa-close text-danger"></i>');
                     $("#created_at").text(moment(item.created_at * 1000).format('YYYY-MM-DD HH:mm:ss'));
                     $("#updated_at").text(moment(item.updated_at * 1000).fromNow());
-                    $(this).addClass('last-visited-' + item.id);
-                    Cookies.set('last-visited-id', item.id);
+                    $(this).addClass('coltable-last-visited-' + item.id);
+                    Cookies.set('coltable-last-visited-id', item.id);
+                    Cookies.set('coltable-last-visited-pbctnam', item.pbc_tnam);
             });
 
             //datatable头部置顶
-            $('#preferences-data').floatThead({
+            $('#col-table-data').floatThead({
                 top: $(".main-header").height() //i need this because of my floating header
             });
             //定制前后保存按钮 Previous / next editing buttons
@@ -711,8 +779,8 @@ $this->params['breadcrumbs'][] = $this->title;
             ];
 
             $(document).on('click', '#btn-view-edit', function() {
-                var lastVisitedId = '.last-visited-' + Cookies.get('last-visited-id'); //table.rows( {selected: true} ).indexes();
-                if (!Cookies.get('last-visited-id')) {
+                var lastVisitedId = '.coltable-last-visited-' + Cookies.get('coltable-last-visited-id'); //table.rows( {selected: true} ).indexes();
+                if (!Cookies.get('coltable-last-visited-id')) {
                     layer.msg('无法获取对象数据..请点击内容行再试！', {icon: 5});
                     return;
                 }
@@ -724,8 +792,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 });
             })
                 .on('click', '#btn-view-copy', function() {
-                    var lastVisitedId = '.last-visited-' + Cookies.get('last-visited-id'); //table.rows( {selected: true} ).indexes();
-                    if (!Cookies.get('last-visited-id')) {
+                    var lastVisitedId = '.coltable-last-visited-' + Cookies.get('coltable-last-visited-id'); //table.rows( {selected: true} ).indexes();
+                    if (!Cookies.get('coltable-last-visited-id')) {
                         layer.msg('无法获取对象数据..请点击内容行再试！', {icon: 5});
                         return;
                     }
@@ -739,8 +807,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     // Create a new entry (discarding the previous edit) and
                     // set the values from the read values and customize self fields's default value
-                    values.codes = '';
-                    values.name1 = '';
+                    values.pbc_cnam = '';
+                    values.pbc_labl = '';
                     editor
                         .create( {
                             title: '复制的记录',
@@ -749,19 +817,19 @@ $this->params['breadcrumbs'][] = $this->title;
                         .set( values );
                 })
                 .on('click', '#btn-view-delete', function() {
-                    var lastVisitedId = '.last-visited-' + Cookies.get('last-visited-id'); //table.rows( {selected: true} ).indexes();
-                    if (!Cookies.get('last-visited-id')) {
+                    var lastVisitedId = '.coltable-last-visited-' + Cookies.get('coltable-last-visited-id'); //table.rows( {selected: true} ).indexes();
+                    if (!Cookies.get('coltable-last-visited-id')) {
                         layer.msg('无法获取对象数据..请点击内容行再试！', {icon: 5});
                         return;
                     }
                     /*editor.remove( table.row(lastVisitedId).indexes(), {
-                        title: '删除系统配置参数',
+                        title: '删除系统表字段配置',
                         formMessage: '确定要删除该条记录吗?',
                         buttons: '确认删除'
                     });*/
                     var shiftNum = [0, 1, 2, 3, 4, 5, 6];
                     layer.confirm('<span class="text-danger">确定要删除该条记录吗?</span>', {
-                        title: '删除系统配置参数',
+                        title: '删除系统表字段配置',
                         shift: shiftNum[Math.floor(Math.random()*shiftNum.length)],
                         icon: 5,
                         scrollbar: false
@@ -769,18 +837,76 @@ $this->params['breadcrumbs'][] = $this->title;
                         editor
                             .remove( table.row(lastVisitedId).indexes(), false )
                             .submit();
-                        Cookies.remove('last-visited-id');
+                        Cookies.remove('coltable-last-visited-id');
                         layer.msg('记录已删除..如需恢复请进入历史数据模块！', {icon: 6}, function(index) {
                             layer.close(index);
                         });
                     }, function(index) {
                         layer.close(index);
                     });
+                })
+                .on('click', '#btn-view-up', function() {
+                    $.ajax({
+                        url: '<?=Yii::$app->homeUrl?>/populac/col-table/down/' + Cookies.get('coltable-last-visited-id'),
+                        type: 'post',
+                        data: { pbc_tnam : Cookies.get('coltable-last-visited-pbctnam') },
+                        beforeSend: function () {
+                            layer.load();
+                        },
+                        complete: function () {
+                            layer.closeAll('loading');
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            layer.alert('上移操作出错:' + textStatus + ' ' + errorThrown, {icon: 5});
+                        },
+                        success: function(data) {
+                            layer.msg('已上移..', {icon: 6, time: 1500}, function(index) {
+                                table.ajax.reload();
+                            });
+                        }
+                    });
+                })
+                .on('click', '#btn-view-down', function() {
+                    $.ajax({
+                        url: '<?=Yii::$app->homeUrl?>/populac/col-table/up/' + Cookies.get('coltable-last-visited-id'),
+                        type: 'post',
+                        data: { pbc_tnam : Cookies.get('coltable-last-visited-pbctnam') },
+                        beforeSend: function () {
+                            layer.load();
+                        },
+                        complete: function () {
+                            layer.closeAll('loading');
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            layer.alert('下移操作出错:' + textStatus + ' ' + errorThrown, {icon: 5});
+                        },
+                        success: function(data) {
+                            layer.msg('已下移..', {icon: 6, time: 1500}, function(index) {
+                                table.ajax.reload();
+                            });
+                        }
+                    });
+                })
+                .on('click', '#btn-view-search', function() {
+                    if ($('div.box-view-search').hasClass('hidden')) {
+                        $('div.box-view-search').removeClass('hidden');
+                        $('#btn-view-search span#btn-view-search-title').html('关闭高级搜索');
+                    } else {
+                        $('div.box-view-search').addClass('hidden');
+                        $('#btn-view-search span#btn-view-search-title').html('显示高级搜索');
+                    }
+                })
+                .on('keyup click', '#box-view-pbc_tnam, #box-view-pbc_cnam', function() {
+                    var i = $(this).attr('data-column');//data-column是datatable中的所在位置
+                    table.column( i ).search(
+                        $(this).val()
+                    ).draw();
                 });
 
-            Cookies.remove('last-visited-id');
+            Cookies.remove('coltable-last-visited-id');
+            Cookies.remove('coltable-last-visited-pbctnam');
             // Inline whole line editing on click 整行编辑
-            /*$('#preferences-data').on( 'click', 'tbody td:not(:first-child)', function (e) {
+            /*$('#col-table-data').on( 'click', 'tbody td:not(:first-child)', function (e) {
                 editor.inline( this );
             } );
 

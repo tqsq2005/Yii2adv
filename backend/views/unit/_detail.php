@@ -123,7 +123,7 @@ $this->registerCss($css);
 
             editor = new $.fn.dataTable.Editor( {
                 ajax: {
-                    url:  "/admin/unit/data-tables?type=crud",
+                    url:  "<?=Yii::$app->homeUrl?>/unit/data-tables?type=crud",
                     dataSrc: '',
                     beforeSend: function () {
                         layer.load();
@@ -351,7 +351,7 @@ $this->registerCss($css);
                 ],//每页显示条数设置
                 stateSave: true,        //保存状态，如果当前页面是第五页，刷新还是在第五页，默认为false
                 ajax: {
-                    url:  "/admin/unit/data-tables?type=fetch&id=<?= $parent ?>",
+                    url:  "<?=Yii::$app->homeUrl?>/unit/data-tables?type=fetch&id=<?= $parent ?>",
                     dataSrc: '',
                     beforeSend: function () {
                         layer.load();
