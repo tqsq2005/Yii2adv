@@ -146,8 +146,8 @@ class PreferencesController extends \common\populac\components\Controller
             ]
         ];
         $dataProvider = $searchModel->search(\yii\helpers\ArrayHelper::merge(Yii::$app->request->get(), $searchFilter));
-        $message = "<ol>恢复操作指引<li><删除内容>中输入内容筛选</li><li>点击复选框选中需要恢复的记录</li><li>点击<恢复记录>按钮</li></ol>";
-        Yii::$app->session->setFlash('info', $message);
+        //$message = "<ol>恢复操作指引<li><删除内容>中输入内容筛选</li><li>点击复选框选中需要恢复的记录</li><li>点击<恢复记录>按钮</li></ol>";
+        //Yii::$app->session->setFlash('info', $message);
         return $this->render('history', [
             'dataProvider' => $dataProvider,
             'searchModel'  => $searchModel,

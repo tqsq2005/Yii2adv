@@ -155,8 +155,8 @@ class ColTableController extends \common\populac\components\Controller
             ]
         ];
         $dataProvider = $searchModel->search(\yii\helpers\ArrayHelper::merge(Yii::$app->request->get(), $searchFilter));
-        $message = "<ol>恢复操作指引<li><删除内容>中输入内容筛选</li><li>点击复选框选中需要恢复的记录</li><li>点击<恢复记录>按钮</li></ol>";
-        Yii::$app->session->setFlash('info', $message);
+        //$message = "<ol>恢复操作指引<li><删除内容>中输入内容筛选</li><li>点击复选框选中需要恢复的记录</li><li>点击<恢复记录>按钮</li></ol>";
+        //Yii::$app->session->setFlash('info', $message);
         return $this->render('history', [
             'dataProvider' => $dataProvider,
             'searchModel'  => $searchModel,
@@ -195,6 +195,26 @@ class ColTableController extends \common\populac\components\Controller
                 'status' => 'success',
             ]);
         }
+    }
+
+    /**
+     * (void) actionColMissing : 未配置字段
+     */
+    public function actionColMissing()
+    {
+        if( Yii::$app->request->get( 'type' ) == 'fetch' ) {
+            $table = ColTable::showTables();
+            $data  = [];
+            foreach( $table as $pbc_tnam ) {
+                $tmp = [];
+                $tmp['pbc_tnam'] = $pbc_tnam;
+                $tmp['pbc_cnam'] = implode( ', ', ColTable::getMissingColumnsByTablenam( $pbc_tnam ) );
+                $data[] = $tmp;
+            }
+            return Json::encode( $data );
+        }
+
+        return $this->render( 'col-missing' );
     }
 
     /**

@@ -117,24 +117,8 @@ class PersonalController extends Controller
         $preferences['marry']   = Preferences::getByClassmark('pmarry');
         $preferences['flag']    = Preferences::getByClassmark('pflag');
         $preferences['work1']   = Preferences::getByClassmark('pwork1');
-        //echo Json::encode($preferences);
-        echo Yii::$app->homeUrl;
-        //$urlRule = new \yii\web\UrlRule();
-        echo \yii\helpers\Url::to(['populac/modules/']);
-        echo '<br>';
-        echo \yii\helpers\Url::to(['/unit/']);
-        echo '<br>';
-        echo \yii\helpers\Url::to(['populac/col-table/']);
-        echo '<br>';
-        Yii::$app->getUrlManager()->addRules([
-            'populac/<controller:[a-zA-Z0-9_\-]+>/<action:[\w+]+>/<id:\d+>' => 'populac/<controller>/<action>',
-            //'populac/col-table/up/<id:\d+>' => 'populac/col-table/up',
-        ], false);
-        echo \yii\helpers\Url::to(['populac/col-table/up', 'id' => 22]);
-        echo '<br>';
-        echo \yii\helpers\Url::$urlManager;
-        echo '<br>';
-        //echo \yii\web\UrlRule::parseRequest('');
+        //var_dump(\common\populac\models\ColTable::getByTablename('child'));
+        var_dump(\common\populac\models\ColTable::getMissingColumnsByTablenam('personal'));
         return;
         return $this->render('test', [
             'preferences'   => Json::encode($preferences),

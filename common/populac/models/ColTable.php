@@ -117,4 +117,50 @@ class ColTable extends ActiveRecord
         });
         return isset(self::$_data[$tablename]) ? self::$_data[$tablename] : null;
     }
+
+    /**
+     * (array) showTables : 返回包数据库所有表的数组
+     * @static
+     * @return array
+     */
+    public static function showTables()
+    {
+        $SQL = 'SHOW TABLE STATUS';
+        $data = Yii::$app->db->createCommand( $SQL )->queryAll();
+        return $data ? ArrayHelper::getColumn( $data, 'Name' ) : [];
+    }
+
+    /**
+     * (array) showColumnsByTablenam : 根据表名`$tablename`返回包含该表所有字段的数组
+     * @static
+     * @param $tablename ：表名
+     * @return array ：包含所有字段的数组
+     */
+    public static function showColumnsByTablenam( $tablename )
+    {
+        $SQL = "SHOW COLUMNS FROM `{$tablename}`";
+        $data = Yii::$app->db->createCommand( $SQL )->queryAll();
+        return $data ? ArrayHelper::getColumn( $data, 'Field' ) : [];
+    }
+
+    /**
+     * (array) getMissingColumnsByTablenam : 返回指定表的未配置字段数组
+     * @static
+     * @param $tablename
+     * @return array
+     */
+    public static function getMissingColumnsByTablenam( $tablename )
+    {
+        $query = self::find()
+            ->select(['pbc_cnam'])
+            ->where(['pbc_tnam' => $tablename])
+            ->all();
+
+        if( $query ) {
+            $column = ArrayHelper::getColumn( $query, 'pbc_cnam' );
+            return array_diff(self::showColumnsByTablenam($tablename), $column);
+        } else {
+            return self::showColumnsByTablenam( $tablename );
+        }
+    }
 }

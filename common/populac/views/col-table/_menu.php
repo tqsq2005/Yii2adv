@@ -45,6 +45,11 @@ $action = $this->context->action->id;
             <?= Yii::t('easyii', 'List') ?>
         </a>
     </li>
+    <li <?= ($action === 'col-missing') ? 'class="active"' : '' ?>>
+        <a href="<?= Url::to(['/populac/col-table/col-missing']) ?>">
+            <i class="fa fa-exclamation-triangle font-12"></i>
+            未配置字段
+        </a></li>
     <li <?= ($action === 'history') ? 'class="active"' : '' ?>>
         <a href="<?= Url::to(['/populac/col-table/history']) ?>">
             <i class="glyphicon glyphicon-trash font-12"></i>
