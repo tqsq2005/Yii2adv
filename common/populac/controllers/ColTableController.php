@@ -19,6 +19,7 @@ namespace common\populac\controllers;
 
 use bedezign\yii2\audit\models\AuditTrailSearch;
 use common\populac\behaviors\SortableController;
+use common\populac\models\Preferences;
 use Yii;
 use yii\base\Exception;
 use yii\helpers\ArrayHelper;
@@ -208,13 +209,39 @@ class ColTableController extends \common\populac\components\Controller
             foreach( $table as $pbc_tnam ) {
                 $tmp = [];
                 $tmp['pbc_tnam'] = $pbc_tnam;
-                $tmp['pbc_cnam'] = implode( ', ', ColTable::getMissingColumnsByTablenam( $pbc_tnam ) );
+                $tmp['pbc_cnam'] = implode( ',', ColTable::getMissingColumnsByTablenam( $pbc_tnam ) );
                 $data[] = $tmp;
             }
             return Json::encode( $data );
         }
 
         return $this->render( 'col-missing' );
+    }
+
+    public function actionGetFieldConfig()
+    {
+        //传过来的数据格式为 pbc_tnam.pbc_cnam
+        $params = Yii::$app->request->post('params', '');
+        $config = [];
+        if($params) {
+            $paramArr = explode('.', $params);
+            if(count($paramArr) == 2) {
+                $pbc_tnam   = $paramArr[0];
+                $pbc_cnam   = $paramArr[1];
+                $classmark  = ColTable::getClassmark($pbc_tnam, $pbc_cnam);
+                $data       = $classmark ? Preferences::getByClassmark($classmark) : [];
+            }
+        }
+
+        if( count($data) ) {
+            foreach( $data as $key=>$value ) {
+                $tmp['id']   = $key;
+                $tmp['text'] = $value;
+                $config[]    = $tmp;
+            }
+        }
+
+        return count($config) ? Json::encode($config) : '';
     }
 
     /**

@@ -15,28 +15,93 @@
  * ==============================================
  */
 ?>
-<!-- Single button -->
-<div class="btn-group p-filter">
-    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <i class="fa fa-filter"></i>
-        过滤 <span class="hidden" id="p-filter-data">清空过滤条件</span> <span class="caret"></span>
-    </button>
-    <ul class="dropdown-menu">
-        <li><a href="#">包含历史资料</a></li>
-        <li><a href="#">流动人口</a></li>
-        <li><a href="#">已婚男性</a></li>
-        <li><a href="#">已婚女性</a></li>
-        <li><a href="#">未婚男性</a></li>
-        <li><a href="#">未婚女性</a></li>
-        <li><a href="#">已婚未育</a></li>
-        <li><a href="#">已婚育一孩</a></li>
-        <li><a href="#">已婚育二孩</a></li>
-        <li><a href="#">已婚育三孩及以上</a></li>
-        <li><a href="#">三个月内入职</a></li>
-        <li><a href="#">三个月内离开单位</a></li>
-        <li role="separator" class="divider"></li>
-        <li><a href="#">清空过滤条件</a></li>
-    </ul>
+<div class="box box-primary">
+    <div class="box-body">
+        <form>
+            <?php for( $i = 0; $i < 8; $i++ ): ?>
+                <div class="row row-<?=$i?>" style="margin: 5px 0;">
+                    <div class="col-md-1">
+                        <?= \kartik\widgets\Select2::widget([
+                            'name'      => 'left-' + $i,
+                            'theme'     => \kartik\select2\Select2::THEME_BOOTSTRAP,
+                            'data'      => \common\populac\models\Preferences::getByClassmark('tLeft'),
+                            'options'   => [
+                                'prompt' => '选择左括号',
+                                'title' => '如需要选择左括号，请选择..'
+                            ],
+                            'pluginOptions' => [
+                                'allowClear' => true,
+                                'minimumResultsForSearch' => 'Infinity',//禁用搜索框
+                            ]
+                        ]);?>
+                    </div>
+                    <div class="col-md-4">
+                        <?= \kartik\widgets\Select2::widget([
+                            'name'      => 'field-' . $i,
+                            'theme'     => \kartik\select2\Select2::THEME_BOOTSTRAP,
+                            'data'      => \common\populac\models\ColTable::getColumnInfoByTablename('personal'),
+                            'value'     => 'unit',
+                            'options'   => [
+                                'prompt' => '请选择需要过滤的条件',
+                                'class'  => 'field-select',
+                                'data-classname' => 'select-value-' . $i,
+                            ],
+                            'pluginOptions' => [
+                                'allowClear' => true,
+                            ]
+                        ]);?>
+                    </div>
+                    <div class="col-md-1">
+                        <?= \kartik\widgets\Select2::widget([
+                            'name'      => 'choose-' . $i,
+                            'theme'     => \kartik\select2\Select2::THEME_BOOTSTRAP,
+                            'data'      => \common\populac\models\Preferences::getByClassmark('tChoose'),
+                            'value'     => 'like',
+                            'options'   => [
+                                'multiple' => false,
+                            ],
+                            'pluginOptions' => [
+                                'minimumResultsForSearch' => 'Infinity',//禁用搜索框
+                            ]
+                        ]);?>
+                    </div>
+                    <div class="col-md-4">
+                        <select class="value-select select-value-<?=$i?>" name="value-<?=$i?>" multiple="multiple" style="width: 100%;">
+                        </select>
+                    </div>
+                    <div class="col-md-1">
+                        <?= \kartik\widgets\Select2::widget([
+                            'name'      => 'right-' . $i,
+                            'theme'     => \kartik\select2\Select2::THEME_BOOTSTRAP,
+                            'data'      => \common\populac\models\Preferences::getByClassmark('tRight'),
+                            'options'   => [
+                                'prompt' => '选择右括号',
+                                'title' => '如需要选择右括号，请选择..'
+                            ],
+                            'pluginOptions' => [
+                                'allowClear' => true,
+                                'minimumResultsForSearch' => 'Infinity',//禁用搜索框
+                            ]
+                        ]);?>
+                    </div>
+                    <div class="col-md-1">
+                        <?= \kartik\widgets\Select2::widget([
+                            'name'      => 'relation-' . $i,
+                            'theme'     => \kartik\select2\Select2::THEME_BOOTSTRAP,
+                            'data'      => \common\populac\models\Preferences::getByClassmark('tRelation'),
+                            'value'     => 'and',
+                            'options'   => [
+                                'multiple'  => false,
+                            ],
+                            'pluginOptions' => [
+                                'minimumResultsForSearch' => 'Infinity',//禁用搜索框
+                            ]
+                        ]);?>
+                    </div>
+                </div>
+            <?php endfor; ?>
+        </form>
+    </div>
 </div>
 <?php
 //echo "$o_dropdown";
@@ -44,22 +109,40 @@
 ?>
     <script type="text/javascript">
         $(function() {
-            var preferences = $.parseJSON('<?= $preferences ?>');
-            var work1 = '';
-            var work2 = '01';
-
-            var text = preferences.work1[work2] ? preferences.work1[work2] : '未知';
-            console.log(text);
-
-            var text = preferences.work1[work1] ? preferences.work1[work1] : '未知';
-            console.log(text);
+            $(".value-select").select2({
+                placeholder: '请直接输入，按逗号或空格键分隔..',
+                tags: true,//tagging support
+                tokenSeparators: [',', '，', ' '],//输入 ',' 或 '空格'的时候自动生成 tag
+            });
+            $('.field-select').on("select2:select", function (e) {
+                var $fieldSelect = $('.' + $(this).attr('data-classname'));
+                $.ajax({
+                    url: '<?= Yii::$app->homeUrl ?>/populac/col-table/get-field-config',
+                    data: { params : $(this).val() },
+                    type: 'post',
+                    beforeSend: function () {
+                        layer.load();
+                    },
+                    complete: function () {
+                        layer.closeAll('loading');
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        layer.alert('数据读取出错:' + textStatus + ' ' + errorThrown, {icon: 5});
+                    },
+                    success: function(data) {
+                        if ( data ) {
+                            $fieldSelect.select2('destroy');//先销毁
+                            $fieldSelect.attr('multiple', 'multiple');//设置为可多选
+                            $fieldSelect.select2({
+                                data: $.parseJSON(data)
+                            });
+                        }
+                    }
+                });
+            });
         });
     </script>
 <?php \common\widgets\JsBlock::end() ?>
-<ul>
-    <li id="unitlist">unitlist</li>
-    <li id="personlist">personlist</li>
-</ul>
 
 
 

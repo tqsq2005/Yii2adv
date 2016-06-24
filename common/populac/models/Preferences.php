@@ -164,7 +164,7 @@ class Preferences extends ActiveRecord
                 $result[self::$_classmark] = ArrayHelper::map(parent::find()->where([
                     'status'    => self::STATUS_ACTIVE,
                     'classmark' => self::$_classmark,
-                ])->all(), 'codes', 'name1');
+                ])->orderBy(['codes' => SORT_ASC])->all(), 'codes', 'name1');
             }catch(\yii\db\Exception $e){}
             return $result;
         });

@@ -117,9 +117,7 @@ class PersonalController extends Controller
         $preferences['marry']   = Preferences::getByClassmark('pmarry');
         $preferences['flag']    = Preferences::getByClassmark('pflag');
         $preferences['work1']   = Preferences::getByClassmark('pwork1');
-        //var_dump(\common\populac\models\ColTable::getByTablename('child'));
-        var_dump(\common\populac\models\ColTable::getMissingColumnsByTablenam('personal'));
-        return;
+
         return $this->render('test', [
             'preferences'   => Json::encode($preferences),
         ]);

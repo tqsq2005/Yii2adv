@@ -69,15 +69,25 @@ $this->params['breadcrumbs'][] = $this->title;
                         data: 'pbc_tnam'
                     },
                     {
-                        data: 'pbc_cnam'
+                        data: 'pbc_cnam',
+                        render: function ( data, type, full ) {
+                            var array   = data.split(',');
+                            var string  = '';
+                            var label   = ['default', 'info', 'primary', 'success', 'warning', 'danger'];
+                            for (var i in array)
+                            {
+                                string += ' <span style="cursor: pointer;" class="label label-' + label[ i%5 ] + '" data-toggle="tooltip" title="' + array[i] + '">' + array[i] + '</span> ';
+                            }
+                            return string;
+                        }
                     }
                 ],
                 order: [[ 1, "asc" ]],//初始排序
-                select: {
+                /*select: {
                     style: 'os',
                     items: 'cell',
                     blurable: true
-                },
+                },*/
                 language: {
                     "sProcessing": "处理中...",
                     "sLengthMenu": "显示 _MENU_ 项结果",

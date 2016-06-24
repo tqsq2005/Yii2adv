@@ -31,6 +31,7 @@ class ColTable extends ActiveRecord
 
     static $_data;
     private static $_tablename;
+    private static $_sql;
 
     /**
      * @inheritdoc
@@ -97,25 +98,67 @@ class ColTable extends ActiveRecord
     }
 
     /**
-     * (null) getByTablename : 通过表名返回 数组[英文字段名=>中文字段名]
+     * (null) getColumnInfoByTablename : 通过表名返回 数组[英文字段名=>中文字段名]
      * @static
      * @param $tablename: 表名 eg：personal
      * @return array
      */
-    public static function getByTablename($tablename)
+    public static function getColumnInfoByTablename($tablename)
     {
+        //拼接SQL语句
+        self::$_sql = "SELECT CONCAT(pbc_tnam , '.', pbc_cnam) pbc_cnam, " .
+            " CONCAT(CASE pbc_tnam WHEN 'personal' THEN '员工本人-' WHEN 'marry' THEN '配偶情况-' WHEN 'child' THEN '子女情况-'" .
+            " WHEN 'jedt' THEN '避孕情况-' WHEN 'ycdt' THEN '孕产动态-' WHEN 'check1' THEN '妇检情况-' WHEN 'letter' THEN '联系函-'" .
+            " WHEN 'holidays_data' THEN '休假情况-' WHEN 'xsb' THEN '亲属情况-' WHEN 'unit' THEN '单位情况-'" .
+            " ELSE '' END,pbc_labl) pbc_labl FROM `col_table`" .
+            " where status=:status and pbc_tnam=:pbc_tnam order by sort_no asc";
         self::$_tablename = $tablename;
         self::$_data =  Data::cache(self::CACHE_KEY . self::$_tablename . '_ARRAYDATA', 3600, function(){
             $result = [];
             try {
-                $result[self::$_tablename] = ArrayHelper::map(parent::find()->where([
-                    'status'    => self::STATUS_ACTIVE,
-                    'pbc_tnam' => self::$_tablename,
-                ])->all(), 'pbc_cnam', 'pbc_labl');
+                $result[self::$_tablename] = ArrayHelper::map(parent::getDb()->createCommand(self::$_sql)
+                    ->bindValues([
+                        ':status'   => self::STATUS_ACTIVE,
+                        ':pbc_tnam' => self::$_tablename,
+                    ])->queryAll(), 'pbc_cnam', 'pbc_labl');
             }catch(\yii\db\Exception $e){}
             return $result;
         });
         return isset(self::$_data[$tablename]) ? self::$_data[$tablename] : null;
+    }
+
+    /**
+     * (array) getColumnInfoByTablenames :
+     * @param array $tablenames
+     * @return array
+     */
+    public function getColumnInfoByTablenames( $tablenames = ['personal'] )
+    {
+        $data = [];
+        if( count($tablenames) ) {
+            foreach( $tablenames as $tablename ) {
+                $data[$tablename] = self::getByTablename($tablename);
+            }
+        }
+        return $data;
+    }
+
+    /**
+     * (string) getClassmark :返回指定表某个字段对应的classmark
+     * @static
+     * @param $pbc_tnam
+     * @param $pbc_cnam
+     * @return string
+     */
+    public static function getClassmark( $pbc_tnam, $pbc_cnam )
+    {
+        $query = self::findOne([
+            'pbc_tnam'  => $pbc_tnam,
+            'pbc_cnam'  => $pbc_cnam,
+            'status'    => self::STATUS_ACTIVE,
+        ]);
+
+        return $query ? $query->pbc_classmark : '';
     }
 
     /**
