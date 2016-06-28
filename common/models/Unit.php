@@ -3,6 +3,7 @@
 namespace common\models;
 
 use common\behaviors\ARLogBehavior;
+use common\populac\behaviors\SortableModel;
 use Yii;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
@@ -35,6 +36,7 @@ use yii\helpers\Url;
  * @property string $jsxhdate
  * @property string $jsbdate
  * @property integer $id
+ * @property integer $order_num
  * @property integer $created_by
  * @property integer $updated_by
  * @property integer $created_at
@@ -57,7 +59,7 @@ class Unit extends \yii\db\ActiveRecord
     {
         return [
             [['unitcode', 'unitname', 'upunitcode'], 'required'],
-            [['corpflag', 'created_by', 'updated_by', 'created_at', 'updated_at'], 'integer'],
+            [['corpflag', 'order_num', 'created_by', 'updated_by', 'created_at', 'updated_at'], 'integer'],
             [['unitcode', 'upunitcode'], 'string', 'max' => 30],
             [['unitname', 'address1', 'office', 'rsystem', 'upunitname'], 'string', 'max' => 80],
             [['corporation', 'oname', 'tel', 'fax', 'leader', 'leadertel'], 'string', 'max' => 50],
@@ -84,6 +86,9 @@ class Unit extends \yii\db\ActiveRecord
             ],
             'ARLog' => [
                 'class' => ARLogBehavior::className(),
+            ],
+            'sortable' => [
+                'class' => SortableModel::className(),//auto create column [ order_num ] 's value
             ],
         ]);
     }
@@ -117,6 +122,7 @@ class Unit extends \yii\db\ActiveRecord
             'jsxhdate' => 'Jsxhdate',
             'jsbdate' => 'Jsbdate',
             'id' => 'ID',
+            'order_num' => '排序',
             'created_by' => 'Created By',
             'updated_by' => 'Updated By',
             'created_at' => 'Created At',
@@ -139,7 +145,7 @@ class Unit extends \yii\db\ActiveRecord
         $query->andFilterWhere([
             'upunitcode' => ($id == '0') ? '%' : $id,
         ]);
-        $data = $query->orderBy(['unitcode' => SORT_ASC])->asArray()->all();
+        $data = $query->orderBy(['order_num' => SORT_ASC, 'unitcode' => SORT_ASC])->asArray()->all();
         if(count($data) > 0) {
             foreach($data as &$arr) {
                 $arr['children']    = $this->isParent($arr['id']);

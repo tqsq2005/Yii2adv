@@ -156,6 +156,62 @@ $this->registerJsFile('@web/plus/jsTree/jstree.min.js', ['depends' => 'yii\web\J
                             },
                             "icon": 'fa fa-pencil'
                         },
+                        "move-up": {
+                            "label": "上移",
+                            "action": function (data) {
+                                var inst = $.jstree.reference(data.reference),
+                                    obj = inst.get_node(data.reference);
+                                var id = obj.id;
+                                $.ajax({
+                                    url: '<?=Yii::$app->homeUrl?>/unit/down/',
+                                    type: 'post',
+                                    data: { upunitcode : obj.id },
+                                    beforeSend: function () {
+                                        layer.load();
+                                    },
+                                    complete: function () {
+                                        layer.closeAll('loading');
+                                    },
+                                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                        layer.alert('上移操作出错:' + textStatus + ' ' + errorThrown, {icon: 5});
+                                    },
+                                    success: function(data) {
+                                        layer.msg('已上移..', {icon: 6, time: 1500}, function(index) {
+                                            ( typeof(table) == 'object' ) ? table.ajax.reload() : (console.log('已上移..'));
+                                        });
+                                    }
+                                });
+                            },
+                            "icon": 'fa fa-arrow-up'
+                        },
+                        "move-down": {
+                            "label": "上移",
+                            "action": function (data) {
+                                var inst = $.jstree.reference(data.reference),
+                                    obj = inst.get_node(data.reference);
+                                var id = obj.id;
+                                $.ajax({
+                                    url: '<?=Yii::$app->homeUrl?>/unit/up/',
+                                    type: 'post',
+                                    data: { upunitcode : obj.id },
+                                    beforeSend: function () {
+                                        layer.load();
+                                    },
+                                    complete: function () {
+                                        layer.closeAll('loading');
+                                    },
+                                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                        layer.alert('下移操作出错:' + textStatus + ' ' + errorThrown, {icon: 5});
+                                    },
+                                    success: function(data) {
+                                        layer.msg('已下移..', {icon: 6, time: 1500}, function(index) {
+                                            ( typeof(table) == 'object' ) ? table.ajax.reload() : (console.log('已下移..'));
+                                        });
+                                    }
+                                });
+                            },
+                            "icon": 'fa fa-arrow-down'
+                        },
                         "remove": {
                             "label": "删除",
                             "action": function (data) {

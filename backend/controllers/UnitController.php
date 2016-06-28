@@ -3,20 +3,21 @@
 namespace backend\controllers;
 
 use common\models\Personal;
+use common\populac\behaviors\SortableController;
 use common\populac\models\Preferences;
 use Yii;
 use common\models\Unit;
-use yii\db\Expression;
 use yii\helpers\Json;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 
+defined('IS_ROOT') or define('IS_ROOT', true);
+
 /**
  * UnitController implements the CRUD actions for Unit model.
  */
-class UnitController extends Controller
+class UnitController extends \common\populac\components\Controller
 {
     public function behaviors()
     {
@@ -26,6 +27,10 @@ class UnitController extends Controller
                 'actions' => [
                     'delete' => ['post'],
                 ],
+            ],
+            'sortable' => [
+                'class' => SortableController::className(),
+                'model' => Unit::className(),
             ],
         ];
     }
@@ -181,7 +186,8 @@ class UnitController extends Controller
                 $returnData = Unit::find()->select(['*'])->where([
                     'upunitcode' => Yii::$app->request->get('id')
                 ])->orderBy([
-                    'unitcode' => SORT_ASC,
+                    'order_num'  => SORT_ASC,
+                    'unitcode'  => SORT_ASC,
                 ])->all();
                 return Json::encode($returnData);
             case "crud":
@@ -207,6 +213,7 @@ class UnitController extends Controller
                         }
                         if($model->save()) {
                             $requestData['id'] = $model->id;
+                            $requestData['order_num'] = $model->order_num;
                             $data = [];
                             $data[] = $requestData;
                             return Json::encode(['data' => $data]);
@@ -246,6 +253,7 @@ class UnitController extends Controller
                                     ])->one();
                                 } else {
                                     $requestData['id'] = $requestID;
+                                    $requestData['order_num'] = $model->order_num;
                                 }
                                 $data[] = $requestData;
                             }
@@ -271,9 +279,43 @@ class UnitController extends Controller
     }
 
     /**
+     * (mixed) actionUp : sort_no + 1
+     * @param $id
+     * @return mixed
+     */
+    public function actionUp($id='#')
+    {
+        $upunitcode = Yii::$app->request->post('upunitcode', '');
+        if( $id == '#' ) {
+            $model      = $this->findModel($upunitcode);
+            $id         = $model->id;
+            $upunitcode = $model->upunitcode;
+        }
+        $condition = $upunitcode ? ['upunitcode' => $upunitcode] : [];
+        return $this->move($id, 'up', $condition);
+    }
+
+    /**
+     * (mixed) actionDown : sort_no - 1
+     * @param $id
+     * @return mixed
+     */
+    public function actionDown($id='#')
+    {
+        $upunitcode = Yii::$app->request->post('upunitcode', '');
+        if( $id == '#' ) {
+            $model      = $this->findModel($upunitcode);
+            $id         = $model->id;
+            $upunitcode = $model->upunitcode;
+        }
+        $condition = $upunitcode ? ['upunitcode' => $upunitcode] : [];
+        return $this->move($id, 'down', $condition);
+    }
+
+    /**
      * Finds the Unit model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $unitcode
+     * @param $unitcode
      * @return Unit the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */

@@ -80,7 +80,8 @@ $this->registerCss($css);
                 <th>专干姓名</th>
                 <th>联系电话</th>
                 <th>邮政编码</th>
-                <th style="width:30px;">操作</th>
+                <th style="width:60px;">操作</th>
+                <th>排序</th>
             </tr>
         </thead>
     </table>
@@ -392,8 +393,13 @@ $this->registerCss($css);
                     {
                         data: null,
                         className: "text-center",
-                        defaultContent: '<i class="fa fa-pencil text-primary editor_edit" data-toggle="tooltip" title="修改" style="cursor: pointer;"></i> &nbsp;&nbsp;' +
+                        defaultContent: '<i class="fa fa-arrow-up text-success editor_up" id="btn-view-up" data-toggle="tooltip" title="上移" style="cursor: pointer;"></i> &nbsp;' +
+                        '<i class="fa fa-arrow-down text-success editor_down" id="btn-view-down" data-toggle="tooltip" title="下移" style="cursor: pointer;"></i> &nbsp;' +
+                        '<i class="fa fa-pencil text-primary editor_edit" data-toggle="tooltip" title="修改" style="cursor: pointer;"></i> &nbsp;' +
                         '<i class="fa fa-trash text-primary editor_remove" data-toggle="tooltip" title="删除" style="cursor: pointer;"></i>'
+                    },
+                    {
+                        data: "order_num"
                     }
                 ],
                 //隐藏ID列
@@ -402,9 +408,14 @@ $this->registerCss($css);
                         "searchable": false,
                         "orderable": false,
                         "targets": [0,1]
+                    },
+                    {
+                        "targets": [8],//隐藏系统表字段配置ID
+                        "visible": false,
+                        "searchable": false
                     }
                 ],
-                order: [[ 2, "asc" ]],//初始排序
+                order: [[ 8, "asc" ], [ 2, "asc" ]],//初始排序
                 //deferRender: true, //当处理大数据时，延迟渲染数据，有效提高Datatables处理能力
                 select: {
                     style: 'multi'
@@ -599,6 +610,54 @@ $this->registerCss($css);
                     message: '确定要删除该条记录吗?',
                     buttons: '确认删除'
                 } );
+            } );
+
+            // move up order_num-1
+            $('#unit-list-data-<?=$unitcode?>').on('click', 'i.editor_up', function (e) {
+                var item = table.row($(this).closest('tr')).data();
+                $.ajax({
+                    url: '<?=Yii::$app->homeUrl?>/unit/down/' + item.id,
+                    type: 'post',
+                    data: { upunitcode : item.upunitcode },
+                    beforeSend: function () {
+                        layer.load();
+                    },
+                    complete: function () {
+                        layer.closeAll('loading');
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        layer.alert('上移操作出错:' + textStatus + ' ' + errorThrown, {icon: 5});
+                    },
+                    success: function(data) {
+                        layer.msg('已上移..', {icon: 6, time: 1500}, function(index) {
+                            table.ajax.reload();
+                        });
+                    }
+                });
+            } );
+
+            // move down order_num+1
+            $('#unit-list-data-<?=$unitcode?>').on('click', 'i.editor_down', function (e) {
+                var item = table.row($(this).closest('tr')).data();
+                $.ajax({
+                    url: '<?=Yii::$app->homeUrl?>/unit/up/' + item.id,
+                    type: 'post',
+                    data: { upunitcode : item.upunitcode },
+                    beforeSend: function () {
+                        layer.load();
+                    },
+                    complete: function () {
+                        layer.closeAll('loading');
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        layer.alert('下移操作出错:' + textStatus + ' ' + errorThrown, {icon: 5});
+                    },
+                    success: function(data) {
+                        layer.msg('已下移..', {icon: 6, time: 1500}, function(index) {
+                            table.ajax.reload();
+                        });
+                    }
+                });
             } );
 
             /*table.buttons().container()
