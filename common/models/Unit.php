@@ -218,6 +218,21 @@ class Unit extends \yii\db\ActiveRecord
     }
 
     /**
+     * (array|null) getUnitcodeToUnitnameList : 返回 数组[ fullunitcode => fullunitname ]
+     * @static
+     * @param string $unitcode
+     * @return array|null
+     */
+    public static function getUnitcodeToUnitnameList( $unitcode = '%' )
+    {
+        $unitcodeList = self::getChildList( $unitcode );
+        $SQL    = "SELECT getChildList(unitcode) AS unitcodeList, unitcode, getUnitList(unitcode, '/') AS fullunitcode, getUnitName(unitcode, '/') AS fullunitname,unitname" .
+            " from unit where unitcode <> '%' and FIND_IN_SET (unitcode, :unitcodeList) ORDER BY getUnitList(unitcode, '/')";
+        $data   = self::getDb()->createCommand($SQL)->bindValue(':unitcodeList', $unitcodeList)->queryAll();
+        return $data ? ArrayHelper::map($data, 'unitcodeList', 'fullunitname') : null;
+    }
+
+    /**
      * @return \yii\db\ActiveQuery
      */
     public function getPersonals()

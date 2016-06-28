@@ -46,7 +46,7 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title text-info">多功能查询:输入值如果要输入多个，输入逗号、空格或回车键会自动隔开 <i id="btn-view-adv-search-help" class="fa fa-question-circle text-warning" data-toggle="tooltip" title="点击查看帮助" style="cursor: pointer"></i></h4>
             </div>
-            <form method="post" action="/admin/personal/test" id="btn-view-adv-search-form">
+            <form id="btn-view-adv-search-form">
             <div class="modal-body">
             <?php for( $i = 0; $i < $iSearchColNum; $i++ ): ?>
                 <div class="row row-<?=$i?>" style="margin: 5px 0;">
@@ -71,7 +71,7 @@
                             'name'      => 'field-' . $i,
                             'theme'     => \kartik\select2\Select2::THEME_BOOTSTRAP,
                             'data'      => \common\populac\models\ColTable::getColumnInfoByTablename('personal'),
-                            'value'     =>  ($i==0) ? 'personal.unit' : (($i==1) ? 'personal.logout' : ''),
+                            'value'     =>  ($i==0) ? 'personal.unit' : (($i==1) ? 'personal.logout' : (($i==2) ? 'personal.name1' : '')),
                             'options'   => [
                                 'prompt' => '过滤条件',
                                 'class'  => 'field-select',
@@ -134,9 +134,8 @@
             <?php endfor; ?>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-warning" id="btn-view-adv-search-submit">重 置</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">关 闭</button>
-                <button type="submit" class="btn btn-primary" id="btn-view-adv-search-relation">确 定</button>
+                <button type="button" class="btn btn-primary" id="btn-view-adv-search-relation">确 定</button>
             </div>
             </form>
         </div><!-- /.modal-content -->
@@ -206,7 +205,7 @@
             // Start the tour
             tour.restart();
         })
-            .on('click', '#btn-view-adv-search-submit', function() {
+            .on('click', '#btn-view-adv-search-relation', function() {
                 var data        = $('#btn-view-adv-search-form').serializeArray();
                 var left        = [];
                 var sfield      = [];
@@ -263,7 +262,9 @@
 
                 //拼接SQL
                 for ( var i = 0; i < valid.length; i++ ) {
-                    var s_value = value[i] ? value[i] : "''";
+                    if ( !value[i] )//没有输入值，跳出当次循环
+                        continue;
+                    var s_value = value[i];
                     //如果有多个值，必须提醒[逻辑比较符]改为[范围内]或[范围外]
                     if( typeof( s_value ) == 'object' && s_value.length > 1 && choose[i] != 'in' && choose[i] != 'not in' ) {
                         layer.msg('输入值有多个，请将[逻辑比较符]改为[范围内]或[范围外]..', {icon: 5, time: 2000}, function(index) {
@@ -274,47 +275,71 @@
                         });
                         return false;
                     }
-                    if ( choose[i] == 'like' || choose[i] == 'not like' ) {
-                        s_value = (s_value == "''") ? "'%'" : "'%" + s_value + "%'";
-                    }
-                    if ( choose[i] == 'in' || choose[i] == 'not in' ) {
-                        if ( typeof( s_value ) == 'string' ) {
-                            s_value = "['" + s_value + "']";
-                        } else {
-                            var  s_value_tmp = '';
-                            for ( var j = 0; j < s_value.length; j++ ) {
-                                s_value_tmp += (j > 0 ? ', ' : '') + "'" + s_value[j] + "'";
-                            }
-                            s_value = "[" + s_value_tmp + "]";
+                    if ( sfield[i].split('.')[1] != 'unit' ) {//非单位编码字段
+                        if ( choose[i] == 'like' || choose[i] == 'not like' ) {
+                            s_value = "'%" + s_value + "%'";
                         }
+                        if ( choose[i] == 'in' || choose[i] == 'not in' ) {
+                            if ( typeof( s_value ) == 'string' ) {
+                                s_value = "['" + s_value + "']";
+                            } else {
+                                var  s_value_tmp = '';
+                                for ( var j = 0; j < s_value.length; j++ ) {
+                                    s_value_tmp += (j > 0 ? ', ' : '') + "'" + s_value[j] + "'";
+                                }
+                                s_value = "[" + s_value_tmp + "]";
+                            }
+                        }
+                        sql += ' ' + ( (i > 0 && sql > '') ? ( relation[i-1] + ' ' ) : '' ) +
+                            left[i] + sfield[i] + ' ' + choose[i] + ' ' + s_value + right[i];
+                    } else {//单位编码字段
+                        if ( choose[i] == 'like' || choose[i] == 'not like' ) {
+                            s_value = "'" + s_value + "'";
+                            sql += ' ' + ( (i > 0 && sql > '') ? ( relation[i-1] + ' ' ) : '' ) +
+                                left[i] + ( choose[i] == 'not like' ? 'not ' : '' ) + "FIND_IN_SET (" + sfield[i] + ", " + s_value + ")" + right[i];
+                        }
+                        if ( choose[i] == 'in' || choose[i] == 'not in' ) {
+                            if ( typeof( s_value ) == 'string' ) {
+                                s_value = "'" + s_value + "'";
+                                sql += ' ' + ( (i > 0 && sql > '') ? ( relation[i-1] + ' ' ) : '' ) +
+                                    left[i] + ( choose[i] == 'not in' ? 'not ' : '' ) + "FIND_IN_SET (" + sfield[i] + ", " + s_value + ")" + right[i];
+                            } else {
+                                var  s_value_tmp = '';
+                                for ( var j = 0; j < s_value.length; j++ ) {
+                                    s_value_tmp += (j > 0 ? ' or ' : '') + "FIND_IN_SET (" + sfield[i] + ", '" + s_value + "')"
+                                }
+                                sql += ' ' + ( (i > 0 && sql > '') ? ( relation[i-1] + ' ' ) : '' ) +
+                                    left[i] + ( choose[i] == 'not in' ? 'not ' : '' ) + '(' + s_value_tmp + ')' + right[i];
+                            }
+                        }
+
                     }
-                    sql += left[i] + sfield[i] + ' ' + choose[i] + ' ' + s_value + right[i] + ' '
-                        + ( ( i < ( valid.length - 1 ) ) ? ( relation[i] + ' ' ) : '' );
                 }
-                //console.log(value);
+                $('#btn-view-adv-search').modal('hide');
+                //TODO
                 console.log(sql);
             });
         $(function() {
             $.fn.modal.Constructor.prototype.enforceFocus = function() {};//modal bug
-            $(".value-select").select2({
-                placeholder: '输入值',
-                tags: true,//tagging support
-                tokenSeparators: [',', '，', ' '],//输入 ',' 或 '空格'的时候自动生成 tag
-            });
-            $('.select-value-0').prop("disabled", false);
+
+            /*$('.select-value-0').prop("disabled", false);
             $('.select-value-1').prop("disabled", false);
             $('.select-value-1').select2({
                 data: [{"id":0,"text":"有效"},{"id":1,"text":"离退休"},{"id":2,"text":"死亡"},{"id":3,"text":"迁出"},{"id":4,"text"
                     :"开除"},{"id":5,"text":"辞职"},{"id":6,"text":"调离"},{"id":7,"text":"解除劳动合同"},{"id":8,"text":"合同期满"},{"id"
                     :9,"text":"其他"}]
-            }).val("0").trigger("change");
+            }).val("0").trigger("change");*/
             $('.field-select').on("select2:select", function (e) {
+                if ( !($(this).val()) )
+                    return false;
                 var $fieldSelect = $('.' + $(this).attr('data-classname'));
+                var params = $(this).val();
+                var classmark = params.split('.')[1];
                 //var $chooseSelect = $('.choose-select-' + ($(this).attr('name')).split('-')[1]);
 
                 $.ajax({
                     url: '<?= Yii::$app->homeUrl ?>/populac/col-table/get-field-config',
-                    data: { params : $(this).val() },
+                    data: { params : params },
                     type: 'post',
                     beforeSend: function () {
                         layer.load();
@@ -335,6 +360,8 @@
                             $fieldSelect.select2({
                                 data: $.parseJSON(data)
                             });
+                            if ( classmark == 'logout' )//注销原因
+                                $fieldSelect.select2().val("0").trigger("change");
                         } else {
                             $fieldSelect.html('');//清空之前的选项
                             //$fieldSelect.select2('destroy');//先销毁
@@ -348,6 +375,19 @@
                     }
                 });
             });
+            //modal shown event: loading col-value's config data
+            var i_modal_shown = 0;
+            $('#btn-view-adv-search').on('shown.bs.modal', function (e) {
+                if ( !i_modal_shown++ )
+                {
+                    $(".value-select").select2({
+                        placeholder: '输入值',
+                        tags: true,//tagging support
+                        tokenSeparators: [',', '，', ' '],//输入 ',' 或 '空格'的时候自动生成 tag
+                    });
+                    $('.field-select').trigger('select2:select');
+                }
+            })
         });
     </script>
 <?php \common\widgets\JsBlock::end() ?>

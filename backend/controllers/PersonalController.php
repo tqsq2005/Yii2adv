@@ -126,6 +126,9 @@ class PersonalController extends Controller
         if(Yii::$app->request->isPost) {
             var_dump(Yii::$app->request->post());
         } else {
+            /*$data = \common\models\Unit::getUnitcodeToUnitnameList();
+            var_dump($data);// $data;
+            return;*/
             return $this->render('test', [
                 'iSearchColNum' => Preferences::get('tSearch', 'colnum'),//高级搜索的行数
             ]);
@@ -336,6 +339,75 @@ class PersonalController extends Controller
             default:
                 throw new \Exception('参数错误！');
         }
+    }
+
+    /**
+     * (string) actionSearchList : 多功能查询后的人员列表
+     * @return string
+     */
+    public function actionSearchResult()
+    {
+        //$this->layout = 'bank';
+        $sql                    = Yii::$app->request->post('sql');
+        /*配置参数*/
+        $preferences            = [];
+        $preferences['sex']     = Preferences::getByClassmark('psex');
+        $preferences['marry']   = Preferences::getByClassmark('pmarry');
+        $preferences['flag']    = Preferences::getByClassmark('pflag');
+        $preferences['work1']   = Preferences::getByClassmark('pwork1');
+
+        return $this->renderAjax('_search-list', [
+            'preferences'   => Json::encode($preferences),
+            'sql'           => $sql,
+        ]);
+
+    }
+
+    /**
+     * (string) actionSearchDataTables : search datatables
+     * @return string
+     * @throws \Exception
+     */
+    public function actionSearchDataTables()
+    {
+        $sql            = Yii::$app->request->post('sql');
+        $responseType   = Yii::$app->request->get('type');
+        $returnData     = [];
+        switch($responseType) {
+            case "fetch":
+                if( $sql ) {
+                    $returnData = Yii::$app->getDb()
+                        ->createCommand('SELECT * FROM `personal` WHERE ' . $sql . ' order by unit asc, code1 asc')
+                        ->queryAll();
+                } else {
+                    //随机取200条记录
+                    $randomSQL = 'SELECT * ' .
+                        'FROM `personal` AS t1 JOIN (SELECT ROUND(RAND() * ' .
+                        '((SELECT MAX(id) FROM `personal`)-(SELECT MIN(id) FROM `personal`))+(SELECT MIN(id) FROM `personal`)) AS id) AS t2 ' .
+                        'WHERE t1.id >= t2.id ' .
+                        'ORDER BY t1.unit, t1.code1 LIMIT 200';
+                    $returnData = Yii::$app->getDb()
+                        ->createCommand($randomSQL)
+                        ->queryAll();
+                }
+
+                return Json::encode($returnData);
+            case "crud":
+                $requestAction = Yii::$app->request->post('action');
+                switch($requestAction) {
+                    case "remove":
+                        //多选则删除全部 用deleteAll()不会触发 event： EVENT_BEFORE_DELETE 和 EVENT_AFTER_DELETE
+                        foreach(Yii::$app->request->post('data') as $removeID => $removeData) {
+                            Personal::findOne($removeID)->delete();
+                        }
+                        return Json::encode($returnData);
+                    default:
+                        return Json::encode($returnData);
+                };
+            default:
+                throw new \Exception('参数错误！');
+        }
+
     }
 
     /**

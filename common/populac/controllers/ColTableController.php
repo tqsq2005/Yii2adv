@@ -18,6 +18,7 @@
 namespace common\populac\controllers;
 
 use bedezign\yii2\audit\models\AuditTrailSearch;
+use common\models\Unit;
 use common\populac\behaviors\SortableController;
 use common\populac\models\Preferences;
 use Yii;
@@ -230,6 +231,9 @@ class ColTableController extends \common\populac\components\Controller
                 $pbc_cnam   = $paramArr[1];
                 $classmark  = ColTable::getClassmark($pbc_tnam, $pbc_cnam);
                 $data       = $classmark ? Preferences::getByClassmark($classmark) : [];
+                if( $pbc_cnam == 'unit' ) {
+                    $data   = Unit::getUnitcodeToUnitnameList();
+                }
             }
         }
 

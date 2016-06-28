@@ -6,7 +6,7 @@
  * ----------------------------------------------
  * 这不是一个自由软件，未经授权不许任何使用和传播。
  * ----------------------------------------------
- * @date: 16-6-19 上午11:07
+ * @date: 16-6-28 下午5:14
  * @author: LocoRoco<tqsq2005@gmail.com>
  * @version:v2016
  * @since:Yii2
@@ -16,32 +16,12 @@
  */
 
 /* @var $this yii\web\View */
-/* @var integer $parent */
-/* @var string $parentName */
-/* @var string $code1 */
 /* @var object $preferences jsondata */
+/* @var string $sql */
 
 $this->title = '人员列表';
 $this->params['breadcrumbs'][] = $this->title;
 $css = <<<CSS
-div.modal-dialog {
-    width: 800px;
-}
-
-div.DTE_Body div.DTE_Body_Content div.DTE_Field {
-    float: left;
-    width: 50%;
-    padding: 5px 10px;
-    clear: none;
-    box-sizing: border-box;
-}
-
-div.DTE_Body div.DTE_Form_Content:after {
-    content: ' ';
-    display: block;
-    clear: both;
-}
-
 span.p-extra-filter {
     cursor: pointer;
 }
@@ -49,32 +29,8 @@ CSS;
 $this->registerCss($css);
 \common\assets\DataTableEditorAsset::register($this);
 ?>
-<div class="box box-success">
-    <div class="box-header with-border">
-        <span class="box-title text-green" id="box-unitname"><i class="fa fa-info-circle" aria-hidden="true"></i> <?= $parentName ?>-基本情况</span>
-
-        <div class="box-tools pull-right">
-            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-            </button>
-        </div>
-    </div>
-    <!-- /.box-header -->
-    <div class="box-body">
-        <div class="row">
-            <div class="col-md-12" style="height: 58px;">
-                <span id="box-unit-info"  class="text-purple">总人数为 -- 人，流动人口为 -- 人，已婚男性人数为 -- 人，已婚女性人数为 -- 人，未婚男性人数
-为 -- 人，未婚女性人数为 -- 人，已婚未育 -- 人，已婚育一孩 -- 人，已婚育二孩 -- 人，近三个月内新入职 -- 人，近三个月内离开单位 -- 人。 </span>
-                <!-- ./chart-responsive -->
-            </div>
-            <!-- /.col -->
-        </div>
-        <!-- /.row -->
-    </div>
-    <!-- /.box-body -->
-</div>
-<!-- /.box -->
-<div class="person-list">
-    <table id="person-list-data" class="table table-striped table-bordered" cellspacing="0" width="100%">
+<div class="person-search-list">
+    <table id="person-search-list-data" class="table table-striped table-bordered" cellspacing="0" width="100%">
         <thead>
             <tr>
                 <th style="width:30px;"></th>
@@ -95,44 +51,6 @@ $this->registerCss($css);
 </div>
 <?php \common\widgets\JsBlock::begin(); ?>
     <script type="text/javascript">
-        //获取查询参数
-        function getQueryCondition(data)
-        {
-            var param = {};
-            //组装查询参数
-            param.name = $("#name-search").val();
-            param.position = $("#position-search").val();
-            param.office = $("#office-search").val();
-            param.extn = $("#extn-search").val();
-            param.status = $("#status-search").val();
-            param.role = $("#role-search").val();
-            //组装分页参数
-            param.startIndex = data.start;
-            param.pageSize = data.length;
-
-            return param;
-        }
-
-        function boxUnitInfo(unit) {
-            $.ajax({
-                url: '<?= \yii\helpers\Url::to(['/personal/summary']) ?>',
-                type : 'get',
-                data : { unit: unit },
-                beforeSend: function () {
-                    layer.load();
-                },
-                complete: function () {
-                    layer.closeAll('loading');
-                },
-                error: function() {
-                    layer.msg("单位基本情况数据获取失败..",{icon: 5});
-                },
-                success: function(data, textStatus){
-                    $("#box-unit-info").html(data);
-                    $("#box-unit-info").textPrint(30);
-                }
-            });
-        }
         var editor = null; // use a global for the submit and return data rendering in the examples
         var preferences = $.parseJSON('<?= $preferences ?>');
         window.pdfMake.fonts  = {
@@ -148,11 +66,9 @@ $this->registerCss($css);
 
             layer.closeAll('tips');
 
-            boxUnitInfo('<?= $parent ?>');
-
             editor = new $.fn.dataTable.Editor( {
                 ajax: {
-                    url:  "<?=Yii::$app->homeUrl?>/personal/data-tables?type=crud",
+                    url:  "<?=Yii::$app->homeUrl?>/personal/search-data-tables?type=crud",
                     dataSrc: '',
                     beforeSend: function () {
                         layer.load();
@@ -164,7 +80,7 @@ $this->registerCss($css);
                         layer.msg("数据处理失败，请重试!",{icon: 5});
                     }
                 },
-                table: "#person-list-data",
+                table: "#person-search-list-data",
                 idSrc:  'id',
                 i18n: {
                     create: {
@@ -203,22 +119,9 @@ $this->registerCss($css);
                 },
                 fields: [
                     {
-                        label: "所在部门:",
-                        name: "unit",
-                        type: "readonly",
-                        id: "p-unit",
-                        def: "<?= $parent ?>",
-                        fieldInfo: "<?= $parentName ?>"
-                    },
-                    {
                         label: "登记日期:",
                         name: "s_date",
                         def: moment(new Date).format('YYYYMMDD')
-                    },
-                    {
-                        label: "个人编码:",
-                        name: "code1",
-                        def: "<?= $code1 ?>"
                     },
                     {
                         label: "姓名:",
@@ -243,7 +146,7 @@ $this->registerCss($css);
                 });
 
             // Edit record
-            $('#person-list-data').on('click', 'i.editor_edit', function (e) {
+            $('#person-search-list-data').on('click', 'i.editor_edit', function (e) {
                 //e.preventDefault();
                 var item = table.row($(this).closest('tr')).data();
                 layer.msg('进入个人档案修改界面..', {icon: 6, time: 1000}, function(index) {
@@ -252,7 +155,7 @@ $this->registerCss($css);
             } );
 
             // Delete a record
-            $('#person-list-data').on('click', 'i.editor_remove', function (e) {
+            $('#person-search-list-data').on('click', 'i.editor_remove', function (e) {
                 //e.preventDefault();
                 editor.remove( $(this).closest('tr'), {
                     title: '删除员工档案',
@@ -261,7 +164,7 @@ $this->registerCss($css);
                 } );
             } );
 
-            var table = $('#person-list-data').DataTable( {
+            var table = $('#person-search-list-data').DataTable( {
                 //dom: "bfrtip",
                 dom:"<'row'<'col-md-9'l><'col-md-3'f>r>tip",
                 lengthChange: true,     //是否允许用户改变表格每页显示的记录数，默认为true
@@ -271,11 +174,9 @@ $this->registerCss($css);
                 ],//每页显示条数设置
                 stateSave: true,        //保存状态，如果当前页面是第五页，刷新还是在第五页，默认为false
                 ajax: {
-                    url:  "<?=Yii::$app->homeUrl?>/personal/data-tables?type=fetch&id=<?= $parent ?>",
-                    data: function ( d ) {
-                        //添加额外的参数传给服务器
-                        d.extra_filter = $("span#p-filter-data").text();
-                    },
+                    url:  "<?=Yii::$app->homeUrl?>/personal/search-data-tables?type=fetch",
+                    type: "POST",
+                    data: { sql : "<?= $sql ?>" },
                     dataSrc: '',
                     beforeSend: function () {
                         layer.load();
@@ -370,19 +271,9 @@ $this->registerCss($css);
                     }
                 ],
                 order: [[ 3, "asc" ]],//初始排序
-                //deferRender: true, //当处理大数据时，延迟渲染数据，有效提高Datatables处理能力
                 select: {
                     style: 'multi'
                 },
-                /*keys: {
-                    columns: ':not(:first-child)',
-                    editor:  editor
-                },
-                select: {
-                    style:    'os',
-                    selector: 'td:first-child',
-                    blurable: true
-                },*/
                 createdRow: function( row, data, dataIndex ) {
                     if ( data.sex == '01' && data.marry > '10' ) {
                         $(row).addClass( 'text-purple' );
@@ -396,8 +287,6 @@ $this->registerCss($css);
                         $(row).addClass( 'text-muted' );
                         return;
                     }
-                    //$(row).addClass( 'text-black' );
-                    //return;
                 },
                 language: {
                     "sProcessing": "处理中...",
@@ -427,12 +316,6 @@ $this->registerCss($css);
             } );
 
             // Display the buttons
-            var e_p_btn_add = function (e) {
-                //e.preventDefault();
-                layer.msg('进入个人档案录入界面..', {icon: 6, time: 1000}, function(index) {
-                    window.open('<?= \yii\helpers\Url::to(['/personal/create']) ?>', '_blank');
-                });
-            };
 
             var e_p_btn_edit = function (e) {
                 //e.preventDefault();
@@ -454,95 +337,10 @@ $this->registerCss($css);
                  }*/
             };
 
-            var e_p_filter = function (e, dt, node, config) {
-                var text = '<i class="fa fa-check-square-o text-red"></i> <span class="text-red">' + $(node).text() + '</span>';
-                $("span#p-filter-data").text($(node).text());
-                $("#box-unitname").trigger('click');
-                layer.msg('根据当前过滤条件：' + text + ', 数据重新生成..', {icon: 6, time: 1000}, function(index) {
-                    table.ajax.reload();
-                    var s_unitname =  '<?= $parentName ?>-基本情况 &nbsp;&nbsp;<span class="text-info">[ 当前过滤条件为：' + text +' ]</span>';
-                    $("#box-unitname").html(s_unitname);
-                    $("#box-unitname").textPrint(100);
-                    layer.tips('当前过滤条件为：' + text, 'i.p-filter', {
-                        tips: [1, '#000'], //还可配置颜色
-                        time: 3000000
-                    });
-                });
-            };
             new $.fn.dataTable.Buttons( table, [
-                {
-                    text: '<i class="fa fa-plus"></i> 新增',
-                    action: e_p_btn_add
-                },
                 {
                     text: '<i class="fa fa-edit"></i> 修改',
                     action: e_p_btn_edit
-                },
-                {
-                    extend: 'collection',
-                    text: '<i class="fa fa-filter p-filter"></i> 过滤<span class="hidden" id="p-filter-data">无过滤条件</span>',
-                    buttons: [
-                        {
-                            text: '无过滤条件',
-                            action: e_p_filter
-                        },
-                        {
-                            text: '包含历史资料',
-                            action: e_p_filter
-                        },
-                        {
-                            text: '流动人口',
-                            action: e_p_filter
-                        },
-                        {
-                            text: '已婚人员',
-                            action: e_p_filter
-                        },
-                        {
-                            text: '已婚男性',
-                            action: e_p_filter
-                        },
-                        {
-                            text: '已婚女性',
-                            action: e_p_filter
-                        },
-                        {
-                            text: '未婚人员',
-                            action: e_p_filter
-                        },
-                        {
-                            text: '未婚男性',
-                            action: e_p_filter
-                        },
-                        {
-                            text: '未婚女性',
-                            action: e_p_filter
-                        },
-                        {
-                            text: '已婚未育',
-                            action: e_p_filter
-                        },
-                        {
-                            text: '已婚育一孩',
-                            action: e_p_filter
-                        },
-                        {
-                            text: '已婚育二孩',
-                            action: e_p_filter
-                        },
-                        {
-                            text: '已婚育三孩及以上',
-                            action: e_p_filter
-                        },
-                        {
-                            text: '三个月内入职',
-                            action: e_p_filter
-                        },
-                        {
-                            text: '三个月内离开单位',
-                            action: e_p_filter
-                        }
-                    ]
                 },
                 {
                     extend: 'collection',
@@ -553,14 +351,9 @@ $this->registerCss($css);
                         { extend: "selectNone", text: '取消全选' }
                     ]
                 },
-                /*{ extend: "edit",   editor: editor },
-                { extend: "remove", editor: editor },*/
-                //column selector
                 {
                     extend: 'colvis',
                     text: '掩藏/显示 列',
-                    //第几列开始
-                    //columns: ':gt(1)'
                 },
                 {
                     extend: 'collection',
@@ -653,11 +446,6 @@ $this->registerCss($css);
                         cell.innerHTML = i + 1;
                     });
                 }).draw();
-
-
-
-            /*table.buttons().container()
-                .appendTo( $('.col-sm-6:eq(0)', table.table().container() ) );*/
 
             //按钮组和每页页码选择框间隔开
             table.buttons().container()

@@ -41,7 +41,9 @@ class UnitController extends \common\populac\components\Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        return $this->render('index', [
+            'iSearchColNum' => Preferences::get('tSearch', 'colnum'),//高级搜索的行数
+        ]);
     }
 
     /**
