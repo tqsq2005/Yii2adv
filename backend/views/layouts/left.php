@@ -3,9 +3,14 @@
     <section class="sidebar">
 
         <!-- Sidebar user panel -->
+        <?php
+        $user_avatar = $directoryAsset . '/img/user2-160x160.jpg';
+        if( $avatar = \common\models\UserAvatar::getAvatar(Yii::$app->user->identity->id) )
+            $user_avatar = Yii::$app->homeUrl.'/uploads/user/avatar/' . $avatar;
+        ?>
         <div class="user-panel">
             <div class="pull-left image">
-                <img src="<?= $directoryAsset ?>/img/user2-160x160.jpg" class="img-circle" alt="User Image"/>
+                <img src="<?= $user_avatar ?>" class="img-circle" alt="User Image"/>
             </div>
             <div class="pull-left info">
                 <p>超级管理员</p>

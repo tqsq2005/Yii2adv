@@ -173,6 +173,14 @@ $config = [
                         'yii2tech-admin' => 'yii2tech-admin.php',
                     ]
                 ],
+                'user' => [
+                    'class' => 'yii\i18n\PhpMessageSource',
+                    'sourceLanguage' => 'en-US',
+                    'basePath' => '@common/messages',
+                    'fileMap' => [
+                        'yii2tech-admin' => 'user.php',
+                    ]
+                ],
             ],
         ],
     ],

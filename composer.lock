@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "e4ad8b710ee4ca2c5edaa35ccbbda4b3",
-    "content-hash": "08ac5f44b45f41bbc897fea7801f093d",
+    "hash": "d7b6030a3e8dd6571ecc3f3ac547f1a0",
+    "content-hash": "8be8e36cb6365903db6d28344961d4d2",
     "packages": [
         {
             "name": "2amigos/yii2-chartjs-widget",
@@ -2125,6 +2125,48 @@
                 "icon"
             ],
             "time": "2016-05-04 16:06:44"
+        },
+        {
+            "name": "iisns/yii2-webuploader",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/iisns/yii2-webuploader.git",
+                "reference": "b7d282aaf43f1fda098787db6fa4c9dba917169a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://packagist.phpcomposer.com/files/iisns/yii2-webuploader/b7d282aaf43f1fda098787db6fa4c9dba917169a.zip",
+                "reference": "b7d282aaf43f1fda098787db6fa4c9dba917169a",
+                "shasum": ""
+            },
+            "require": {
+                "yiisoft/yii2": "*"
+            },
+            "type": "yii2-extension",
+            "autoload": {
+                "psr-4": {
+                    "iisns\\webuploader\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Shiyang",
+                    "email": "dr@shiyang.me"
+                }
+            ],
+            "description": "WebUploader是一个简单的以Html5为主，Flash为辅的现代文件上传组件。在现代的浏览器里面能充分发挥html5的优势，同时又不摒弃主流IE浏览器，延用原来的Flash运行时。两套运行时，同样的调用方式，可供用户任意选用。WebUploader采用大文件分片并发上传，极大的提高了文件上传效率。",
+            "keywords": [
+                "iisns",
+                "upload",
+                "webuploader",
+                "yii2"
+            ],
+            "time": "2016-02-13 11:19:26"
         },
         {
             "name": "imagine/imagine",
@@ -4468,21 +4510,23 @@
         },
         {
             "name": "mdmsoft/yii2-admin",
-            "version": "1.0.5",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mdmsoft/yii2-admin.git",
-                "reference": "b1297aa7162a90c3a6abe11924e60e0a7ffd9c5f"
+                "reference": "f1711779ea3c19e334d9774d223a9682e693b31e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://packagist.phpcomposer.com/files/mdmsoft/yii2-admin/b1297aa7162a90c3a6abe11924e60e0a7ffd9c5f.zip",
-                "reference": "b1297aa7162a90c3a6abe11924e60e0a7ffd9c5f",
+                "url": "https://packagist.phpcomposer.com/files/mdmsoft/yii2-admin/f1711779ea3c19e334d9774d223a9682e693b31e.zip",
+                "reference": "f1711779ea3c19e334d9774d223a9682e693b31e",
                 "shasum": ""
             },
             "require": {
-                "yiisoft/yii2": "~2.0",
-                "yiisoft/yii2-jui": "~2.0"
+                "yiisoft/yii2": "~2.0.7"
+            },
+            "require-dev": {
+                "yiisoft/yii2-codeception": "~2.0"
             },
             "suggest": {
                 "yiisoft/yii2-bootstrap": "Used when using layout 'left-menu', 'right-menu' or 'top-menu'"
@@ -4490,7 +4534,12 @@
             "type": "yii2-extension",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.0.x-dev"
+                    "dev-1.0.master": "1.0.x-dev",
+                    "dev-master": "2.x-dev"
+                },
+                "asset-installer-paths": {
+                    "npm-asset-library": "vendor/npm",
+                    "bower-asset-library": "vendor/bower"
                 }
             },
             "autoload": {
@@ -4508,13 +4557,14 @@
                     "email": "misbahuldmunir@gmail.com"
                 }
             ],
-            "description": "Auth manager for Yii2 ",
+            "description": "RBAC Auth manager for Yii2 ",
             "keywords": [
                 "admin",
                 "auth",
+                "rbac",
                 "yii"
             ],
-            "time": "2015-05-05 23:37:30"
+            "time": "2016-05-20 23:38:13"
         },
         {
             "name": "mihaildev/yii2-ckeditor",
@@ -6930,6 +6980,7 @@
         "uran1980/yii2-pace-widget": 20,
         "pendalf89/yii2-tinymce": 20,
         "pendalf89/yii2-filemanager": 20,
+        "mdmsoft/yii2-admin": 20,
         "dektrium/yii2-user": 20,
         "kartik-v/yii2-tree-manager": 20,
         "warrence/yii2-kartikgii": 20,

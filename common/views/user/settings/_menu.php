@@ -17,7 +17,7 @@ $networksVisible = count(Yii::$app->authClientCollection->clients) > 0;
 
 ?>
 
-<div class="panel panel-default">
+<div class="panel panel-info">
     <div class="panel-heading">
         <h3 class="panel-title">
             <img src="http://gravatar.com/avatar/<?= $user->profile->gravatar_id ?>?s=24" class="img-rounded" alt="<?= $user->username ?>" />
@@ -31,6 +31,7 @@ $networksVisible = count(Yii::$app->authClientCollection->clients) > 0;
             ],
             'items' => [
                 ['label' => Yii::t('user', 'Profile'), 'url' => ['/user/settings/profile']],
+                ['label' => '头像', 'url' => ['/user-avatar/index']],
                 ['label' => Yii::t('user', 'Account'), 'url' => ['/user/settings/account']],
                 ['label' => Yii::t('user', 'Networks'), 'url' => ['/user/settings/networks'], 'visible' => $networksVisible],
             ],

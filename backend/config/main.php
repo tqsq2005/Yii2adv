@@ -49,7 +49,19 @@ return [
                 'assignment' => [
                     'class' => 'mdm\admin\controllers\AssignmentController',
                     'userClassName' => \dektrium\user\models\User::className(),
-                    'idField' => 'id'
+                    'idField' => 'id',
+                    'usernameField' => 'username',
+                    //'fullnameField' => 'profile.name',
+                    'extraColumns' => [
+                        [
+                            'attribute' => 'email',
+                            'label' => '联系邮箱',
+                            'value' => function($model, $key, $index, $column) {
+                                return $model->email;
+                            },
+                        ],
+                    ],
+                    //'searchClass' => \dektrium\user\models\UserSearch::className(),
                 ],
                 /*'other' => [
                     'class' => 'path\to\OtherController', // add another controller
@@ -65,7 +77,10 @@ return [
         //dektrium/yii2-user
         'user' => [
             // following line will restrict access to profile, recovery, registration and settings controllers from backend
-            'as backend' => 'dektrium\user\filters\BackendFilter',
+            'as backend' => [
+                'class' => \dektrium\user\filters\BackendFilter::className(),
+                'controllers' => ['profile', 'recovery', 'registration'],
+            ],
         ],
         //dektrium/yii2-rbac
         'rbac' => [
@@ -171,14 +186,15 @@ return [
             'errorAction' => 'site/error',
             'class' => '\bedezign\yii2\audit\components\web\ErrorHandler',
         ],
-        //adminlte 主题
-        /*'view' => [
+        //adminlte 主题, 变更yii2-admin的view路径
+        'view' => [
             'theme' => [
                 'pathMap' => [
-                    '@app/views' => '@vendor/dmstr/yii2-adminlte-asset/example-views/yiisoft/yii2-app'
+                    //'@app/views' => '@vendor/dmstr/yii2-adminlte-asset/example-views/yiisoft/yii2-app'
+                    '@mdm/admin/views' => '@backend/views/admin',
                 ],
             ],
-        ],*/
+        ],
         'request' => [
             'parsers' => [ // 因为模块中有使用angular.js  所以该设置是为正常解析angular提交post数据
                 'application/json' => 'yii\web\JsonParser',

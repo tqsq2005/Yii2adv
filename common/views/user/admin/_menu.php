@@ -1,56 +1,21 @@
 <?php
 
-/*
- * This file is part of the Dektrium project
- *
- * (c) Dektrium project <http://github.com/dektrium>
- *
- * For the full copyright and license information, please view the LICENSE.md
- * file that was distributed with this source code.
- */
+use yii\helpers\Html;
 
-use yii\bootstrap\Nav;
-
+$action = $this->context->action->id;
 ?>
-
-<?= Nav::widget([
-    'options' => [
-        'class' => 'nav-tabs',
-        'style' => 'margin-bottom: 15px',
-    ],
-    'items' => [
-        [
-            'label'   => Yii::t('user', 'Users'),
-            'url'     => ['/user/admin/index'],
-        ],
-        [
-            'label'   => Yii::t('user', 'Roles'),
-            'url'     => ['/rbac/role/index'],
-            'visible' => isset(Yii::$app->extensions['dektrium/yii2-rbac']),
-        ],
-        [
-            'label' => Yii::t('user', 'Permissions'),
-            'url'   => ['/rbac/permission/index'],
-            'visible' => isset(Yii::$app->extensions['dektrium/yii2-rbac']),
-        ],
-        [
-            'label' => Yii::t('user', 'Create'),
-            'items' => [
-                [
-                    'label'   => Yii::t('user', 'New user'),
-                    'url'     => ['/user/admin/create'],
-                ],
-                [
-                    'label' => Yii::t('user', 'New role'),
-                    'url'   => ['/rbac/role/create'],
-                    'visible' => isset(Yii::$app->extensions['dektrium/yii2-rbac']),
-                ],
-                [
-                    'label' => Yii::t('user', 'New permission'),
-                    'url'   => ['/rbac/permission/create'],
-                    'visible' => isset(Yii::$app->extensions['dektrium/yii2-rbac']),
-                ],
-            ],
-        ],
-    ],
-]) ?>
+<ul class="nav nav-pills">
+    <li <?= ($action === 'index') ? 'class="active"' : '' ?>>
+        <?= Html::a('<i class="fa fa-th-list"></i> '.Yii::t('user', 'Users'), ['/user/admin/index']); ?>
+    </li>
+    <?php if($action === 'create' || $action === 'index') : ?>
+        <li <?= ($action==='create') ? 'class="active"' : 'id="menu-user-create"' ?>>
+            <?= Html::a('<i class="fa fa-plus"></i>'.Yii::t('user', 'New user'), ['/user/admin/create']); ?>
+        </li>
+    <?php endif; ?>
+    <?php if(in_array($action, ['update', 'update-profile', 'info', 'assignments'])) : ?>
+        <li class="active">
+            <?= Html::a('<i class="fa fa-edit"></i>'.Yii::t('user', 'Update user account'), \yii\helpers\Url::current()); ?>
+        </li>
+    <?php endif; ?>
+</ul>

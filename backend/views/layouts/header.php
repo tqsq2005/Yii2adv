@@ -226,21 +226,43 @@ use yii\helpers\Html;
                     </ul>
                 </li>
                 <!-- User Account: style can be found in dropdown.less -->
-
+                <?php
+                $user_avatar = $directoryAsset . '/img/user2-160x160.jpg';
+                if( $avatar = \common\models\UserAvatar::getAvatar(Yii::$app->user->identity->id) )
+                    $user_avatar = Yii::$app->homeUrl.'/uploads/user/avatar/' . $avatar;
+                ?>
                 <li class="dropdown user user-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        <img src="<?= $directoryAsset ?>/img/user2-160x160.jpg" class="user-image" alt="User Image"/>
-                        <span class="hidden-xs"><?= Yii::$app->user->identity->username ?></span>
+                        <img src="<?= $user_avatar ?>" class="user-image" alt="User Image"/>
+                        <span class="hidden-xs">
+                            <?php
+                                if( $user = Yii::$app->user->identity ) {
+                                    $profile   = $user->profile;
+                                    if( $profile->name )
+                                        echo $profile->name;
+                                    else
+                                        echo $user->username;
+                                } else {
+                                    echo '游客';
+                                }
+                            ?>
+                        </span>
                     </a>
                     <ul class="dropdown-menu">
                         <!-- User image -->
                         <li class="user-header">
-                            <img src="<?= $directoryAsset ?>/img/user2-160x160.jpg" class="img-circle"
-                                 alt="User Image"/>
+                            <img src="<?= $user_avatar ?>" class="img-circle" alt="User Image"/>
 
                             <p>
-                                Alexander Pierce - Web Developer
-                                <small>Member since Nov. 2012</small>
+                                <?php
+                                    if( $profile ) {
+                                        if( $profile->bio )
+                                            echo $profile->bio;
+                                        echo '<small>' . date('Y-n-j加入', $user->created_at) . '</small>' ;
+                                    } else {
+                                        echo '游客：谢谢你长得这么好看还关注我！';
+                                    }
+                                ?>
                             </p>
                         </li>
                         <!-- Menu Body -->
@@ -258,13 +280,21 @@ use yii\helpers\Html;
                         <!-- Menu Footer-->
                         <li class="user-footer">
                             <div class="pull-left">
-                                <a href="#" class="btn btn-default btn-flat">个人信息</a>
+                                <?= Html::a(
+                                    '个人信息',
+                                    ['/user/settings/profile'],
+                                    ['class' => 'btn btn-default btn-flat']
+                                ) ?>
                             </div>
                             <div class="pull-right">
                                 <?= Html::a(
                                     '退出系统',
                                     ['/user/security/logout'],
-                                    ['data-method' => 'post', 'class' => 'btn btn-default btn-flat']
+                                    [
+                                        'data-method'   => 'post',
+                                        'data-confirm'  => '注销账号，确定吗？',
+                                        'class'         => 'btn btn-default btn-flat'
+                                    ]
                                 ) ?>
                             </div>
                         </li>
