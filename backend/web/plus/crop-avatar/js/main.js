@@ -1,3 +1,19 @@
+/*
+ * $FILE_NAME
+ * ==============================================
+ * 版权所有 2001-2016 http://www.zhmax.com
+ * ----------------------------------------------
+ * 这不是一个自由软件，未经授权不许任何使用和传播。
+ * ----------------------------------------------
+ * @date: 16-7-4 上午10:46
+ * @author: LocoRoco<tqsq2005@gmail.com>
+ * @version:v2016
+ * @since:Yii2
+ * ----------------------------------------------
+ * 程序文件简介：
+ * ==============================================
+ */
+
 (function (factory) {
   if (typeof define === 'function' && define.amd) {
     // AMD. Register as anonymous module.
@@ -21,7 +37,6 @@
     this.$avatarView = this.$container.find('.avatar-view');
     this.$avatar = this.$avatarView.find('img');
     this.$avatarModal = this.$container.find('#avatar-modal');
-    this.$loading = this.$container.find('.loading');
 
     this.$avatarForm = this.$avatarModal.find('.avatar-form');
     this.$avatarUpload = this.$avatarForm.find('.avatar-upload');
@@ -175,10 +190,10 @@
       if (this.active) {
         data = $(e.target).data();
 
-        if (data.method) {
-          this.$img.cropper(data.method, data.option);
+        if (data.cropMethod) {
+          this.$img.cropper(data.cropMethod, data.option);
           //水平或垂直旋转做特殊处理
-          switch (data.method) {
+          switch (data.cropMethod) {
             case 'scaleX':
             case 'scaleY':
                 $(e.target).data('option', -data.option);
@@ -207,6 +222,7 @@
         this.$avatarWrapper.empty().html(this.$img);
         this.$img.cropper({
           aspectRatio: 1,
+          autoCropArea: 0.8,
           preview: this.$avatarPreview.selector,
           crop: function (e) {
             var json = [
@@ -273,12 +289,10 @@
     },
 
     submitStart: function () {
-      this.$loading.fadeIn();
+      layer.load();
     },
 
     submitDone: function (data) {
-      console.log(data);
-
       if ($.isPlainObject(data) && data.state === 200) {
         if (data.result) {
           this.url = data.result;
@@ -305,8 +319,10 @@
       this.alert(msg);
     },
 
-    submitEnd: function () {
-      this.$loading.fadeOut();
+    submitEnd: function (data) {
+      layer.msg('截图已保存', { icon: 6, time: 1500 }, function() {
+        layer.closeAll('loading');
+      });
     },
 
     cropDone: function () {

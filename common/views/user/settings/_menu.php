@@ -31,7 +31,7 @@ $networksVisible = count(Yii::$app->authClientCollection->clients) > 0;
             ],
             'items' => [
                 ['label' => Yii::t('user', 'Profile'), 'url' => ['/user/settings/profile']],
-                ['label' => '头像', 'url' => ['/user-avatar/index']],
+                ['label' => '头像', 'url' => ['/user-avatar/index'], 'visible' => strlen(Yii::$app->homeUrl) <= 1],
                 ['label' => Yii::t('user', 'Account'), 'url' => ['/user/settings/account']],
                 ['label' => Yii::t('user', 'Networks'), 'url' => ['/user/settings/networks'], 'visible' => $networksVisible],
             ],

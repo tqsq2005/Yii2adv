@@ -17,6 +17,7 @@
 
 namespace backend\controllers;
 
+use common\components\cropper\CropAvatar;
 use Yii;
 use common\models\UserAvatar;
 use yii\base\InvalidCallException;
@@ -133,6 +134,65 @@ class UserAvatarController extends Controller
         }
 
         return $this->render('_cropper', [
+            'user' => $user,
+            'avatar' => $avatar,
+        ]);
+    }
+
+    /**
+     * (string) actionCropAvatar : 点击头像的方式更新头像
+     * @return string
+     * @throws \Exception
+     * @throws \yii\base\Exception
+     */
+    public function actionCropAvatar()
+    {
+        $user = Yii::$app->user->identity;//user model
+        //处理回传数据
+        if (Yii::$app->request->isPost) {
+            //数据出入CropAvatar类处理
+            $crop = new CropAvatar(
+                Yii::$app->request->post('avatar_src'),
+                Yii::$app->request->post('avatar_imgSavePath'),
+                Yii::$app->request->post('avatar_data'),
+                isset($_FILES['avatar_file']) ? $_FILES['avatar_file'] : null
+            );
+
+            $saveFileName = $crop->getSaveFileName();//取得新的文件名
+
+            if ( $saveFileName ) {
+                if( $userAvatar = $this->findModel( $user->id ) ) {
+                    $oldFileName = Yii::getAlias('@webroot'.Yii::$app->request->post('avatar_imgSavePath')).$userAvatar->avatar;
+                    //删除旧头像
+                    if (file_exists($oldFileName) && (strpos($userAvatar->avatar, 'default') === false))
+                        @unlink($oldFileName);
+                    //更新头像
+                    $userAvatar->avatar = $saveFileName;
+                    $userAvatar->update();
+                } else {
+                    $userAvatar = new UserAvatar;
+                    $userAvatar->user_id = $user->id;
+                    $userAvatar->avatar = $saveFileName;
+                    $userAvatar->save();
+                }
+            }
+
+            $response = array(
+                'state'         => 200,
+                'message'       => $crop -> getMsg(),
+                'result'        => $crop -> getResult(),
+                'saveFileName'  => $saveFileName,
+            );
+
+            return json_encode($response);
+        }
+
+        $avatar = '';
+        if( $userAvatar = $this->findModel( $user->id ) ) {
+            $avatar = $userAvatar->avatar;
+        }
+
+        return $this->render('_crop_avatar', [
             'user' => $user,
             'avatar' => $avatar,
         ]);
