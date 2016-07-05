@@ -162,9 +162,9 @@ class Unit extends \yii\db\ActiveRecord
      * @param $id
      * @return bool
      */
-    public function isParent($id)
+    public static function isParent($id)
     {
-        $query = $this::find()->andFilterWhere([
+        $query = self::find()->andFilterWhere([
             'upunitcode' => $id,
         ])->count(1);
 

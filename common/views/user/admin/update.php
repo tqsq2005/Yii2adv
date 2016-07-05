@@ -50,6 +50,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     'url' => ['/user/admin/assignments', 'id' => $user->id],
                                     'visible' => isset(Yii::$app->extensions['dektrium/yii2-rbac']),
                                 ],
+                                ['label' => '单位权限', 'url' => ['/map-unit/index', 'user_id' => $user->id]],
                                 '<hr>',
                                 [
                                     'label' => Yii::t('user', 'Confirm'),
