@@ -136,6 +136,23 @@ $this->registerJsFile('@web/plus/jsTree/jstree.min.js', ['depends' => 'yii\web\J
                 $('#unit-tree').jstree(true).search(v);
             }, 250);
         });
+        //ajax success
+        var f_success = function(data) {
+            if ( data == '权限不足,请向主管单位申请！' ) {
+                layer.msg( data, { icon: 5, time: 2000, shift: 6 } );
+            } else {
+                var shiftNum = [0, 1, 2, 3, 4, 5, 6];
+                layer.confirm('单位权限设置成功，是否需要刷新单位权限列表？', {
+                    title: '系统提示',
+                    shift: shiftNum[Math.floor(Math.random()*shiftNum.length)],
+                    icon: 6,
+                    scrollbar: false
+                }, function(index) {
+                    $('#unit-tree').jstree('refresh');
+                    layer.close(index);
+                });
+            }
+        };
         //jstree
         $('#unit-tree')
             .jstree({
@@ -193,18 +210,7 @@ $this->registerJsFile('@web/plus/jsTree/jstree.min.js', ['depends' => 'yii\web\J
                                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                                         layer.alert('设置单位权限出错:' + textStatus + ' ' + errorThrown, {icon: 5});
                                     },
-                                    success: function(data) {
-                                        var shiftNum = [0, 1, 2, 3, 4, 5, 6];
-                                        layer.confirm('单位权限设置成功，是否需要刷新单位权限列表？', {
-                                            title: '系统提示',
-                                            shift: shiftNum[Math.floor(Math.random()*shiftNum.length)],
-                                            icon: 6,
-                                            scrollbar: false
-                                        }, function(index) {
-                                            $('#unit-tree').jstree('refresh');
-                                            layer.close(index);
-                                        });
-                                    }
+                                    success: f_success
                                 });
                             },
                             "icon": 'fa fa-key text-success'
@@ -233,18 +239,7 @@ $this->registerJsFile('@web/plus/jsTree/jstree.min.js', ['depends' => 'yii\web\J
                                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                                         layer.alert('设置单位权限出错:' + textStatus + ' ' + errorThrown, {icon: 5});
                                     },
-                                    success: function(data) {
-                                        var shiftNum = [0, 1, 2, 3, 4, 5, 6];
-                                        layer.confirm('单位权限设置成功，是否需要刷新单位权限列表？', {
-                                            title: '系统提示',
-                                            shift: shiftNum[Math.floor(Math.random()*shiftNum.length)],
-                                            icon: 6,
-                                            scrollbar: false
-                                        }, function(index) {
-                                            $('#unit-tree').jstree('refresh');
-                                            layer.close(index);
-                                        });
-                                    }
+                                    success: f_success
                                 });
                             },
                             "icon": 'fa fa-key text-success'
@@ -263,7 +258,7 @@ $this->registerJsFile('@web/plus/jsTree/jstree.min.js', ['depends' => 'yii\web\J
                                 $.ajax({
                                     url: '<?=Yii::$app->homeUrl?>/map-unit/permission/',
                                     type: 'post',
-                                    data: { permission: 1, unitcode: obj.id, user_id: <?= $user->id ?> },
+                                    data: { permission: 9, unitcode: obj.id, user_id: <?= $user->id ?> },
                                     beforeSend: function () {
                                         layer.load();
                                     },
@@ -273,18 +268,7 @@ $this->registerJsFile('@web/plus/jsTree/jstree.min.js', ['depends' => 'yii\web\J
                                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                                         layer.alert('设置单位权限出错:' + textStatus + ' ' + errorThrown, {icon: 5});
                                     },
-                                    success: function(data) {
-                                        var shiftNum = [0, 1, 2, 3, 4, 5, 6];
-                                        layer.confirm('单位权限设置成功，是否需要刷新单位权限列表？', {
-                                            title: '系统提示',
-                                            shift: shiftNum[Math.floor(Math.random()*shiftNum.length)],
-                                            icon: 6,
-                                            scrollbar: false
-                                        }, function(index) {
-                                            $('#unit-tree').jstree('refresh');
-                                            layer.close(index);
-                                        });
-                                    }
+                                    success: f_success
                                 });
                             },
                             "icon": 'fa fa-eye text-primary'
@@ -303,7 +287,7 @@ $this->registerJsFile('@web/plus/jsTree/jstree.min.js', ['depends' => 'yii\web\J
                                 $.ajax({
                                     url: '<?=Yii::$app->homeUrl?>/map-unit/permission/',
                                     type: 'post',
-                                    data: { permission: 0, unitcode: obj.id, user_id: <?= $user->id ?> },
+                                    data: { permission: 1, unitcode: obj.id, user_id: <?= $user->id ?> },
                                     beforeSend: function () {
                                         layer.load();
                                     },
@@ -313,18 +297,7 @@ $this->registerJsFile('@web/plus/jsTree/jstree.min.js', ['depends' => 'yii\web\J
                                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                                         layer.alert('设置单位权限出错:' + textStatus + ' ' + errorThrown, {icon: 5});
                                     },
-                                    success: function(data) {
-                                        var shiftNum = [0, 1, 2, 3, 4, 5, 6];
-                                        layer.confirm('单位权限设置成功，是否需要刷新单位权限列表？', {
-                                            title: '系统提示',
-                                            shift: shiftNum[Math.floor(Math.random()*shiftNum.length)],
-                                            icon: 6,
-                                            scrollbar: false
-                                        }, function(index) {
-                                            $('#unit-tree').jstree('refresh');
-                                            layer.close(index);
-                                        });
-                                    }
+                                    success: f_success
                                 });
                             },
                             "icon": 'fa fa-eye-slash text-info'
@@ -343,7 +316,7 @@ $this->registerJsFile('@web/plus/jsTree/jstree.min.js', ['depends' => 'yii\web\J
                                 $.ajax({
                                     url: '<?=Yii::$app->homeUrl?>/map-unit/permission/',
                                     type: 'post',
-                                    data: { permission: -1, unitcode: obj.id, user_id: <?= $user->id ?> },
+                                    data: { permission: 0, unitcode: obj.id, user_id: <?= $user->id ?> },
                                     beforeSend: function () {
                                         layer.load();
                                     },
@@ -353,18 +326,7 @@ $this->registerJsFile('@web/plus/jsTree/jstree.min.js', ['depends' => 'yii\web\J
                                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                                         layer.alert('设置单位权限出错:' + textStatus + ' ' + errorThrown, {icon: 5});
                                     },
-                                    success: function(data) {
-                                        var shiftNum = [0, 1, 2, 3, 4, 5, 6];
-                                        layer.confirm('单位权限设置成功，是否需要刷新单位权限列表？', {
-                                            title: '系统提示',
-                                            shift: shiftNum[Math.floor(Math.random()*shiftNum.length)],
-                                            icon: 6,
-                                            scrollbar: false
-                                        }, function(index) {
-                                            $('#unit-tree').jstree('refresh');
-                                            layer.close(index);
-                                        });
-                                    }
+                                    success: f_success
                                 });
                             },
                             "icon": 'fa fa-lock text-muted'

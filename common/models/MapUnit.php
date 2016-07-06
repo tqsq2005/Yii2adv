@@ -24,9 +24,9 @@ use yii\helpers\Url;
  */
 class MapUnit extends \yii\db\ActiveRecord
 {
-    const USER_POWER_DENY       = -1;   // 禁止
-    const USER_POWER_VIEW_DEPT  = 0;    // 只看单位看不见单位下的人员
-    const USER_POWER_VIEW_ALL   = 1;    // 既看单位也看部门只有查看权限
+    const USER_POWER_DENY       = 0;   // 禁止
+    const USER_POWER_VIEW_DEPT  = 1;    // 只看单位看不见单位下的人员
+    const USER_POWER_VIEW_ALL   = 9;    // 既看单位也看部门只有查看权限
     const USER_POWER_ALLOW      = 99;   // 完全
     /**
      * @inheritdoc
@@ -133,6 +133,13 @@ class MapUnit extends \yii\db\ActiveRecord
         return $data;
     }
 
+    /**
+     * (int) getUserPower : 获取user_power
+     * @static
+     * @param integer $user_id
+     * @param string $unitcode
+     * @return int
+     */
     public static function getUserPower($user_id, $unitcode)
     {
         $query = self::findOne(['user_id' => $user_id, 'unitcode' => $unitcode]);
