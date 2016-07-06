@@ -47,18 +47,6 @@ class UnitController extends \common\populac\components\Controller
     }
 
     /**
-     * Displays a single Unit model.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionView($id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
-    }
-
-    /**
      * Creates a new Unit model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
@@ -85,10 +73,10 @@ class UnitController extends \common\populac\components\Controller
     }
 
     /**
-     * Updates an existing Unit model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
+     * (string|Response) actionUpdate : 根据unitcode更新单位或部门
+     * @param $id
+     * @return string|Response
+     * @throws NotFoundHttpException
      */
     public function actionUpdate($id)
     {
@@ -106,21 +94,19 @@ class UnitController extends \common\populac\components\Controller
     }
 
     /**
-     * Deletes an existing Unit model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
+     * (false|int) actionDelete : 根据unitcode删除单位或部门
+     * @return false|int
+     * @throws NotFoundHttpException
+     * @throws \Exception
      */
-    public function actionDelete($id)
+    public function actionDelete()
     {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+        return $this->findModel(Yii::$app->request->post('unitcode'))->delete();
     }
 
     /**
-     * (void) actionTreenode : 生成目录树
-     * @param string $unitcode
+     * (void) actionTree : 生成目录树
+     * @param string $id
      */
     public function actionTree($id='@')
     {

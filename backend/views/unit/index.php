@@ -333,11 +333,40 @@ $this->registerJsFile('@web/plus/jsTree/jstree.min.js', ['depends' => 'yii\web\J
                                 var text = obj.text;
                                 var a_Obj = $('#' + obj.a_attr.id);
 
-                                a_Obj.addClass('showModalButton');
-                                a_Obj.attr('value', '<?= Yii::getAlias('@web'); ?>/unit/delete/' + id );
-                                a_Obj.attr('title', '添加 [' + text + '] 的子级单位(部门)');
-                                a_Obj.trigger('click');
-                                a_Obj.removeClass('showModalButton');
+                                layer.confirm('删除单位(部门)：『'+ text +'['+ id +']』，确定吗？', {
+                                    title: '系统提示',
+                                    shift: 6,
+                                    icon: 5,
+                                    scrollbar: false
+                                }, function(index) {
+                                    $.ajax({
+                                        url: '<?=Yii::$app->homeUrl?>/unit/delete/',
+                                        type: 'post',
+                                        data: { unitcode: id },
+                                        beforeSend: function () {
+                                            layer.load(1);
+                                        },
+                                        complete: function () {
+                                            layer.closeAll('loading');
+                                        },
+                                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                            layer.alert('删除单位(部门)出错:' + textStatus + ' ' + errorThrown, {icon: 5});
+                                        },
+                                        success: function() {
+                                            var shiftNum = [0, 1, 2, 3, 4, 5, 6];
+                                            layer.confirm('单位(部门)：『'+ text +'['+ id +']』已删除，是否需要刷新单位列表？', {
+                                                title: '系统提示',
+                                                shift: shiftNum[Math.floor(Math.random()*shiftNum.length)],
+                                                icon: 6,
+                                                scrollbar: false
+                                            }, function(index) {
+                                                $('#unit-tree').jstree('refresh');
+                                                layer.close(index);
+                                            });
+                                        }
+                                    });
+                                    layer.close(index);
+                                });
                             },
                             "icon": 'fa fa-trash-o'
                         }

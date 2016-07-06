@@ -44,6 +44,8 @@ use yii\helpers\Url;
  */
 class Unit extends \yii\db\ActiveRecord
 {
+    /** @var string $_delUnitcode 要删除的单位编码 */
+    private $_delUnitcode;
     /**
      * @inheritdoc
      */
@@ -91,6 +93,27 @@ class Unit extends \yii\db\ActiveRecord
                 'class' => SortableModel::className(),//auto create column [ order_num ] 's value
             ],
         ]);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function beforeDelete()
+    {
+        //删除之前先赋值unitcode给$_delUnitcode
+        $this->_delUnitcode = $this->unitcode;
+        return parent::beforeDelete();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function afterDelete()
+    {
+        parent::afterDelete();
+        //TODO: 后期要继续添加 删除人员、配偶等等相关联表的代码
+        //删除map_unit表中unitcode是：$_delUnitcode 的
+        MapUnit::deleteAll(['unitcode' => $this->_delUnitcode]);
     }
 
     /**
@@ -149,7 +172,7 @@ class Unit extends \yii\db\ActiveRecord
         if(count($data) > 0) {
             foreach($data as &$arr) {
                 $arr['children']    = $this->isParent($arr['id']);
-                $arr['icon']        = $arr['children'] ? 'fa fa-folder-o text-success' : 'fa fa-star-half-o text-success';
+                $arr['icon']        = $arr['children'] ? 'fa fa-folder text-yellow' : 'fa fa-star-half-o text-success';
                 $arr['id']          = ($arr['id'] == '%') ? '0' : $arr['id'];
                 $arr['url']         = Url::to(['detail', 'id' => $arr['id']]);
             }

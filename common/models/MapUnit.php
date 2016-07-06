@@ -24,7 +24,7 @@ use yii\helpers\Url;
  */
 class MapUnit extends \yii\db\ActiveRecord
 {
-    const USER_POWER_DENY       = 0;   // 禁止
+    const USER_POWER_DENY       = 0;    // 禁止
     const USER_POWER_VIEW_DEPT  = 1;    // 只看单位看不见单位下的人员
     const USER_POWER_VIEW_ALL   = 9;    // 既看单位也看部门只有查看权限
     const USER_POWER_ALLOW      = 99;   // 完全
@@ -124,7 +124,7 @@ class MapUnit extends \yii\db\ActiveRecord
                         break;
                 }
                 $arr['children']    = Unit::isParent($arr['id']);
-                $arr['icon']        = $arr['children'] ? "fa fa-folder-o $user_power_class" : "fa $user_power_icon $user_power_class";
+                $arr['icon']        = $arr['children'] ? "fa fa-folder $user_power_class" : "fa $user_power_icon $user_power_class";
                 $arr['text']        = $arr['children'] ? "<span class='". $user_power_class ."'>{$arr['text']} <i class='fa ". $user_power_icon ."'></i></span>" : "<span class='". $user_power_class ."'>{$arr['text']}</span>";
                 $arr['id']          = ($arr['id'] == '%') ? '0' : $arr['id'];
                 $arr['url']         = Url::to(['index', 'id' => $arr['id']]);

@@ -29,7 +29,7 @@ class MapUnitController extends Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['post'],
+                    'permission' => ['post'],
                 ],
             ],
         ];
@@ -43,7 +43,6 @@ class MapUnitController extends Controller
     public function actionIndex( $user_id )
     {
         /** @var User $user */
-        //$this->layout = '@backend/views/map-unit/_tree.php';
         $user = User::findOne($user_id);
 
         return $this->render('index', [
@@ -68,41 +67,12 @@ class MapUnitController extends Controller
         echo json_encode($data);
     }
 
-    public function actionTest($id='0000230400') {
-        $childList = Unit::getParentList($id);
-        $user_id   = 1;
-        $permission = MapUnit::USER_POWER_VIEW_DEPT;
-        $SQL            = "REPLACE INTO `map_unit`(`user_id`, `unitcode`, `user_power`) ".
-            " SELECT $user_id, u.unitcode, $permission FROM `unit` u LEFT JOIN `map_unit` mu ON u.unitcode = mu.unitcode ".
-            " where FIND_IN_SET(u.unitcode, :unitlist) and (mu.user_power < 0 or mu.user_power IS NULL)";
-        $rawSQL = Yii::$app->db->createCommand($SQL)
-            ->bindValue(':unitlist', $childList)
-            ->getRawSql();
-        echo $rawSQL;
-
-        $childList  = Unit::getChildList($id);
-        $SQL        = "REPLACE INTO `map_unit`(`user_id`, `unitcode`, `user_power`) " .
-            " SELECT $user_id, `unitcode`, $permission FROM `unit` where FIND_IN_SET(`unitcode`, :unitlist)";
-        echo Yii::$app->db->createCommand($SQL)
-            ->bindValue(':unitlist', $childList)
-            ->getRawSql();
-
-        $SQL        = "REPLACE INTO `map_unit`(`user_id`, `unitcode`, `user_power`) ".
-            " SELECT $user_id, u.unitcode, $permission FROM `unit` u LEFT JOIN `map_unit` mu ON u.unitcode = mu.unitcode ".
-            " where u.unitcode = :unitcode and (mu.user_power >= :user_power and mu.user_id = :user_id)";
-        echo Yii::$app->db->createCommand($SQL)
-            ->bindValues([
-                ':unitcode'     => $id,
-                ':user_power'   => $permission,
-                ':user_id'      => Yii::$app->user->identity->id,
-            ])->getRawSql();
-        echo '<br>';
-        $role = Yii::$app->authManager->getRolesByUser(6);
-        var_dump($role);
-        $is_supperAdmin = array_key_exists('超级管理员11', $role);
-        var_dump($is_supperAdmin);
-    }
-
+    /**
+     * (string) actionPermission : 设置单位权限
+     * @return string   返回更新记录说明
+     * @throws \Exception
+     * @throws \yii\db\Exception
+     */
     public function actionPermission() {
         $permission = Yii::$app->request->post('permission');
         $unitcode   = Yii::$app->request->post('unitcode');
@@ -208,21 +178,6 @@ class MapUnitController extends Controller
             throw new \Exception('参数不完整！');
         }
 
-    }
-
-    /**
-     * (null|static) findModel : 根据`$user_id`及`$unitcode`返回`MapUnit`的实例
-     * @param $user_id
-     * @param $unitcode
-     * @return null|MapUnit
-     */
-    protected function findModel($user_id, $unitcode)
-    {
-        if (($model = MapUnit::findOne(['user_id' => $user_id, 'unitcode' => $unitcode])) !== null) {
-            return $model;
-        }
-
-        return null;
     }
 
     /**
