@@ -13,7 +13,8 @@ use yii\widgets\ActiveForm;
         <div class="unit-form">
             <?php $form = ActiveForm::begin([
                 'id' => 'unit-form',
-                'enableClientValidation' => false,
+                //'enableClientValidation' => true,
+                //'enableAjaxValidation' => true,
             ]); ?>
             <div class="row">
                 <div class="col-md-4">
@@ -104,40 +105,7 @@ use yii\widgets\ActiveForm;
                 $('div.field-unit-corporation, div.field-unit-leader, div.field-unit-leadertel').addClass('hidden');
             }
 
-            $(document).on('change', '#unit-corpflag', function() {
-                //单位
-                if ($(this).val() == '4') {
-                    $('div.field-unit-corporation, div.field-unit-leader, div.field-unit-leadertel').removeClass('hidden');
-                } else if ($(this).val() == '5') {//部门
-                    $('div.field-unit-corporation, div.field-unit-leader, div.field-unit-leadertel').addClass('hidden');
-                }
-            });
-            //form 验证
-            $('#unit-form').formValidation({
-                framework: 'bootstrap',
-                excluded: ':disabled',
-                icon: {
-                    valid: 'glyphicon glyphicon-ok',
-                    invalid: 'glyphicon glyphicon-remove',
-                    validating: 'glyphicon glyphicon-refresh'
-                },
-                fields: {
-                    "Unit[unitcode]": {
-                        validators: {
-                            notEmpty: {
-                                message: '单位编码不能为空！'
-                            }
-                        }
-                    },
-                    "Unit[unitname]": {
-                        validators: {
-                            notEmpty: {
-                                message: '单位名称不能为空！'
-                            }
-                        }
-                    }
-                }
-            });
+
         });
     </script>
 <?php \common\widgets\JsBlock::end(); ?>

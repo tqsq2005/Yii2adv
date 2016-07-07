@@ -352,12 +352,22 @@ $this->registerJsFile('@web/plus/jsTree/jstree.min.js', ['depends' => 'yii\web\J
                                         error: function (XMLHttpRequest, textStatus, errorThrown) {
                                             layer.alert('删除单位(部门)出错:' + textStatus + ' ' + errorThrown, {icon: 5});
                                         },
-                                        success: function() {
+                                        success: function(data) {
+                                            if( data == '权限不足' ) {
+                                                layer.msg(data, {icon: 5, time: 1500});
+                                                return;
+                                            }
+                                            var title = '单位(部门)：『'+ text +'['+ id +']』已删除，是否需要刷新单位列表？';
+                                            var icon  = 6;
+                                            if (data == 'StaleObject') {
+                                                title = '单位(部门)：『'+ text +'['+ id +']』不存在，已被他人删除，是否需要刷新单位列表？'
+                                                icon  = 5;
+                                            }
                                             var shiftNum = [0, 1, 2, 3, 4, 5, 6];
-                                            layer.confirm('单位(部门)：『'+ text +'['+ id +']』已删除，是否需要刷新单位列表？', {
+                                            layer.confirm( title, {
                                                 title: '系统提示',
                                                 shift: shiftNum[Math.floor(Math.random()*shiftNum.length)],
-                                                icon: 6,
+                                                icon: icon,
                                                 scrollbar: false
                                             }, function(index) {
                                                 $('#unit-tree').jstree('refresh');
@@ -745,6 +755,73 @@ $this->registerJsFile('@web/plus/jsTree/jstree.min.js', ['depends' => 'yii\web\J
 
 
     });
-
+    //单位JS
+    $(document).on('change', '#unit-corpflag', function() {
+        //单位
+        if ($(this).val() == '4') {
+            $('div.field-unit-corporation, div.field-unit-leader, div.field-unit-leadertel').removeClass('hidden');
+        } else if ($(this).val() == '5') {//部门
+            $('div.field-unit-corporation, div.field-unit-leader, div.field-unit-leadertel').addClass('hidden');
+        }
+    });
+    //form 验证
+    $('#unit-form').formValidation({
+        framework: 'bootstrap',
+        excluded: ':disabled',
+        icon: {
+            valid: 'glyphicon glyphicon-ok',
+            invalid: 'glyphicon glyphicon-remove',
+            validating: 'glyphicon glyphicon-refresh'
+        },
+        fields: {
+            "Unit[unitcode]": {
+                validators: {
+                    notEmpty: {
+                        message: '单位编码不能为空！'
+                    }
+                }
+            },
+            "Unit[unitname]": {
+                validators: {
+                    notEmpty: {
+                        message: '单位名称不能为空！'
+                    }
+                }
+            }
+        }
+    });
+    //单位新增及修改用ajax
+    $(document).on('beforeSubmit', '#unit-form', function() {
+        var form = $(this);
+        $.ajax({
+            url  : form.attr('action'),
+            type : 'post',
+            data : form.serialize(),
+            beforeSend: function () {
+                layer.load();
+            },
+            complete: function () {
+                layer.closeAll('loading');
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                layer.alert('保存出错:' + textStatus + ' ' + errorThrown, {icon: 5});
+            },
+            success: function(data) {
+                $('#modal').modal('hide');
+                var title    = data + ' 是否需要刷新单位列表？';
+                var shiftNum = [0, 1, 2, 3, 4, 5, 6];
+                layer.confirm( title, {
+                    title: '系统提示',
+                    shift: shiftNum[Math.floor(Math.random()*shiftNum.length)],
+                    icon: 6,
+                    scrollbar: false
+                }, function(index) {
+                    $('#unit-tree').jstree('refresh');
+                    layer.close(index);
+                });
+            }
+        });
+        return false;
+    });
 </script>
 <?php \common\widgets\JsBlock::end(); ?>

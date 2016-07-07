@@ -145,4 +145,12 @@ class MapUnit extends \yii\db\ActiveRecord
         $query = self::findOne(['user_id' => $user_id, 'unitcode' => $unitcode]);
         return $query ? $query->user_power : self::USER_POWER_DENY;
     }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUnit()
+    {
+        return $this->hasOne(Unit::className(), ['unitcode' => 'unitcode']);
+    }
 }

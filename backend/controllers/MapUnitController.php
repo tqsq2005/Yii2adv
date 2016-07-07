@@ -181,6 +181,35 @@ class MapUnitController extends Controller
     }
 
     /**
+     * (string) actionCheckUnitAccessible : 客户端ajax校验当前用户是否取得单位编码的完全访问权限
+     * 见common\components\validators\UnitAccessible
+     * @return string
+     */
+    public function actionCheckUnitAccessible()
+    {
+        /** @var string $attribute 字段：unitcode、upunitcode或unit */
+        $attribute  = Yii::$app->request->post('attribute');
+        /** @var string $value 字段对应的值 */
+        $value      = Yii::$app->request->post('value');
+        /** @var integer $user_id 当前用户ID */
+        $user_id    = Yii::$app->user->identity->id;
+        $errMsg     = '';
+        switch( $attribute ) {
+            case 'unitcode'://修改
+                if( Unit::findOne(['unitcode' => $value]) && MapUnit::getUserPower( $user_id, $value ) != MapUnit::USER_POWER_ALLOW ) {
+                    $errMsg = '你没有单位(部门)『'. $value .'』的『完全访问』权限.';
+                }
+                break;
+            case 'upunitcode'://新增
+                if( !Unit::findOne(['upunitcode' => $value]) && MapUnit::getUserPower( $user_id, $value ) < MapUnit::USER_POWER_VIEW_DEPT ) {
+                    $errMsg = '你没有单位(部门)『'. $value .'』的『完全访问』权限.';
+                }
+                break;
+        }
+        return $errMsg;
+    }
+
+    /**
      * (返回更新的记录数) userPowerUpdate :
      * @param $currentUID   integer 当前登录的用户ID
      * @param $setUID       integer 需要设置单位权限的用户ID

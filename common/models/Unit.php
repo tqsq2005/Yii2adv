@@ -3,6 +3,7 @@
 namespace common\models;
 
 use common\behaviors\ARLogBehavior;
+use common\components\validators\UnitAccessible;
 use common\populac\behaviors\SortableModel;
 use Yii;
 use yii\behaviors\BlameableBehavior;
@@ -36,6 +37,7 @@ use yii\helpers\Url;
  * @property string $jsxhdate
  * @property string $jsbdate
  * @property integer $id
+ * @property integer $ver
  * @property integer $order_num
  * @property integer $created_by
  * @property integer $updated_by
@@ -46,6 +48,8 @@ class Unit extends \yii\db\ActiveRecord
 {
     /** @var string $_delUnitcode 要删除的单位编码 */
     private $_delUnitcode;
+    /** @var string $_delUpunitcode 要删除的主管单位编码 */
+    private $_delUpunitcode;
     /**
      * @inheritdoc
      */
@@ -61,7 +65,7 @@ class Unit extends \yii\db\ActiveRecord
     {
         return [
             [['unitcode', 'unitname', 'upunitcode'], 'required'],
-            [['corpflag', 'order_num', 'created_by', 'updated_by', 'created_at', 'updated_at'], 'integer'],
+            [['corpflag', 'ver', 'order_num', 'created_by', 'updated_by', 'created_at', 'updated_at'], 'integer'],
             [['unitcode', 'upunitcode'], 'string', 'max' => 30],
             [['unitname', 'address1', 'office', 'rsystem', 'upunitname'], 'string', 'max' => 80],
             [['corporation', 'oname', 'tel', 'fax', 'leader', 'leadertel'], 'string', 'max' => 50],
@@ -71,6 +75,7 @@ class Unit extends \yii\db\ActiveRecord
             [['unitcode'], 'unique'],
             [['upunitcode'], 'exist', 'targetAttribute' => 'unitcode'],
             [['upunitname'], 'exist', 'targetAttribute' => 'unitname'],
+            [['unitcode', 'upunitcode'], UnitAccessible::className()],
         ];
     }
 
@@ -97,6 +102,15 @@ class Unit extends \yii\db\ActiveRecord
 
     /**
      * @inheritDoc
+     * Make Unit support optimistic lock, with the field of ver.
+     */
+    public function optimisticLock()
+    {
+        return 'ver';
+    }
+
+    /**
+     * @inheritDoc
      */
     public function beforeDelete()
     {
@@ -108,12 +122,71 @@ class Unit extends \yii\db\ActiveRecord
     /**
      * @inheritDoc
      */
+    public function beforeSave($insert)
+    {
+        //先赋值旧的unitcode  给$_delUnitcode
+        //  赋值旧的upunitcode给$_delUpunitcode
+        $this->_delUnitcode     = $this->getOldAttribute('unitcode');
+        $this->_delUpunitcode   = $this->getOldAttribute('upunitcode');
+        return parent::beforeSave($insert);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function afterDelete()
     {
         parent::afterDelete();
-        //TODO: 后期要继续添加 删除人员、配偶等等相关联表的代码
+        //TODO: 后期要继续添加 删除人员、配偶等等相关联表的代码 deleteAll不触发事件，需要记录的用delete()
         //删除map_unit表中unitcode是：$_delUnitcode 的
         MapUnit::deleteAll(['unitcode' => $this->_delUnitcode]);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+        //新增操作记得更新map_unit权限
+        if( $insert ) {
+            //只要对新增单位的主管单位权限不小于当前用户的都应该授权为 完全访问
+            /** @var integer $user_id 当前用户ID */
+            $user_id    = Yii::$app->user->identity->id;
+            /** @var string $unitcode 新增的单位编码 */
+            $unitcode   = $this->unitcode;
+            /** @var string $upunitcode 新增的主管单位编码 */
+            $upunitcode = $this->upunitcode;
+            /** @var integer $permission 符合条件的用户都设置为 完全访问 */
+            $permission = MapUnit::USER_POWER_ALLOW;
+            $SQL        = "REPLACE INTO `map_unit`(user_id, unitcode, user_power) ".
+                " SELECT mp.user_id, '{$unitcode}', {$permission} FROM (SELECT `user_id`, `unitcode`, `user_power` FROM `map_unit` WHERE `unitcode` = :upunitcode) mp ".
+                " JOIN (SELECT `user_id`, `unitcode`, `user_power` FROM `map_unit` WHERE `user_id` = :user_id AND `unitcode` = :upunitcode) cur_mp ".
+                " ON mp.unitcode = cur_mp.unitcode AND mp.user_power >= cur_mp.user_power ";
+            Yii::$app->db->createCommand( $SQL )
+                ->bindValues([
+                    ':upunitcode'   => $upunitcode,
+                    ':user_id'      => $user_id,
+                ])
+                ->execute();
+        } else {
+            //更新操作就相应更新关联表
+            //TODO: 后期要继续添加 删除人员、配偶等等相关联表的代码 updateAll不触发事件，需要记录的用update()
+            if(array_key_exists('unitcode', $changedAttributes)) {
+                MapUnit::updateAll(['unitcode' => $this->unitcode], ['unitcode' => $this->_delUnitcode]);
+            }
+        }
+    }
+
+    /**
+     * @inheritDoc
+     * Make update and delete operations transactional.
+     */
+    public function transactions()
+    {
+        return [
+            self::OP_UPDATE | self::OP_DELETE,
+        ];
     }
 
     /**
@@ -145,6 +218,7 @@ class Unit extends \yii\db\ActiveRecord
             'jsxhdate' => 'Jsxhdate',
             'jsbdate' => 'Jsbdate',
             'id' => 'ID',
+            'ver' => '乐观锁标记',
             'order_num' => '排序',
             'created_by' => 'Created By',
             'updated_by' => 'Updated By',
@@ -154,21 +228,31 @@ class Unit extends \yii\db\ActiveRecord
     }
 
     /**
-     * (array|\yii\db\ActiveRecord[]) getChildren : 获取下级信息
+     * (array|\yii\db\ActiveRecord[]) getChildren : 根据用户权限获取下级信息
      * @param $id
      * @return array|\yii\db\ActiveRecord[]
      */
     public function getChildren($id)
     {
-        $query = $this::find();
-        $query->select([
-            'id'    => 'unitcode',
-            'text'  => 'unitname',
-        ]);
-        $query->andFilterWhere([
-            'upunitcode' => ($id == '0') ? '%' : $id,
-        ]);
-        $data = $query->orderBy(['order_num' => SORT_ASC, 'unitcode' => SORT_ASC])->asArray()->all();
+        $user_id = Yii::$app->user->identity->id;
+        $data = Unit::find()
+            ->select([
+                'id'    => 'unit.unitcode',
+                'text'  => 'unit.unitname',
+            ])
+            ->innerJoin('map_unit', '`map_unit`.`unitcode` = `unit`.`unitcode`')
+            ->andFilterWhere([
+                'map_unit.user_id' => $user_id
+            ])
+            ->andFilterWhere([
+                'unit.upunitcode' => ($id == '0') ? '%' : $id,
+            ])
+            ->orderBy([
+                'unit.order_num' => SORT_ASC,
+                'unit.unitcode' => SORT_ASC,
+            ])
+            ->asArray()
+            ->all();
         if(count($data) > 0) {
             foreach($data as &$arr) {
                 $arr['children']    = $this->isParent($arr['id']);
@@ -261,5 +345,13 @@ class Unit extends \yii\db\ActiveRecord
     public function getPersonals()
     {
         return $this->hasMany(Personal::className(), ['unit' => 'unitcode']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getMapUnits()
+    {
+        return $this->hasMany(MapUnit::className(), ['unitcode' => 'unitcode']);
     }
 }

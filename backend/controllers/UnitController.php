@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use common\models\MapUnit;
 use common\models\Personal;
 use common\populac\behaviors\SortableController;
 use common\populac\models\Preferences;
@@ -56,8 +57,7 @@ class UnitController extends \common\populac\components\Controller
         $model = new Unit();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            Yii::$app->session->setFlash('info', '单位(部门)[ ' . $model->unitname . ' ]添加成功！');
-            return $this->redirect(['index']);
+            return '单位(部门)[ ' . $model->unitname . ' ]添加成功！';
         } else {
             $parentId           = Yii::$app->request->get('parentId');
             $parentId           = ($parentId == '0') ? '%' : $parentId;
@@ -80,17 +80,26 @@ class UnitController extends \common\populac\components\Controller
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
+        try{
+            $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            Yii::$app->session->setFlash('info', '单位(部门)[ ' . $model->unitname . ' ]更新成功！');
+            if ($model->load(Yii::$app->request->post()) && $model->save()) {
+                return '单位(部门)[ ' . $model->unitname . ' ]更新成功！';
+            } else {
+                return $this->renderAjax('update', [
+                    'model'     => $model,
+                    'isParent'  => 'no',
+                ]);
+            }
+        } catch(\Exception $e) {
+            Yii::$app->session->setFlash('warning', '该单位(部门)不存在！');
             return $this->redirect(['index']);
-        } else {
-            return $this->renderAjax('update', [
-                'model'     => $model,
-                'isParent'  => 'no',
-            ]);
         }
+    }
+
+    public function actionTest($id)
+    {
+
     }
 
     /**
@@ -101,7 +110,17 @@ class UnitController extends \common\populac\components\Controller
      */
     public function actionDelete()
     {
-        return $this->findModel(Yii::$app->request->post('unitcode'))->delete();
+        try{
+            $user_id  = Yii::$app->user->identity->id;
+            $unitcode = Yii::$app->request->post('unitcode');
+            $unit     = $this->findModel($unitcode);
+            if( MapUnit::getUserPower($user_id, $unitcode) != MapUnit::USER_POWER_ALLOW )
+                return '权限不足';
+            return $unit->delete();
+        } catch (\Exception $e) {
+            return 'StaleObject';
+        }
+
     }
 
     /**
@@ -167,16 +186,25 @@ class UnitController extends \common\populac\components\Controller
      */
     public function actionDataTables()
     {
-        $responseType = Yii::$app->request->get('type');
+        $responseType   = Yii::$app->request->get('type');
+        $user_id        = Yii::$app->user->identity->id;
         $returnData = [];
         switch($responseType) {
             case "fetch":
-                $returnData = Unit::find()->select(['*'])->where([
-                    'upunitcode' => Yii::$app->request->get('id')
-                ])->orderBy([
-                    'order_num'  => SORT_ASC,
-                    'unitcode'  => SORT_ASC,
-                ])->all();
+                $returnData = Unit::find()
+                    ->select(['unit.*'])
+                    ->innerJoin('map_unit', '`map_unit`.`unitcode` = `unit`.`unitcode`')
+                    ->andFilterWhere([
+                        'map_unit.user_id' => $user_id
+                    ])
+                    ->andFilterWhere([
+                        'unit.upunitcode' => Yii::$app->request->get('id')
+                    ])
+                    ->orderBy([
+                        'unit.order_num'  => SORT_ASC,
+                        'unit.unitcode'  => SORT_ASC,
+                    ])
+                    ->all();
                 return Json::encode($returnData);
             case "crud":
                 $requestAction = Yii::$app->request->post('action');
@@ -315,4 +343,6 @@ class UnitController extends \common\populac\components\Controller
             throw new NotFoundHttpException('数据获取失败..');
         }
     }
+
+
 }
