@@ -37,6 +37,23 @@ class Menu extends \mdm\admin\models\Menu
         ]);
     }
 
+    /**
+     * @inheritDoc
+     */
+    public function beforeSave($insert)
+    {
+        //新增有上级单位名称没有上级编码
+        if( $insert && $this->parent_name && !$this->parent ) {
+            $query = self::findOne(['name' => $this->parent_name]);
+            if( $query ) {
+                $this->parent = $query->id;
+            } else {
+                return false;
+            }
+        }
+        return parent::beforeSave($insert);
+    }
+
     public function getChildren($id)
     {
         $query = $this::find();

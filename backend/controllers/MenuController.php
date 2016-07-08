@@ -19,6 +19,7 @@
 namespace backend\controllers;
 
 use backend\models\Menu;
+use mdm\admin\components\Helper;
 use mdm\admin\components\MenuHelper;
 use Yii;
 use yii\base\Exception;
@@ -53,7 +54,7 @@ class MenuController extends \mdm\admin\controllers\MenuController
         $model = new Menu;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            MenuHelper::invalidate();
+            Helper::invalidate();
             Yii::$app->session->setFlash('info', '菜单[ ' . $model->name . ' ]添加成功！');
             return $this->redirect(['index']);
         } else {
@@ -74,7 +75,7 @@ class MenuController extends \mdm\admin\controllers\MenuController
             $model->parent_name = $model->menuParent->name;
         }
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            MenuHelper::invalidate();
+            Helper::invalidate();
             Yii::$app->session->setFlash('info', '菜单[ ' . $model->name . ' ]更新成功！');
             return $this->redirect(['index']);
         } else {
@@ -90,7 +91,7 @@ class MenuController extends \mdm\admin\controllers\MenuController
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
-        MenuHelper::invalidate();
+        Helper::invalidate();
 
         return $this->redirect(['index']);
     }
