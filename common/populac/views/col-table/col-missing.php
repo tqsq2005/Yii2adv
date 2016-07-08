@@ -35,6 +35,48 @@ $this->params['breadcrumbs'][] = $this->title;
         </table>
     </div>
 </div>
+<div class="modal fade" id="col-form-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">新增表字段配置</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" id="col-add-form" action="<?= \yii\helpers\Url::to(['create']) ?>">
+                    <div class="form-group">
+                        <label for="pbc_tnam" class="col-sm-2 control-label">表名</label>
+                        <div class="col-sm-10">
+                            <input type="email" class="form-control" name="ColTable[pbc_tnam]" id="pbc_tnam" placeholder="输入表名..">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="pbc_cnam" class="col-sm-2 control-label">字段名</label>
+                        <div class="col-sm-10">
+                            <input type="email" class="form-control" name="ColTable[pbc_cnam]" id="pbc_cnam" placeholder="输入字段名..">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="pbc_labl" class="col-sm-2 control-label">中文标签</label>
+                        <div class="col-sm-10">
+                            <input type="email" class="form-control" name="ColTable[pbc_labl]" id="pbc_labl" placeholder="输入中文标签..">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="pbc_classmark" class="col-sm-2 control-label">参数配置</label>
+                        <div class="col-sm-10">
+                            <input type="email" class="form-control" name="ColTable[pbc_classmark]" id="pbc_classmark" placeholder="输入参数配置..">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关 闭</button>
+                <button type="button" id="col-add-form-sumbit" class="btn btn-primary">保 存</button>
+            </div>
+        </div>
+    </div>
+</div>
 <?php \common\widgets\JsBlock::begin(); ?>
     <script type="text/javascript">
         $(document).ready(function() {
@@ -73,10 +115,10 @@ $this->params['breadcrumbs'][] = $this->title;
                         render: function ( data, type, full ) {
                             var array   = data.split(',');
                             var string  = '';
-                            var label   = ['default', 'info', 'primary', 'success', 'warning', 'danger'];
+                            var label   = ['default', 'primary', 'success'];
                             for (var i in array)
                             {
-                                string += ' <span style="cursor: pointer;" class="label label-' + label[ i%5 ] + '" data-toggle="tooltip" title="' + array[i] + '">' + array[i] + '</span> ';
+                                string += ' <span style="cursor: pointer;" class="label label-' + label[ Math.floor(Math.random()*label.length) ] + ' label-col-add" data-pbc_cnam = "' + array[i] + '" data-toggle="tooltip" title="点击新增『' + array[i] + '』字段配置">' + array[i] + '</span> ';
                             }
                             return string;
                         }
@@ -184,6 +226,44 @@ $this->params['breadcrumbs'][] = $this->title;
             $('#col-missing-data').floatThead({
                 top: $(".main-header").height() //i need this because of my floating header
             });
+
+            //col-add  #col-add-form
+            $(document)
+                .on('click', 'span.label-col-add', function() {
+                    var pbc_cnam = $(this).attr('data-pbc_cnam');
+                    var pbc_tnam = $(this).parents('tr').find('td:eq(1)').text().trim();
+                    $('form#col-add-form input#pbc_tnam').val(pbc_tnam);
+                    $('form#col-add-form input#pbc_cnam').val(pbc_cnam);
+                    $('#col-form-modal').modal('show');
+                })
+                .on('click', '#col-add-form-sumbit', function() {
+                    var form = $('form#col-add-form');
+                    $.ajax({
+                        url  : form.attr('action'),
+                        type : 'post',
+                        data : form.serialize(),
+                        beforeSend: function () {
+                            layer.load(1);
+                        },
+                        complete: function () {
+                            layer.closeAll('loading');
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            layer.alert('保存出错:' + textStatus + ' ' + errorThrown, {icon: 5});
+                        },
+                        success: function(data) {
+                            var msg = $.parseJSON(data);
+                            if ( msg.status == 'success' ) {
+                                $('#col-form-modal').modal('hide');
+                                table.ajax.reload();
+                                layer.msg(msg.message, { icon: 6, time: 2000 });
+                            } else {
+                                layer.msg(msg.message, { icon: 5, time: 2000 });
+                            }
+                        }
+                    });
+                });
         } );
+
     </script>
 <?php \common\widgets\JsBlock::end(); ?>

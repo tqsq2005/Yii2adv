@@ -61,7 +61,7 @@ class UnitAccessible extends Validator
      */
     public function clientValidateAttribute($model, $attribute, $view)
     {
-        $checkURL = Yii::$app->homeUrl.Url::to('/map-unit/check-unit-accessible');
+        $checkURL = Url::to(['/map-unit/check-unit-accessible']);
         return <<<JS
         deferred.push($.post('$checkURL', {value: value, attribute: '$attribute'}).done(function(data) {
             if ('' !== data) {

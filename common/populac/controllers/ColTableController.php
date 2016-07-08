@@ -200,6 +200,31 @@ class ColTableController extends \common\populac\components\Controller
     }
 
     /**
+     * (string) actionCreate : 新增表字段配置
+     * @return string
+     */
+    public function actionCreate()
+    {
+        $request = Yii::$app->request;
+        $model = new ColTable();
+        $returnData = [
+            'status' => 'error',
+            'message' => '表字段配置新增失败',
+        ];
+
+        if($request->isAjax){
+            if($model->load($request->post()) && $model->save()) {
+                $returnData = [
+                    'status' => 'success',
+                    'message' => "表『{$model->pbc_tnam}』字段『{$model->pbc_cnam}』配置已新增",
+                ];
+            }
+        }
+
+        return json_encode($returnData);
+    }
+
+    /**
      * (void) actionColMissing : 未配置字段
      */
     public function actionColMissing()
@@ -217,6 +242,10 @@ class ColTableController extends \common\populac\components\Controller
         }
 
         return $this->render( 'col-missing' );
+    }
+
+    public function actionTest() {
+        return $this->render( 'test' );
     }
 
     public function actionGetFieldConfig()

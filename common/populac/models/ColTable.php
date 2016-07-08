@@ -65,7 +65,7 @@ class ColTable extends ActiveRecord
     public function rules()
     {
         return [
-            [['pbc_tnam', 'sort_no', 'pbc_cnam', 'pbc_labl'], 'required'],
+            [['pbc_tnam', 'pbc_cnam', 'pbc_labl'], 'required'],
             [['sort_no', 'status', 'created_at', 'updated_at'], 'integer'],
             [['pbc_tnam', 'pbc_cnam', 'pbc_classmark'], 'string', 'max' => 30],
             [['pbc_labl'], 'string', 'max' => 80],
@@ -97,20 +97,22 @@ class ColTable extends ActiveRecord
         ];
     }
 
-    public static function getTablenames()
+    /**
+     * @inheritDoc
+     */
+    public function beforeSave($insert)
     {
-        self::$_data =  Data::cache(self::CACHE_KEY . '_TABLENAMES_DATA', 3600, function(){
-            $result = '';
-            try {
-                $result[self::$_tablename] = ArrayHelper::map(parent::getDb()->createCommand(self::$_sql)
-                    ->bindValues([
-                        ':status'   => self::STATUS_ACTIVE,
-                        ':pbc_tnam' => self::$_tablename,
-                    ])->queryAll(), 'pbc_cnam', 'pbc_labl');
-            }catch(\yii\db\Exception $e){}
-            return $result;
-        });
-        return isset(self::$_data[$tablename]) ? self::$_data[$tablename] : null;
+        //新增且sort_no未输入则自动生成
+        if( $insert && $this->pbc_tnam && $this->pbc_cnam && !$this->sort_no ) {
+            $query = self::find()
+                ->where([
+                    'pbc_tnam' => $this->pbc_tnam,
+                    'pbc_cnam' => $this->pbc_cnam,
+                ])
+                ->max('sort_no');
+            $this->sort_no = $query ? ++$query : 1;
+        }
+        return parent::beforeSave($insert);
     }
 
     /**
