@@ -45,6 +45,7 @@ class MapUnit extends \yii\db\ActiveRecord
             [['user_id', 'unitcode', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'required'],
             [['user_id', 'user_power', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'integer'],
             [['unitcode'], 'string', 'max' => 30],
+            [['user_power'], 'in', 'range' => [self::USER_POWER_VIEW_DEPT, self::USER_POWER_VIEW_ALL, self::USER_POWER_ALLOW]],
             [['user_id', 'unitcode'], 'unique', 'targetAttribute' => ['user_id', 'unitcode'], 'message' => 'The combination of 用户ID and 单位编码 has already been taken.'],
             [['unitcode'], 'exist', 'skipOnEmpty' => false, 'targetClass' => Unit::className(), 'targetAttribute' => ['unitcode' => 'unitcode']],
             [['user_id'], 'exist', 'skipOnEmpty' => false, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
@@ -78,7 +79,8 @@ class MapUnit extends \yii\db\ActiveRecord
             'id' => 'ID',
             'user_id' => '用户ID',
             'unitcode' => '单位编码',
-            //-1禁止、0只看单位看不见单位下的人员、1既看单位也看部门只有查看权限、99完全
+            //0禁止、1只看单位看不见单位下的人员、9既看单位也看部门只有查看权限、99完全
+            // 禁止的话就不存入表中
             'user_power' => '权限',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',

@@ -97,11 +97,6 @@ class UnitController extends \common\populac\components\Controller
         }
     }
 
-    public function actionTest($id)
-    {
-
-    }
-
     /**
      * (false|int) actionDelete : 根据unitcode删除单位或部门
      * @return false|int

@@ -97,6 +97,22 @@ class ColTable extends ActiveRecord
         ];
     }
 
+    public static function getTablenames()
+    {
+        self::$_data =  Data::cache(self::CACHE_KEY . '_TABLENAMES_DATA', 3600, function(){
+            $result = '';
+            try {
+                $result[self::$_tablename] = ArrayHelper::map(parent::getDb()->createCommand(self::$_sql)
+                    ->bindValues([
+                        ':status'   => self::STATUS_ACTIVE,
+                        ':pbc_tnam' => self::$_tablename,
+                    ])->queryAll(), 'pbc_cnam', 'pbc_labl');
+            }catch(\yii\db\Exception $e){}
+            return $result;
+        });
+        return isset(self::$_data[$tablename]) ? self::$_data[$tablename] : null;
+    }
+
     /**
      * (null) getColumnInfoByTablename : 通过表名返回 数组[英文字段名=>中文字段名]
      * @static
@@ -137,7 +153,7 @@ class ColTable extends ActiveRecord
         $data = [];
         if( count($tablenames) ) {
             foreach( $tablenames as $tablename ) {
-                $data[$tablename] = self::getByTablename($tablename);
+                $data[$tablename] = self::getColumnInfoByTablename($tablename);
             }
         }
         return $data;
@@ -162,15 +178,16 @@ class ColTable extends ActiveRecord
     }
 
     /**
-     * (array) showTables : 返回包数据库所有表的数组
+     * (array) showTables : 返回包含数据库所有表的数组
      * @static
      * @return array
      */
     public static function showTables()
     {
-        $SQL = 'SHOW TABLE STATUS';
+        /*$SQL = 'SHOW TABLE STATUS';
         $data = Yii::$app->db->createCommand( $SQL )->queryAll();
-        return $data ? ArrayHelper::getColumn( $data, 'Name' ) : [];
+        return $data ? ArrayHelper::getColumn( $data, 'Name' ) : [];*/
+        return Yii::$app->db->createCommand('SHOW TABLES')->queryColumn();
     }
 
     /**

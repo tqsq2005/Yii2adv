@@ -51,6 +51,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     'visible' => isset(Yii::$app->extensions['dektrium/yii2-rbac']),
                                 ],
                                 ['label' => '单位权限', 'url' => ['/map-unit/index', 'user_id' => $user->id]],
+                                ['label' => '字段权限', 'url' => ['/map-field/index', 'user_id' => $user->id]],
                                 '<hr>',
                                 [
                                     'label' => Yii::t('user', 'Confirm'),
