@@ -63,14 +63,13 @@ $this->registerJsFile('@web/plus/jsTree/jstree.min.js', ['depends' => 'yii\web\J
                         <!-- /.box-header -->
                         <div class="box-body">
                             <ol>
-                                <li id="field-detail">当前未选中任何『字段』</li>
+                                <li id="field-detail">当前未选中任何『信息』</li>
                                 <li>字段名称点击鼠标右键：
                                     <ol>
-                                        <li><span class="text-success"><i class="fa fa-key"></i> 完全访问[含下级]</span>:将设置该字段及其下级的权限为『完全访问』，其上级的权限为『查看访问单位』。 </li>
-                                        <li><span class="text-success"><i class="fa fa-key"></i> 完全访问[当前节点]</span>:将仅设置当前字段的权限为『完全访问』。 </li>
-                                        <li><span class="text-primary"><i class="fa fa-eye"></i> 查看访问单位及人员</span>:将设置该字段及其下级的权限为『查看访问单位及人员』。 </li>
-                                        <li><span class="text-info"><i class="fa fa-eye-slash"></i> 查看访问单位</span>:将仅设置当前字段的权限为『查看访问单位』。 </li>
-                                        <li><span class="text-muted"><i class="fa fa-lock"></i> 禁止访问</span>:将设置该字段及其下级的权限为『禁止访问』。 </li>
+                                        <li><span class="text-success"><i class="fa fa-key"></i> 完全访问</span>:将设置该字段的权限为『完全访问』。 </li>
+                                        <li><span class="text-info"><i class="fa fa-eye-slash"></i> 新增后查看访问</span>:将设置该字段的权限为『新增后查看访问』。 </li>
+                                        <li><span class="text-primary"><i class="fa fa-eye"></i> 查看访问</span>:将设置该字段的权限为『查看访问』。 </li>
+                                        <li><span class="text-muted"><i class="fa fa-lock"></i> 禁止访问</span>:将设置该字段的权限为『禁止访问』。 </li>
                                     </ol>
                                 </li>
                                 <li>鼠标右键且选择了相关权限后，系统会弹出『字段权限设置成功，是否需要刷新字段权限列表？』提示：
@@ -82,8 +81,8 @@ $this->registerJsFile('@web/plus/jsTree/jstree.min.js', ['depends' => 'yii\web\J
                                 <li>字段权限列表颜色说明：
                                     <ol>
                                         <li><span class="text-success"><i class="fa fa-key"></i> 字段名称</span>:表示当前字段的权限为『完全访问』。 </li>
-                                        <li><span class="text-primary"><i class="fa fa-eye"></i> 字段名称</span>:表示当前字段的权限为『查看访问单位及人员』。 </li>
-                                        <li><span class="text-info"><i class="fa fa-eye-slash"></i> 字段名称</span>:表示当前字段的权限为『查看访问单位』。 </li>
+                                        <li><span class="text-info"><i class="fa fa-eye-slash"></i> 新增后查看访问</span>:表示当前字段的权限为『新增后查看访问』。 </li>
+                                        <li><span class="text-primary"><i class="fa fa-eye"></i> 字段名称</span>:表示当前字段的权限为『查看访问』。 </li>
                                         <li><span class="text-muted"><i class="fa fa-lock"></i> 字段名称</span>:表示当前字段的权限为『禁止访问』。 </li>
                                     </ol>
                                 </li>
@@ -170,12 +169,16 @@ $this->registerJsFile('@web/plus/jsTree/jstree.min.js', ['depends' => 'yii\web\J
                 'contextmenu': {
                     'items': {
                         "permissionAllow": {
-                            "label": "<span class='jstree-contextmenu-label text-success'>完全访问[含下级]</span>",
+                            "label": "<span class='jstree-contextmenu-label text-success'>完全访问</span>",
                             "action": function (data) {
                                 var inst    = $.jstree.reference(data.reference),
                                     obj     = inst.get_node(data.reference);
                                 var id      = obj.id;
                                 var text    = obj.text;
+                                if ( id.indexOf('gdjs') < 0 ) {
+                                    layer.msg('(' + id +')' + text + ' 类型为『表』,请在其『字段』中设置权限..', { icon: 5, time: 2000 });
+                                    return false;
+                                }
                                 if ( text.indexOf('text-success') > 0 ) {
                                     layer.msg('(' + id +')' + text + ' 的权限已经是『完全访问』了..', { icon: 6, time: 2000 });
                                     return false;
@@ -183,7 +186,7 @@ $this->registerJsFile('@web/plus/jsTree/jstree.min.js', ['depends' => 'yii\web\J
                                 $.ajax({
                                     url: '<?=Yii::$app->homeUrl?>/map-field/permission/',
                                     type: 'post',
-                                    data: { permission: 99, unitcode: obj.id, user_id: <?= $user->id ?> },
+                                    data: { permission: 99, id: obj.id, user_id: <?= $user->id ?> },
                                     beforeSend: function () {
                                         layer.load();
                                     },
@@ -198,79 +201,25 @@ $this->registerJsFile('@web/plus/jsTree/jstree.min.js', ['depends' => 'yii\web\J
                             },
                             "icon": 'fa fa-key text-success'
                         },
-                        "permissionAllowSingle": {
-                            "label": "<span class='jstree-contextmenu-label text-success'>完全访问[当前节点]</span>",
+                        "permissionViewAfterAdd": {
+                            "label": "<span class='jstree-contextmenu-label text-primary'>新增后查看访问</span>",
                             "action": function (data) {
                                 var inst    = $.jstree.reference(data.reference),
                                     obj     = inst.get_node(data.reference);
                                 var id      = obj.id;
                                 var text    = obj.text;
-                                if ( text.indexOf('text-success') > 0 ) {
-                                    layer.msg('(' + id +')' + text + ' 的权限已经是『完全访问』了..', { icon: 6, time: 2000 });
+                                if ( id.indexOf('gdjs') < 0 ) {
+                                    layer.msg('(' + id +')' + text + ' 类型为『表』,请在其『字段』中设置权限..', { icon: 5, time: 2000 });
                                     return false;
                                 }
-                                $.ajax({
-                                    url: '<?=Yii::$app->homeUrl?>/map-field/permission/',
-                                    type: 'post',
-                                    data: { permission: 99, type: 'single', unitcode: obj.id, user_id: <?= $user->id ?> },
-                                    beforeSend: function () {
-                                        layer.load();
-                                    },
-                                    complete: function () {
-                                        layer.closeAll('loading');
-                                    },
-                                    error: function (XMLHttpRequest, textStatus, errorThrown) {
-                                        layer.alert('设置字段权限出错:' + textStatus + ' ' + errorThrown, {icon: 5});
-                                    },
-                                    success: f_success
-                                });
-                            },
-                            "icon": 'fa fa-key text-success'
-                        },
-                        "permissionViewAll": {
-                            "label": "<span class='jstree-contextmenu-label text-primary'>查看访问单位及人员</span>",
-                            "action": function (data) {
-                                var inst    = $.jstree.reference(data.reference),
-                                    obj     = inst.get_node(data.reference);
-                                var id      = obj.id;
-                                var text    = obj.text;
-                                if ( text.indexOf('text-primary') > 0 ) {
-                                    layer.msg('(' + id +')' + text + ' 的权限已经是『查看访问单位及人员』了..', { icon: 6, time: 2000 });
-                                    return false;
-                                }
-                                $.ajax({
-                                    url: '<?=Yii::$app->homeUrl?>/map-field/permission/',
-                                    type: 'post',
-                                    data: { permission: 9, unitcode: obj.id, user_id: <?= $user->id ?> },
-                                    beforeSend: function () {
-                                        layer.load();
-                                    },
-                                    complete: function () {
-                                        layer.closeAll('loading');
-                                    },
-                                    error: function (XMLHttpRequest, textStatus, errorThrown) {
-                                        layer.alert('设置字段权限出错:' + textStatus + ' ' + errorThrown, {icon: 5});
-                                    },
-                                    success: f_success
-                                });
-                            },
-                            "icon": 'fa fa-eye text-primary'
-                        },
-                        "permissionViewDept": {
-                            "label": "<span class='jstree-contextmenu-label text-info'>查看访问单位</span>",
-                            "action": function (data) {
-                                var inst    = $.jstree.reference(data.reference),
-                                    obj     = inst.get_node(data.reference);
-                                var id      = obj.id;
-                                var text    = obj.text;
                                 if ( text.indexOf('text-info') > 0 ) {
-                                    layer.msg('(' + id +')' + text + ' 的权限已经是『查看访问单位』了..', { icon: 6, time: 2000 });
+                                    layer.msg('(' + id +')' + text + ' 的权限已经是『新增后查看访问』了..', { icon: 6, time: 2000 });
                                     return false;
                                 }
                                 $.ajax({
                                     url: '<?=Yii::$app->homeUrl?>/map-field/permission/',
                                     type: 'post',
-                                    data: { permission: 1, unitcode: obj.id, user_id: <?= $user->id ?> },
+                                    data: { permission: 9, id: obj.id, user_id: <?= $user->id ?> },
                                     beforeSend: function () {
                                         layer.load();
                                     },
@@ -285,6 +234,39 @@ $this->registerJsFile('@web/plus/jsTree/jstree.min.js', ['depends' => 'yii\web\J
                             },
                             "icon": 'fa fa-eye-slash text-info'
                         },
+                        "permissionView": {
+                            "label": "<span class='jstree-contextmenu-label text-primary'>查看访问</span>",
+                            "action": function (data) {
+                                var inst    = $.jstree.reference(data.reference),
+                                    obj     = inst.get_node(data.reference);
+                                var id      = obj.id;
+                                var text    = obj.text;
+                                if ( id.indexOf('gdjs') < 0 ) {
+                                    layer.msg('(' + id +')' + text + ' 类型为『表』,请在其『字段』中设置权限..', { icon: 5, time: 2000 });
+                                    return false;
+                                }
+                                if ( text.indexOf('text-primary') > 0 ) {
+                                    layer.msg('(' + id +')' + text + ' 的权限已经是『查看访问』了..', { icon: 6, time: 2000 });
+                                    return false;
+                                }
+                                $.ajax({
+                                    url: '<?=Yii::$app->homeUrl?>/map-field/permission/',
+                                    type: 'post',
+                                    data: { permission: 1, id: obj.id, user_id: <?= $user->id ?> },
+                                    beforeSend: function () {
+                                        layer.load();
+                                    },
+                                    complete: function () {
+                                        layer.closeAll('loading');
+                                    },
+                                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                        layer.alert('设置字段权限出错:' + textStatus + ' ' + errorThrown, {icon: 5});
+                                    },
+                                    success: f_success
+                                });
+                            },
+                            "icon": 'fa fa-eye text-primary'
+                        },
                         "permissionDeny": {
                             "label": "<span class='jstree-contextmenu-label text-muted'>禁止访问</span>",
                             "action": function (data) {
@@ -292,6 +274,10 @@ $this->registerJsFile('@web/plus/jsTree/jstree.min.js', ['depends' => 'yii\web\J
                                     obj     = inst.get_node(data.reference);
                                 var id      = obj.id;
                                 var text    = obj.text;
+                                if ( id.indexOf('gdjs') < 0 ) {
+                                    layer.msg('(' + id +')' + text + ' 类型为『表』,请在其『字段』中设置权限..', { icon: 5, time: 2000 });
+                                    return false;
+                                }
                                 if ( text.indexOf('text-muted') > 0 ) {
                                     layer.msg('(' + id +')' + text + ' 的权限已经是『禁止访问』了..', { icon: 6, time: 2000 });
                                     return false;
@@ -299,7 +285,7 @@ $this->registerJsFile('@web/plus/jsTree/jstree.min.js', ['depends' => 'yii\web\J
                                 $.ajax({
                                     url: '<?=Yii::$app->homeUrl?>/map-field/permission/',
                                     type: 'post',
-                                    data: { permission: 0, unitcode: obj.id, user_id: <?= $user->id ?> },
+                                    data: { permission: 0, id: obj.id, user_id: <?= $user->id ?> },
                                     beforeSend: function () {
                                         layer.load();
                                     },
@@ -329,7 +315,7 @@ $this->registerJsFile('@web/plus/jsTree/jstree.min.js', ['depends' => 'yii\web\J
                     //$.pjax.reload({container:"#field-data",data: {'unitSearch[upid]':data.selected.join(':')}});
                     //data.selected 是Array类型
                     var info = data.selected.join('<br>');
-                    $('#field-detail').html('当前『字段』为：(<span class="text-danger">'+ data.selected.join(',') +'</span>) ' + data.node.text);
+                    $('#field-detail').html('当前『选中』为：(<span class="text-danger">'+ data.selected.join(',') +'</span>) ' + data.node.text);
                 } else {
                     $('#field-detail').html('当前未选中任何『字段』');
                 }

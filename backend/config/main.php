@@ -129,10 +129,6 @@ return [
 //                // ... merge data (see below)
 //            ]
         ],
-        //preferences
-        'sysini' => [
-            'class' => 'common\modules\preferences\Preferences',
-        ],
         //database
         'database' => [
             'class' => \backend\modules\database\Module::className(),
@@ -200,6 +196,10 @@ return [
                 'application/json' => 'yii\web\JsonParser',
           ],
         ],
+        //preferences
+        /*'preferences' => [
+            'class' => \common\populac\models\Preferences::className(),
+        ],*/
     ],
     'params' => $params,
     /*'on afterAction' => function($event) {

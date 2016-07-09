@@ -5021,17 +5021,18 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/PendalF89/yii2-filemanager.git",
-                "reference": "fcfbf63d5338d8303c1835c7cd7d9448e58c65cd"
+                "reference": "223f36ea718123bcee5db73e1904ec1364bf2099"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://packagist.phpcomposer.com/files/PendalF89/yii2-filemanager/fcfbf63d5338d8303c1835c7cd7d9448e58c65cd.zip",
-                "reference": "fcfbf63d5338d8303c1835c7cd7d9448e58c65cd",
+                "url": "https://packagist.phpcomposer.com/files/PendalF89/yii2-filemanager/223f36ea718123bcee5db73e1904ec1364bf2099.zip",
+                "reference": "223f36ea718123bcee5db73e1904ec1364bf2099",
                 "shasum": ""
             },
             "require": {
                 "2amigos/yii2-file-upload-widget": "*",
                 "kartik-v/yii2-widget-alert": "*",
+                "kartik-v/yii2-widget-select2": "*",
                 "pendalf89/yii2-tinymce": "*",
                 "yiisoft/yii2": "*",
                 "yiisoft/yii2-imagine": "*"
@@ -5053,7 +5054,7 @@
                 }
             ],
             "description": "Yii2 filemanager",
-            "time": "2016-03-31 14:50:13"
+            "time": "2016-07-03 02:00:19"
         },
         {
             "name": "pendalf89/yii2-tinymce",

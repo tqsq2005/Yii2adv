@@ -244,10 +244,6 @@ class ColTableController extends \common\populac\components\Controller
         return $this->render( 'col-missing' );
     }
 
-    public function actionTest() {
-        return $this->render( 'test' );
-    }
-
     public function actionGetFieldConfig()
     {
         //传过来的数据格式为 pbc_tnam.pbc_cnam
