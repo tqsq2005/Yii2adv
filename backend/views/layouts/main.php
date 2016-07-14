@@ -44,7 +44,7 @@ if (Yii::$app->controller->action->id === 'login') {
         <?php $this->registerCssFile(Yii::$app->getHomeUrl() . '/css/print.css', ['media' => 'print']) ?>
         <?php $this->head() ?>
     </head>
-    <body class="hold-transition skin-blue sidebar-mini fixed">
+    <body class="hold-transition skin-blue sidebar-mini layout-boxed">
     <?php $this->beginBody() ?>
 
     <!--//Get all flash messages and loop through them-->

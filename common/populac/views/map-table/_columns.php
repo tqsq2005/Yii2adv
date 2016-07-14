@@ -12,7 +12,7 @@ return [
     ],
     [
         'attribute'=>'tname',
-        'width'=> '140px',
+        'width'=> '80px',
         'content' => function ($model, $key, $index, $column) {
             return \yii\helpers\Html::a($model->tname, Url::to(['update', 'id' => $model->id]), [
                 'data-toggle' => 'tooltip',
@@ -25,7 +25,7 @@ return [
     [
         'class'=>'kartik\grid\EditableColumn',
         'attribute'=>'cnname',
-        'width'=> '180px',
+        'width'=> '120px',
         'editableOptions'=>[
             'header'=>'表中文名',
             'inputType'=>\kartik\editable\Editable::INPUT_TEXT,
@@ -91,6 +91,7 @@ return [
         'urlCreator' => function($action, $model, $key, $index) { 
                 return Url::to([$action,'id'=>$key]);
         },
+        'template' => '{view} {delete}',//{view} {update} {delete}
         'viewOptions'=>['role'=>'modal-remote','title'=>'查看','data-toggle'=>'tooltip'],
         //'updateOptions'=>['role'=>'modal-remote','title'=>'更新', 'data-toggle'=>'tooltip'],
         'deleteOptions'=>['role'=>'modal-remote','title'=>'删除',

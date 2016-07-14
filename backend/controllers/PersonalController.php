@@ -123,6 +123,18 @@ class PersonalController extends Controller
 
     public function actionTest()
     {
+        $callback = function($menu){
+            return [
+                'label' => $menu['name'],
+                'url' => [$menu['route']],
+                'icon' => $menu['data'],
+                'active' => $menu['route'],
+                'items' => $menu['children']
+            ];
+        };
+        $data = \mdm\admin\components\MenuHelper::getAssignedMenu(Yii::$app->user->id, 14, $callback, true);
+        echo json_encode($data);
+        return;
         if(Yii::$app->request->isPost) {
             var_dump(Yii::$app->request->post());
         } else {

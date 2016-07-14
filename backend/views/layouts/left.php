@@ -36,7 +36,7 @@
                     'label' => $menu['name'],
                     'url' => [$menu['route']],
                     'icon' => $menu['data'],
-                    'active' => $menu['route'],
+                    //'active' => true,
                     'items' => $menu['children']
                 ];
             };
@@ -45,13 +45,20 @@
         <?= dmstr\widgets\Menu::widget(
             [
                 'options' => ['class' => 'sidebar-menu'],
-                'items' => [
+                'items' => \yii\helpers\ArrayHelper::merge(
+                    [['label' => '管理台菜单', 'options' => ['class' => 'header']],],
+                    \mdm\admin\components\MenuHelper::getAssignedMenu(Yii::$app->user->id, 14, $callback, true), [
                     ['label' => '管理台菜单', 'options' => ['class' => 'header']],
                     ['label' => '测试页面', 'icon' => 'fa fa-flag-checkered', 'url' => ['/site/test']],
-                    ['label' => 'Gii', 'icon' => 'fa fa-file-code-o', 'url' => ['/gii']],
+                    [
+                        'label' => 'Gii',
+                        'icon' => 'fa fa-file-code-o',
+                        'url' => ['/gii'],
+                        'template' => '<a href="{url}" target="_blank">{icon} {label}</a>',
+                    ],
                     ['label' => 'Debug', 'icon' => 'fa fa-dashboard', 'url' => ['/debug']],
                     ['label' => 'Login', 'url' => Yii::$app->getHomeUrl(), 'visible' => Yii::$app->user->isGuest],
-                    [
+                    /*[
                         'label' => 'Same tools',
                         'icon' => 'fa fa-share',
                         'url' => '#',
@@ -76,7 +83,7 @@
                                 ],
                             ],
                         ],
-                    ],
+                    ],*/
                     [
                         'label' => '系统管理',
                         'visible' => !Yii::$app->user->isGuest,
@@ -85,10 +92,6 @@
                         'items' => [
                             ['label' => '系统使用帮助1', 'icon' => 'fa fa-question-circle', 'url' => ['/helpdoc'],],
                             ['label' => '系统使用帮助2', 'icon' => 'fa fa-question-circle', 'url' => ['/helpmenu/main'],],
-                            [
-                                'label' => '系统权限设置', 'icon' => 'fa fa-users', 'url' => '#',
-                                'items' => \mdm\admin\components\MenuHelper::getAssignedMenu(Yii::$app->user->id, 14, $callback, true),
-                            ],
                             ['label' => '系统参数配置', 'icon' => 'fa fa-wrench', 'url' => ['/preferences/index', 'per-page' => Yii::$app->params['backend.view_item_per_page']],],
                             ['label' => '系统事件管理', 'icon' => 'fa fa-calendar', 'url' => ['/event/index'],],
                             ['label' => '系统事件管理', 'icon' => 'fa fa-calendar-plus-o', 'url' => ['/events/index'],],
@@ -104,7 +107,8 @@
                             ],
                         ],
                     ]
-                ]
+                ]),
+
             ]
         ) ?>
 

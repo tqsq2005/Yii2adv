@@ -7,16 +7,14 @@ use yii\helpers\Html;
  * @var common\models\Personal $model
  */
 
-$this->title = 'Create Personal';
-$this->params['breadcrumbs'][] = ['label' => 'Personals', 'url' => ['index']];
+$this->title = '新增个人档案信息';
+$this->params['breadcrumbs'][] = ['label' => '员工档案资料管理', 'url' => ['/unit/index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="personal-create">
-    <div class="page-header">
-        <h1><?= Html::encode($this->title) ?></h1>
+<div class="box box-primary">
+    <div class="box-body">
+        <?= $this->render('_form', [
+            'model' => $model,
+        ]) ?>
     </div>
-    <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
-
 </div>

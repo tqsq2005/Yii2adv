@@ -14,11 +14,18 @@ use kartik\datecontrol\DateControl;
 
 <div class="personal-form">
 
-    <?php $form = ActiveForm::begin(['type'=>ActiveForm::TYPE_HORIZONTAL]); echo Form::widget([
+    <?php $form = ActiveForm::begin([
+        //'type'=>ActiveForm::TYPE_HORIZONTAL,
+        /*'fieldConfig' => [
+            'template' => "{label}\n<div class=\"col-lg-6\">{input}</div>\n<div class=\"col-lg-offset-6 col-lg-6\">{error}</div>",
+            'labelOptions' => ['class' => 'col-lg-6 control-label'],
+            //'placeholder' => "{attribute}",
+        ],*/
+    ]); echo Form::widget([
 
         'model' => $model,
         'form' => $form,
-        'columns' => 1,
+        'columns' => 5,
         'attributes' => [
 
             'code1'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Code1...', 'maxlength'=>36]],
@@ -34,16 +41,6 @@ use kartik\datecontrol\DateControl;
             'marry'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Marry...', 'maxlength'=>2]],
 
             'unit'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Unit...', 'maxlength'=>30]],
-
-            'personal_id'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Personal ID...', 'maxlength'=>60]],
-
-            'created_by'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Created By...']],
-
-            'updated_by'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Updated By...']],
-
-            'created_at'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Created At...']],
-
-            'updated_at'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Updated At...']],
 
             'childnum'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Childnum...']],
 
