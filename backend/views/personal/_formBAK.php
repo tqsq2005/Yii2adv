@@ -112,7 +112,83 @@ use kartik\datecontrol\DateControl;
 
             'memo'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Memo...', 'maxlength'=>254]],
 
+
+
+
+
+
+
+            'cardcode'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Cardcode...', 'maxlength'=>50]],
+
+            'do_man'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Do Man...', 'maxlength'=>50]],
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            'cztype'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Cztype...', 'maxlength'=>2]],
+
+            'incity'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Incity...', 'maxlength'=>2]],
+
+
+
+
+
+
+
+
+
+
+
+
+
+            'carddate'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Carddate...', 'maxlength'=>10]],
+
+            'examinedate'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Examinedate...', 'maxlength'=>10]],
+
+            'feeddate'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Feeddate...', 'maxlength'=>10]],
+
+            'yzdate'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Yzdate...', 'maxlength'=>10]],
+
+
+
+
+
+            'marrowdate'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Marrowdate...', 'maxlength'=>10]],
+
+            'leavedate'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Leavedate...', 'maxlength'=>10]],
+
+
+
+
+
+
+
+
+
+            'fzdw'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Fzdw...', 'maxlength'=>80]],
+
+            'checkunit'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Checkunit...', 'maxlength'=>80]],
+
+
+
+            'oldunit'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Oldunit...', 'maxlength'=>30]],
+
             'picture_name'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Picture Name...', 'maxlength'=>100]],
+
+            'memo2'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Memo2...', 'maxlength'=>100]],
+
+
 
         ]
 
