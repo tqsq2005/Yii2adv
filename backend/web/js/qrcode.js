@@ -67,14 +67,15 @@ jQuery(function($) {
 
     // 防止重复提交
     /*$('form').on('beforeValidate', function (e) {
+        console.log('beforeValidate');
         $(':submit').attr('disabled', true).addClass('disabled');
-    });*/
+    });
     $('form').on('afterValidate', function (e) {
-        console.log($(this).data('yiiActiveForm').validated);
+        //console.log($(this).data('yiiActiveForm').validated);
         if (cheched = $(this).data('yiiActiveForm').validated == false) {
             $(':submit').removeAttr('disabled').removeClass('disabled');
         }
-    });
+    });*/
     $('form').on('beforeSubmit', function (e) {
         $(':submit').attr('disabled', true).addClass('disabled');
     });

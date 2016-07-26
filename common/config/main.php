@@ -225,6 +225,12 @@ if (!YII_ENV_TEST) {
             'adminCrud' => [
                 'class' => 'yii2tech\admin\gii\crud\Generator'
             ],
+            'materializecss' => [
+                'class' => 'yii\gii\generators\crud\Generator',
+                'templates' => [ // setting materializecss templates
+                    'materializecss' => '@vendor/macgyer/yii2-materializecss/src/gii-templates/generators/crud/materializecss',
+                ]
+            ],
         ],
         'allowedIPs' => ['127.0.0.1', '::1', '192.168.*'],
     ];

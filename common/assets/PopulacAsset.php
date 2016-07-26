@@ -53,7 +53,7 @@ class PopulacAsset extends AssetBundle{
         //'js/jquery.history.js',
         //'js/charisma.js',
         'js/app/common.js',
-        'js/qrcode.js',//二维码
+        //'js/qrcode.js',//二维码
         'js/ajax-modal-popup.js',//modal js
     ];
     public $css = [

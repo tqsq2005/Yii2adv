@@ -15,7 +15,7 @@
     "minimum-stability": "stable",
     "require": {
         "php": ">=5.4.0",
-        "yiisoft/yii2": ">=2.0.6",
+        "yiisoft/yii2": "^2.0",
         "yiisoft/yii2-bootstrap": "*",
         "yiisoft/yii2-swiftmailer": "*",
         "kartik-v/yii2-icons": "*",
@@ -57,7 +57,8 @@
         "bower-asset/fancybox": "*",
         "bower-asset/jquery.switcher": "*",
         "yii2tech/admin": "dev-master",
-        "iisns/yii2-webuploader": "*"
+        "iisns/yii2-webuploader": "*",
+        "macgyer/yii2-materializecss": "*"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",

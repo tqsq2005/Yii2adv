@@ -5,6 +5,7 @@ use yii\helpers\Html;
 /**
  * @var yii\web\View $this
  * @var common\models\Personal $model
+ * @var string $unitname
  */
 
 $this->title = '新增个人档案信息';
@@ -15,6 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="box-body">
         <?= $this->render('_form', [
             'model' => $model,
+            'unitname' => $unitname,
         ]) ?>
     </div>
 </div>

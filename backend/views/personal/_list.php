@@ -47,7 +47,7 @@ span.p-extra-filter {
 }
 CSS;
 $this->registerCss($css);
-\common\assets\DataTableEditorAsset::register($this);
+//\common\assets\DataTableEditorNoPDFAsset::register($this);
 ?>
 <div class="box box-success">
     <div class="box-header with-border">
@@ -135,14 +135,14 @@ $this->registerCss($css);
         }
         var editor = null; // use a global for the submit and return data rendering in the examples
         var preferences = $.parseJSON('<?= $preferences ?>');
-        window.pdfMake.fonts  = {
+        /*window.pdfMake.fonts  = {
             msyh: {
                 normal: 'msyh.ttf',
                 bold: 'msyh.ttf',
                 italics: 'msyh.ttf',
                 bolditalics: 'msyh.ttf',
             }
-        };
+        };*/
 
         $(document).ready(function() {
 
@@ -430,7 +430,7 @@ $this->registerCss($css);
             var e_p_btn_add = function (e) {
                 //e.preventDefault();
                 layer.msg('进入个人档案录入界面..', {icon: 6, time: 1000}, function(index) {
-                    window.open('<?= \yii\helpers\Url::to(['/personal/create']) ?>', '_blank');
+                    window.open('<?= \yii\helpers\Url::to(['/personal/create', 'unit'=>$parent]) ?>', '_blank');
                 });
             };
 
@@ -587,7 +587,7 @@ $this->registerCss($css);
                                 columns: ':visible'
                             },
                         },
-                        {
+                        /*{
                             extend: 'pdf',
                             text: '所选导出PDF',
                             pageSize: 'A3',//LEGAL
@@ -617,7 +617,7 @@ $this->registerCss($css);
                                     font: 'msyh'
                                 };
                             }
-                        },
+                        },*/
                         {
                             extend: 'print',
                             text: '打印全部',

@@ -7,7 +7,7 @@ use kartik\datecontrol\DateControl;
 
 /**
  * @var yii\web\View $this
- * @var backend\models\Marry $model
+ * @var common\models\Marry $model
  * @var yii\widgets\ActiveForm $form
  */
 ?>
@@ -16,55 +16,63 @@ use kartik\datecontrol\DateControl;
 
     <?php $form = ActiveForm::begin(['type'=>ActiveForm::TYPE_HORIZONTAL]); echo Form::widget([
 
-    'model' => $model,
-    'form' => $form,
-    'columns' => 1,
-    'attributes' => [
+        'model' => $model,
+        'form' => $form,
+        'columns' => 1,
+        'attributes' => [
 
-'id'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter ID...']], 
+            'id'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter ID...']],
 
-'personal_id'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Personal ID...', 'maxlength'=>60]], 
+            'code1'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter 个人编码...', 'maxlength'=>36]],
 
-'marrowno'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Marrowno...']], 
+            'marrow'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter 配偶姓名...', 'maxlength'=>50]],
 
-'code1'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Code1...', 'maxlength'=>36]], 
+            'because'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter 与员工婚姻关系...', 'maxlength'=>2]],
 
-'marrow'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Marrow...', 'maxlength'=>50]], 
+            'becausedate'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter 发生婚姻关系时间...', 'maxlength'=>10]],
 
-'othertel'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Othertel...', 'maxlength'=>50]], 
+            'mfcode'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter 配偶身份证号...', 'maxlength'=>18]],
 
-'marrycode'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Marrycode...', 'maxlength'=>50]], 
+            'mhkdz'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter 配偶户口地址...', 'maxlength'=>80]],
 
-'do_man'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Do Man...', 'maxlength'=>50]], 
+            'marrowdate'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter 配偶出生日期...', 'maxlength'=>10]],
 
-'because'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Because...', 'maxlength'=>2]], 
+            'marrowunit'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter 配偶工作单位...', 'maxlength'=>80]],
 
-'hfp'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Hfp...', 'maxlength'=>2]], 
+            'othertel'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter 配偶单位电话...', 'maxlength'=>50]],
 
-'hmarry'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Hmarry...', 'maxlength'=>2]], 
+            'hfp'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter 配偶户口性质...', 'maxlength'=>2]],
 
-'becausedate'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Becausedate...', 'maxlength'=>10]], 
+            'maddr'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter 配偶单位地址...', 'maxlength'=>80]],
 
-'marrowdate'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Marrowdate...', 'maxlength'=>10]], 
+            'mpostcode'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter 配偶单位邮编...', 'maxlength'=>10]],
 
-'mpostcode'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Mpostcode...', 'maxlength'=>10]], 
+            'marrowno'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter 配偶生育次数...']],
 
-'mfcode'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Mfcode...', 'maxlength'=>18]], 
+            'hmarry'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter 配偶婚姻状况...', 'maxlength'=>2]],
 
-'mhkdz'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Mhkdz...', 'maxlength'=>80]], 
+            'marrycode'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter 结婚证号...', 'maxlength'=>50]],
 
-'marrowunit'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Marrowunit...', 'maxlength'=>80]], 
+            'mem'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter 备注...', 'maxlength'=>100]],
 
-'maddr'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Maddr...', 'maxlength'=>80]], 
+            'unit'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Unit...', 'maxlength'=>30]],
 
-'mem'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Mem...', 'maxlength'=>100]], 
+            'personal_id'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Personal ID...', 'maxlength'=>60]],
 
-'unit'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Unit...', 'maxlength'=>30]], 
+            'do_man'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Do Man...', 'maxlength'=>50]],
 
-    ]
+            'created_by'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Created By...']],
 
+            'updated_by'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Updated By...']],
+
+            'created_at'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Created At...']],
+
+            'updated_at'=>['type'=> Form::INPUT_TEXT, 'options'=>['placeholder'=>'Enter Updated At...']],
+
+        ]
 
     ]);
+
     echo Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']);
     ActiveForm::end(); ?>
 

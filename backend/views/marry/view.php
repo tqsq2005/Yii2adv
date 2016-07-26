@@ -6,7 +6,7 @@ use kartik\datecontrol\DateControl;
 
 /**
  * @var yii\web\View $this
- * @var backend\models\Marry $model
+ * @var common\models\Marry $model
  */
 
 $this->title = $model->mid;
@@ -50,13 +50,17 @@ $this->params['breadcrumbs'][] = $this->title;
             'personal_id',
             'do_man',
             'mid',
+            'created_by',
+            'updated_by',
+            'created_at',
+            'updated_at',
         ],
         'deleteOptions'=>[
-        'url'=>['delete', 'id' => $model->mid],
-        'data'=>[
-        'confirm'=>Yii::t('app', 'Are you sure you want to delete this item?'),
-        'method'=>'post',
-        ],
+            'url'=>['delete', 'id' => $model->mid],
+            'data'=>[
+                'confirm'=>Yii::t('app', 'Are you sure you want to delete this item?'),
+                'method'=>'post',
+            ],
         ],
         'enableEditMode'=>true,
     ]) ?>

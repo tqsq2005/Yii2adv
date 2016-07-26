@@ -20,6 +20,7 @@
  * @var string $imgTitle 图片标题
  * @var string $imgClass 图片样式
  * @var string $imgSavePath 图片保存路径
+ * @var string $imgAction 图片裁剪处理URL
  * @var \yii\web\View $this
  */
 
@@ -36,7 +37,7 @@ $imgSrc = $imgSrc ? $imgSrc : Yii::$app->homeUrl.'/uploads/user/default/user2-16
     <div class="modal fade" id="avatar-modal" aria-hidden="true" aria-labelledby="avatar-modal-label" role="dialog" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <form class="avatar-form" action="<?= \yii\helpers\Url::to(['/user-avatar/crop-avatar']) ?>" enctype="multipart/form-data" method="post">
+                <form class="avatar-form" action="<?= $imgAction ?>" enctype="multipart/form-data" method="post">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                         <h4 class="modal-title" id="avatar-modal-label">照片裁剪</h4>
@@ -107,7 +108,7 @@ $imgSrc = $imgSrc ? $imgSrc : Yii::$app->homeUrl.'/uploads/user/default/user2-16
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <button type="submit" class="btn btn-primary btn-block avatar-save">Done</button>
+                                    <button type="submit" class="btn btn-primary btn-block avatar-save">保 存</button>
                                 </div>
                             </div>
                         </div>

@@ -20,6 +20,8 @@ namespace common\populac\controllers;
 use bedezign\yii2\audit\models\AuditTrailSearch;
 use Yii;
 use yii\base\Exception;
+use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 use yii\widgets\ActiveForm;
 use common\populac\models\Preferences;
@@ -27,6 +29,22 @@ use common\populac\models\Preferences;
 class PreferencesController extends \common\populac\components\Controller
 {
     public $rootActions = ['create', 'delete'];
+
+    /**
+     * @inheritDoc
+     */
+    public function behaviors()
+    {
+        return ArrayHelper::merge(parent::behaviors(), [
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'exists' => ['POST'],
+                ],
+            ],
+        ]);
+    }
+
 
     public function actionIndex()
     {
@@ -186,5 +204,43 @@ class PreferencesController extends \common\populac\components\Controller
                 'status' => 'success',
             ]);
         }
+    }
+
+    /**
+     * (int) actionExists : 判断 classmark 的 name1 是否存在
+     * @return int
+     */
+    public function actionExists()
+    {
+        $request = Yii::$app->request;
+        if( $request->isAjax && $request->isPost ) {
+            $classmark  = $request->post('classmark');
+            $name1      = $request->post('name1');
+            return Preferences::getCodesByName1($classmark, $name1) ? 'yes' : 'no';
+        }
+    }
+
+    /**
+     * (int) actionAdd : 添加 classmark 的 name1
+     * @return int
+     */
+    public function actionAdd()
+    {
+        $request = Yii::$app->request;
+        if( $request->isAjax && $request->isPost ) {
+            $classmark  = $request->post('classmark');
+            $name1      = $request->post('name1');
+            //清除该`classmark`的缓存
+            $key1       = Preferences::CACHE_KEY . $classmark . '_ARRAYDATA_NAME1TONAME1';
+            $key2       = Preferences::CACHE_KEY . $classmark . '_ARRAYDATA_NAME1TOCODES';
+            Yii::$app->cache->delete($key1);
+            Yii::$app->cache->delete($key2);
+            //添加
+            if( Preferences::set($classmark, $name1, $name1) ) {
+                return 'success';
+            }
+        }
+
+        return 'fails';
     }
 }

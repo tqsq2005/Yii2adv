@@ -4,20 +4,24 @@ use yii\helpers\Html;
 
 /**
  * @var yii\web\View $this
+ * @var integer $id
+ * @var string $pid personal_id
  * @var common\models\Personal $model
  */
 
-$this->title = 'Update Personal: ' . ' ' . $model->title;
-$this->params['breadcrumbs'][] = ['label' => 'Personals', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->title, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->title = '更新个人档案信息';
+$this->params['breadcrumbs'][] = ['label' => '员工档案资料管理', 'url' => ['/unit/index']];
+$this->params['breadcrumbs'][] = $this->title;
+echo $this->render('_menu', [
+    'id'  => $id,
+    'pid' => $pid,
+]);
 ?>
-<div class="personal-update">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
-
+<div class="box box-solid">
+    <div class="box-body">
+        <?= $this->render('_form', [
+            'model' => $model,
+        ]) ?>
+    </div>
+</div>
 </div>

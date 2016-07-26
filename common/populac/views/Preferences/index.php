@@ -16,7 +16,7 @@
  */
 
 $this->title = Yii::t('easyii', 'Preferences');
-\common\assets\DataTableEditorAsset::register($this);
+\common\assets\DataTableEditorNoPDFAsset::register($this);
 \common\assets\Qtip::register($this);
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -119,14 +119,14 @@ $this->params['breadcrumbs'][] = $this->title;
         var editor; // use a global for the submit and return data rendering in the examples
 
         $(document).ready(function() {
-            window.pdfMake.fonts  = {
+            /*window.pdfMake.fonts  = {
                 msyh: {
                     normal: 'msyh.ttf',
                     bold: 'msyh.ttf',
                     italics: 'msyh.ttf',
                     bolditalics: 'msyh.ttf',
                 }
-            };
+            };*/
             editor = new $.fn.dataTable.Editor( {
                 ajax: {
                     url:  "<?=Yii::$app->homeUrl?>/populac/preferences/index?type=crud",
@@ -461,7 +461,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 columns: ':visible'
                             },
                         },
-                        {
+                        /*{
                             extend: 'pdf',
                             text: '所选导出PDF',
                             pageSize: 'A3',//LEGAL
@@ -491,7 +491,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     font: 'msyh'
                                 };
                             }
-                        },
+                        },*/
                         {
                             extend: 'print',
                             text: '打印全部',

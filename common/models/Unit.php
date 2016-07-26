@@ -340,6 +340,18 @@ class Unit extends \yii\db\ActiveRecord
     }
 
     /**
+     * (string) getUnitnameByUnitcode : 根据 `unitcode` 返回 `单位或部门名称`
+     * @static
+     * @param string $unitcode
+     * @return string
+     */
+    public static function getUnitnameByUnitcode( $unitcode = '%' )
+    {
+        $data = self::findOne(['unitcode' => $unitcode]);
+        return $data ? $data->unitname : '';
+    }
+
+    /**
      * @return \yii\db\ActiveQuery
      */
     public function getPersonals()

@@ -49,6 +49,7 @@ class Preferences extends ActiveRecord
     static $_data;
     private static $_classmark;
     private static $_codes;
+    private static $_name1;
 
     /**
      * @inheritdoc
@@ -151,9 +152,8 @@ class Preferences extends ActiveRecord
     /**
      * (null) getByClassmark : 通过classmark返回codes=>name1的数组
      * @static
-     * @param $classmark : 参数类型
-     * @param $codes : 参数编码
-     * @return string 参数名称
+     * @param string $classmark : 参数类型
+     * @return array [codes => name1]
      */
     public static function getByClassmark($classmark)
     {
@@ -165,6 +165,28 @@ class Preferences extends ActiveRecord
                     'status'    => self::STATUS_ACTIVE,
                     'classmark' => self::$_classmark,
                 ])->orderBy(['codes' => SORT_ASC])->all(), 'codes', 'name1');
+            }catch(\yii\db\Exception $e){}
+            return $result;
+        });
+        return isset(self::$_data[$classmark]) ? self::$_data[$classmark] : null;
+    }
+
+    /**
+     * (null) getByClassmarkReturnName1ToName1 : 通过classmark返回name1=>name1的数组
+     * @static
+     * @param string $classmark : 参数类型
+     * @return array [name1 => name1]
+     */
+    public static function getByClassmarkReturnName1ToName1($classmark)
+    {
+        self::$_classmark = $classmark;
+        self::$_data =  Data::cache(self::CACHE_KEY . self::$_classmark . '_ARRAYDATA_NAME1TONAME1', 3600, function(){
+            $result = [];
+            try {
+                $result[self::$_classmark] = ArrayHelper::map(parent::find()->where([
+                    'status'    => self::STATUS_ACTIVE,
+                    'classmark' => self::$_classmark,
+                ])->orderBy(['codes' => SORT_ASC])->all(), 'name1', 'name1');
             }catch(\yii\db\Exception $e){}
             return $result;
         });
@@ -198,14 +220,43 @@ class Preferences extends ActiveRecord
     }
 
     /**
+     * (null) getCodesByName1 : 通过classmark及name1获取相关参数编码
+     * @static
+     * @param $classmark : 参数类型
+     * @param $name1 : 参数名称
+     * @return string 参数编码
+     */
+    public static function getCodesByName1($classmark, $name1)
+    {
+        self::$_classmark = $classmark;
+        self::$_name1 = $name1;
+        self::$_data =  Data::cache(self::CACHE_KEY . self::$_classmark . '_ARRAYDATA_NAME1TOCODES', 3600, function(){
+            $result = [];
+            try {
+                foreach (parent::find()->where([
+                    'status'    => self::STATUS_ACTIVE,
+                    'classmark' => self::$_classmark,
+                ])->all() as $preferences) {
+                    $result[$preferences->classmark][$preferences->name1] = $preferences->codes;
+                }
+            }catch(\yii\db\Exception $e){}
+            return $result;
+        });
+        return isset(self::$_data[$classmark][$name1]) ? self::$_data[$classmark][$name1] : null;
+    }
+
+    /**
      * (void) set : 新增或修改指定classmark及codes对应的参数名
      * @static
      * @param $classmark : 参数类型
      * @param $codes : 参数编码
      * @param $name1 : 参数名称
      * @param string $classmarkcn : 中文参数类型
-     * @param string $changemark : 参数修改标识，默认为1
-     * @param string $status : 参数是否启用， 默认为启用(1)
+     * @param integer $changemark : 参数修改标识，默认为1
+     * @param integer $status : 参数是否启用， 默认为启用(1)
+     * @return bool
+     * @throws \Exception
+     * @throws \yii\db\Exception
      */
     public static function set($classmark, $codes, $name1, $classmarkcn = '', $changemark = 1, $status = 1)
     {
@@ -229,13 +280,15 @@ class Preferences extends ActiveRecord
             if ($preferences->validate()) {
                 $preferences->save();
                 $trans->commit();
-                $returnMsg = '参数类型>>>' . $classmarkcn . '-' . $classmark . '<<<新增或修改>>>'.$name1.'-'.$codes.'<<<成功！';
-                Yii::$app->getSession()->setFlash('success',$returnMsg);
+                return true;
+                //$returnMsg = '参数类型>>>' . $classmarkcn . '-' . $classmark . '<<<新增或修改>>>'.$name1.'-'.$codes.'<<<成功！';
+                //Yii::$app->getSession()->setFlash('success',$returnMsg);
             } else {
                 // 验证失败：$errors 是一个包含错误信息的数组
                 $trans->rollBack();
-                $errors = $preferences->errors;
-                Yii::$app->getSession()->setFlash('danger',\yii\helpers\Json::encode($errors));
+                return false;
+                //$errors = $preferences->errors;
+                //Yii::$app->getSession()->setFlash('danger',\yii\helpers\Json::encode($errors));
             }
         } catch(\Exception $e) {
             $trans->rollBack();

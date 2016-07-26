@@ -43,7 +43,7 @@ div.DTE_Body div.DTE_Form_Content:after {
 }
 CSS;
 $this->registerCss($css);
-\common\assets\DataTableEditorAsset::register($this);
+\common\assets\DataTableEditorNoPDFAsset::register($this);
 ?>
 <div class="box box-success">
     <div class="box-header with-border">
@@ -111,14 +111,14 @@ $this->registerCss($css);
         var editor = null; // use a global for the submit and return data rendering in the examples
 
         $(document).ready(function() {
-            window.pdfMake.fonts  = {
+            /*window.pdfMake.fonts  = {
                 msyh: {
                     normal: 'msyh.ttf',
                     bold: 'msyh.ttf',
                     italics: 'msyh.ttf',
                     bolditalics: 'msyh.ttf',
                 }
-            };
+            };*/
 
             boxUnitInfo('<?= $parent ?>');
 
@@ -526,7 +526,7 @@ $this->registerCss($css);
                                 columns: ':visible'
                             },
                         },
-                        {
+                        /*{
                             extend: 'pdf',
                             text: '所选导出PDF',
                             pageSize: 'A3',//LEGAL
@@ -556,7 +556,7 @@ $this->registerCss($css);
                                     font: 'msyh'
                                 };
                             }
-                        },
+                        },*/
                         {
                             extend: 'print',
                             text: '打印全部',

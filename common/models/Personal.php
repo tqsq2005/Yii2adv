@@ -3,6 +3,7 @@
 namespace common\models;
 
 use common\behaviors\ARLogBehavior;
+use common\populac\models\Preferences;
 use Yii;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
@@ -73,6 +74,7 @@ use yii\helpers\ArrayHelper;
  * @property integer $updated_by
  * @property integer $created_at
  * @property integer $updated_at
+ * @property string $fhdate
  *
  * @property Marry[] $marries
  * @property Unit $unit0
@@ -93,12 +95,49 @@ class Personal extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['code1', 'name1', 'sex', 'birthdate', 'fcode', 'marry', 'unit', 'personal_id', 'created_by', 'updated_by', 'created_at', 'updated_at'], 'required'],
-            [['childnum', 'selfno', 'logout', 'created_by', 'updated_by', 'created_at', 'updated_at'], 'integer'],
+            [['code1', 'name1', 'sex', 'birthdate', 'fcode', 'marry', 'unit',
+                's_date', 'flag', 'memo1', 'selfno', 'childnum', 'mz', 'work1', 'ingoingdate',
+                'address1', 'hkaddr', 'hkxz', 'e_date', 'checktime'], 'required'],
+            [['marrydate'], 'required',
+                'when' => function($model) {
+                    return $model->marry != '10';
+                }, 'whenClient' => "function (attribute, value) {
+                    return $('#p-marry').val() != '10';
+                }"
+            ],
+            [['lhdate'], 'required',
+                'when' => function($model) {
+                    return in_array($model->marry, [Preferences::getCodesByName1('pmarry', '离婚'), Preferences::getCodesByName1('pmarry', '再婚'),Preferences::getCodesByName1('pmarry', '复婚')]);
+                }, 'whenClient' => "function (attribute, value) {
+                    return $.inArray($('#p-marry').val(), ['22', '23', '40']) > -1 ;
+                }"
+            ],
+            [['zhdate'], 'required',
+                'when' => function($model) {
+                    return $model->marry == '22';
+                }, 'whenClient' => "function (attribute, value) {
+                    return $('#p-marry').val() == '22';
+                }"
+            ],
+            [['fhdate'], 'required',
+                'when' => function($model) {
+                    return $model->marry == '23';
+                }, 'whenClient' => "function (attribute, value) {
+                    return $('#p-marry').val() == '23';
+                }"
+            ],
+            [
+                ['s_date', 'birthdate', 'ingoingdate', 'jobdate', 'marrydate', 'lhdate', 'zhdate', 'fhdate'],
+                'date',
+                'format' => 'php:Ymd',
+                'message' => '日期格式：YYYYMMDD'
+            ],
+            [['e_date'], 'number'],
+            [['childnum', 'selfno', 'logout', 'checktime', 'created_by', 'updated_by', 'created_at', 'updated_at'], 'integer'],
             [['code1'], 'string', 'max' => 36],
             [['name1', 'tel', 'whcd', 'is_dy', 'title', 'zw', 'ltman', 'lttel', 'cardcode', 'do_man'], 'string', 'max' => 50],
-            [['sex', 'mz', 'marry', 'hkxz', 'work1', 'obect1', 'flag', 'memo1', 'onlysign', 'cztype', 'incity', 'checktime'], 'string', 'max' => 2],
-            [['birthdate', 'marrydate', 'postcode', 'jobdate', 'ingoingdate', 'lhdate', 'zhdate', 'ltpostcode', 'carddate', 'examinedate', 'feeddate', 'yzdate', 's_date', 'e_date', 'marrowdate', 'leavedate', 'audittime'], 'string', 'max' => 10],
+            [['sex', 'mz', 'marry', 'hkxz', 'work1', 'obect1', 'flag', 'memo1', 'onlysign', 'cztype', 'incity'], 'string', 'max' => 2],
+            [['birthdate', 'marrydate', 'postcode', 'jobdate', 'ingoingdate', 'lhdate', 'zhdate', 'fhdate', 'ltpostcode', 'carddate', 'examinedate', 'feeddate', 'yzdate', 's_date', 'e_date', 'marrowdate', 'leavedate', 'audittime'], 'string', 'max' => 8],
             [['fcode'], 'string', 'max' => 18],
             [['address1', 'hkaddr', 'ltunit', 'ltaddr', 'fzdw', 'checkunit'], 'string', 'max' => 80],
             [['grous', 'unit', 'oldunit'], 'string', 'max' => 30],
@@ -134,7 +173,7 @@ class Personal extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'code1' => '个人编码',
+            'code1' => '员工编号',
             'name1' => '姓名',
             'sex' => '性别',
             'birthdate' => '出生日期',
@@ -156,7 +195,7 @@ class Personal extends \yii\db\ActiveRecord
             'obect1' => '重点对象',
             'flag' => '户籍性质',
             'childnum' => '现子女数',
-            'unit' => '所在单位',
+            'unit' => '所在部门',
             'jobdate' => '工作日期',
             'ingoingdate' => '入单位日期',
             'memo1' => '管理对象',
@@ -189,13 +228,14 @@ class Personal extends \yii\db\ActiveRecord
             'marrowdate' => 'Marrowdate',
             'oldunit' => 'Oldunit',
             'leavedate' => 'Leavedate',
-            'checktime' => 'Checktime',
+            'checktime' => '函调/妇检次数',
             'audittime' => 'Audittime',
             'id' => 'ID',
             'created_by' => 'Created By',
             'updated_by' => 'Updated By',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
+            'fhdate' => '复婚日期',
         ];
     }
 
@@ -222,12 +262,39 @@ class Personal extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * (string) generatePersonal_id : 生成personal_id
+     * @static
+     * @param $unit 部门编码
+     * @param int $randomStrLength 随机字符串长度
+     * @return string personal_id
+     */
+    public static function generatePersonal_id( $unit, $randomStrLength = 12 )
+    {
+        $security   = Yii::$app->security;
+        if ( $unit == '%' ) $unit = $security->generateRandomString(8);
+        $randomStr  = $security->generateRandomString($randomStrLength);
+        return date('YmdHis') . $randomStr . $unit;
+    }
 
+    /**
+     * (null|static) getPersonalByPid : 返回personal_id对应的Personal实例
+     * @static
+     * @param string $pid personal_id
+     * @return null|static
+     */
+    public static function getPersonalByPid( $pid )
+    {
+        $data = self::findOne(['personal_id' => $pid]);
+        return $data ? $data : null;
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getMarries()
     {
         return $this->hasMany(Marry::className(), ['personal_id' => 'personal_id']);
-    }*/
+    }
 
     /**
      * @return \yii\db\ActiveQuery
