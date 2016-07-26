@@ -138,7 +138,7 @@ class Personal extends \yii\db\ActiveRecord
             [['name1', 'tel', 'whcd', 'is_dy', 'title', 'zw', 'ltman', 'lttel', 'cardcode', 'do_man'], 'string', 'max' => 50],
             [['sex', 'mz', 'marry', 'hkxz', 'work1', 'obect1', 'flag', 'memo1', 'onlysign', 'cztype', 'incity'], 'string', 'max' => 2],
             [['birthdate', 'marrydate', 'postcode', 'jobdate', 'ingoingdate', 'lhdate', 'zhdate', 'fhdate', 'ltpostcode', 'carddate', 'examinedate', 'feeddate', 'yzdate', 's_date', 'e_date', 'marrowdate', 'leavedate', 'audittime'], 'string', 'max' => 8],
-            [['fcode'], 'string', 'max' => 18],
+            [['fcode'], 'string', 'max' => 18, 'min' => 15],
             [['address1', 'hkaddr', 'ltunit', 'ltaddr', 'fzdw', 'checkunit'], 'string', 'max' => 80],
             [['grous', 'unit', 'oldunit'], 'string', 'max' => 30],
             [['picture_name', 'memo2'], 'string', 'max' => 100],

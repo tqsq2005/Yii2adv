@@ -35,7 +35,7 @@ class PersonalController extends Controller
      */
     public function beforeAction($action)
     {
-        if( $action->id == 'test' ) {
+        if( $action->id == 'crop-avatar' ) {
             $this->enableCsrfValidation = false;
         }
         return parent::beforeAction($action);
@@ -178,7 +178,9 @@ class PersonalController extends Controller
                 @unlink($oldFileName);
             //更新头像
             $personal->picture_name = $saveFileName;
-            $personal->update();
+            //$runValidation default is true, 老员工部分资料不完善，这边设置为不校验rules
+            $personal->update(false);
+            Yii::info($personal->errors, 'Person-crop-avatar-errors');
 
             $response = array(
                 'state'         => 200,

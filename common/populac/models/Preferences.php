@@ -172,6 +172,31 @@ class Preferences extends ActiveRecord
     }
 
     /**
+     * (null) getByClassmark : 供datatables的editor使用 通过classmark返回codes(value)=>name1(label)的数组
+     * @static
+     * @param string $classmark : 参数类型
+     * @return array [value => label]
+     */
+    public static function getByClassmarkForDatatables($classmark)
+    {
+        self::$_classmark = $classmark;
+        self::$_data =  Data::cache(self::CACHE_KEY . self::$_classmark . '_ARRAYDATA_FOR_DATATABLES', 3600, function(){
+            $result = [];
+            try {
+                $data = self::getByClassmark(self::$_classmark);
+                foreach( $data as $value => $label ) {
+                    $tmp = [];
+                    $tmp['label'] = $label;
+                    $tmp['value'] = $value;
+                    $result[self::$_classmark][] = $tmp;
+                }
+            }catch(\yii\db\Exception $e){}
+            return $result;
+        });
+        return isset(self::$_data[$classmark]) ? self::$_data[$classmark] : null;
+    }
+
+    /**
      * (null) getByClassmarkReturnName1ToName1 : 通过classmark返回name1=>name1的数组
      * @static
      * @param string $classmark : 参数类型

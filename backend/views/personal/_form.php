@@ -33,7 +33,7 @@ $this->registerCss($css);
         <div class="col-sm-3 pull-right">
             <?php
             echo \common\components\cropper\CropAvatarWidget::widget([
-                'imgSrc' => Yii::$app->homeUrl.'/uploads/personCardPhoto/' . $model->personal_id . '/' . $model->picture_name,
+                'imgSrc' => strlen($model->picture_name) > 14 ? Yii::$app->homeUrl.'/uploads/personCardPhoto/' . $model->personal_id . '/' . $model->picture_name : '',
                 'imgSavePath' => '/uploads/personCardPhoto/' . $model->personal_id . '/',
                 'imgClass' => 'profile-user-img img-responsive img-rounded',
                 'imgCropType' => common\components\cropper\CropAvatarWidget::PERSON_AVATAR,

@@ -3,10 +3,14 @@
 /**
  * @var $this yii\web\View
  * @var string $pid personal_id
+ * @var integer $pPrimaryKey 表personal的自增ID
+ * @var integer $id 配偶序号
  * @var string $code1 员工编码
- * @var string because 与职工婚姻关系
- * @var string becausedate 发生婚姻关系时间
+ * @var string $because 与职工婚姻关系
+ * @var string $becausedate 发生婚姻关系时间
+ * @var integer $selfno 生育次数
  * @var object $preferences jsondata
+ * @var object $preferencesForDT jsondata
  */
 
 use yii\helpers\Url;
@@ -44,7 +48,7 @@ CSS;
 $this->registerCss($css);
 \common\assets\DataTableEditorNoPDFAsset::register($this);
 echo $this->render('@backend/views/personal/_menu', [
-    'id'  => $code1,
+    'id'  => $pPrimaryKey,
     'pid' => $pid,
 ]);
 ?>
@@ -54,7 +58,7 @@ echo $this->render('@backend/views/personal/_menu', [
             <table id="marry-list-data" class="table table-striped table-bordered" cellspacing="0" width="2000">
                 <thead>
                 <tr>
-                    <th style="width: 20px;"></th>
+                    <th style="width: 20px;">#</th>
                     <th style="width: 40px;">序号</th>
                     <th style="width: 60px;">员工编号</th>
                     <th style="width: 60px;">配偶姓名</th>
@@ -83,15 +87,42 @@ echo $this->render('@backend/views/personal/_menu', [
 <?php \common\widgets\JsBlock::begin(); ?>
 <script type="text/javascript">
 
+    //身份证合法性
+    function certificateNoParse(certificateNo){
+        var pat = /^\d{6}(((19|20)\d{2}(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])\d{3}([0-9]|x|X))|(\d{2}(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])\d{3}))$/;
+        if(!pat.test(certificateNo))
+            return null;
+
+        var parseInner = function(certificateNo, idxSexStart, birthYearSpan){
+            var res = {};
+            var idxSex = 1 - certificateNo.substr(idxSexStart, 1) % 2;
+            res.sex = idxSex == '1' ? '02' : '01';
+
+            var year = (birthYearSpan == 2 ? '19' : '') +
+                certificateNo.substr(6, birthYearSpan);
+            var month = certificateNo.substr(6 + birthYearSpan, 2);
+            var day = certificateNo.substr(8 + birthYearSpan, 2);
+            res.birthday = year + '' + month + '' + day;
+
+            var d = new Date(); //当然，在正式项目中，这里应该获取服务器的当前时间
+            var monthFloor = ((d.getMonth()+1) < parseInt(month,10) || (d.getMonth()+1) == parseInt(month,10) && d.getDate() < parseInt(day,10)) ? 1 : 0;
+            res.age = d.getFullYear() - parseInt(year,10) - monthFloor;
+            return res;
+        };
+
+        return parseInner(certificateNo, certificateNo.length == 15 ? 14 : 16, certificateNo.length == 15 ? 2 : 4);
+    };
+
     var editor = null; // use a global for the submit and return data rendering in the examples
-    var preferences = $.parseJSON('<?= $preferences ?>');
+    var preferences         = $.parseJSON('<?= $preferences ?>');
+    var preferencesForDT    = $.parseJSON('<?= $preferencesForDT ?>');
     $(document).ready(function() {
 
         layer.closeAll('tips');
 
         editor = new $.fn.dataTable.Editor( {
             ajax: {
-                url:  "<?=Url::to(['/marry/data-tables', ['type'=>'crud', 'pid'=>$pid]])?>",
+                url:  "<?=Url::to(['/marry/data-tables', 'type'=>'crud', 'pid'=>$pid])?>",
                 dataSrc: '',
                 beforeSend: function () {
                     layer.load();
@@ -108,17 +139,17 @@ echo $this->render('@backend/views/personal/_menu', [
             i18n: {
                 create: {
                     button: "新增",
-                    title:  "新增员工档案",
+                    title:  "新增配偶资料",
                     submit: "保存"
                 },
                 edit: {
                     button: "修改",
-                    title:  "修改员工档案",
+                    title:  "修改配偶资料",
                     submit: "保存"
                 },
                 remove: {
                     button: "删除",
-                    title:  "删除员工档案",
+                    title:  "删除配偶资料",
                     submit: "确认删除",
                     confirm: {
                         _: "确定要删除这 %d 条记录吗?",
@@ -141,38 +172,135 @@ echo $this->render('@backend/views/personal/_menu', [
                 }
             },
             fields: [
+                { name: "personal_id", def: "<?= $pid ?>", type: "hidden" },
+                { name: "id", def: "<?= $id ?>", type: "hidden" },
                 {
-                    label: "个人编码:",
+                    label: "员工编码:",
+                    type: "readonly",
                     name: "code1",
                     def: "<?= $code1 ?>"
                 },
                 {
-                    label: "姓名:",
-                    name: "name1",
+                    label: "配偶姓名:",
+                    name: "marrow"
                 },
                 {
-                    label: "性别:",
-                    name: "sex",
+                    label: "与职工婚姻关系:",
+                    name: "because",
                     type: "select",
-                    ipOpts: [
-                        { "label": "男", "value": "01" },
-                        { "label": "女", "value": "02"}
-                    ]
+                    def: "<?= $because ?>",
+                    ipOpts: preferencesForDT['marry']
+                },
+                {
+                    label: "发生婚姻关系时间:",
+                    name: "becausedate",
+                    def: "<?= $becausedate ?>"
+                },
+                {
+                    label: "配偶婚姻状况:",
+                    name: "hmarry",
+                    type: "select",
+                    def: "<?= $because ?>",
+                    ipOpts: preferencesForDT['marry']
+                },
+                {
+                    label: "配偶户口性质:",
+                    name: "hfp",
+                    type: "select",
+                    ipOpts: preferencesForDT['hkxz']
+                },
+                {
+                    label: "配偶身份证号:",
+                    name: "mfcode"
+                },
+                {
+                    label: "配偶出生日期:",
+                    name: "marrowdate"
+                },
+                {
+                    label: "结婚证号:",
+                    name: "marrycode"
+                },
+                {
+                    label: "配偶生育次数:",
+                    def: "<?= $selfno ?>",
+                    name: "marrowno"
+                },
+                {
+                    label: "配偶户口地址:",
+                    name: "mhkdz"
+                },
+                {
+                    label: "配偶工作单位:",
+                    name: "marrowunit"
+                },
+                {
+                    label: "配偶单位地址:",
+                    name: "maddr"
+                },
+                {
+                    label: "配偶单位电话:",
+                    name: "othertel"
+                },
+                {
+                    label: "配偶单位邮编:",
+                    name: "mpostcode"
+                },
+                {
+                    label: "备 注:",
+                    name: "mem"
                 }
             ]
         } );
 
+        //修改过字段如果退出则警告
+        var openVals;
         editor
-        //删除并保存成功事件
+            .on('open', function () {
+                openVals = JSON.stringify( editor.get() );
+            } )
+            .on('preBlur', function ( e ) {
+                // On close, check if the values have changed and ask for closing confirmation if they have
+                if ( openVals !== JSON.stringify( editor.get() ) ) {
+                    //return confirm( '您有未保存的更改..确定要退出吗?' );
+                    layer.msg('您有未保存的更改，窗口已锁定，强烈建议先保存，如需强行退出请按键盘上的<kbd>ESC</kbd>键' +
+                        '或点击弹出层右上方的<kbd><i class="fa fa-times text-red" aria-hidden="true"></i>按钮</kbd>！',
+                        {
+                            icon: 6,
+                            shift: 6
+                        }
+                    );
+                    return false;
+                }
+            } )
+            //新增并保存成功事件
+            .on('create', function(e, json, data) {
+                //table.search( data.unitname ).draw();
+                layer.msg('记录已新增！', {icon: 6, time: 1500});
+            })
+            //修改并保存成功事件
+            .on('edit', function(e, json, data) {
+                //table.search( data.unitname ).draw();
+                layer.msg('记录已修改！', {icon: 6, time: 1500});
+            })
+            //删除并保存成功事件
             .on('remove', function(e, json, data) {
-                layer.msg('记录已删除！', {icon: 6, time: 2000});
+                layer.msg('记录已删除！', {icon: 6, time: 1500});
             });
 
+        // Edit record
+        $('#marry-list-data').on('click', 'i.editor_edit', function (e) {
+            //e.preventDefault();
+            editor.edit( $(this).closest('tr'), {
+                title: '修改配偶资料',
+                buttons: '保存'
+            } );
+        } );
         // Delete a record
         $('#marry-list-data').on('click', 'i.editor_remove', function (e) {
             //e.preventDefault();
             editor.remove( $(this).closest('tr'), {
-                title: '删除员工档案',
+                title: '删除配偶资料',
                 message: '确定要删除该条记录吗?',
                 buttons: '确认删除'
             } );
@@ -272,8 +400,8 @@ echo $this->render('@backend/views/personal/_menu', [
                 {
                     data: null,
                     className: "text-center",
-                    defaultContent: '<i class="fa fa-pencil text-primary editor_edit" data-toggle="tooltip" title="修改" style="cursor: pointer;"></i> &nbsp;&nbsp;' +
-                    '<i class="fa fa-trash text-primary editor_remove" data-toggle="tooltip" title="删除" style="cursor: pointer;"></i>'
+                    defaultContent: '<i class="fa fa-pencil text-primary editor_edit" data-toggle="tooltip" data-placement="bottom" title="修改" style="cursor: pointer;"></i> &nbsp;&nbsp;' +
+                    '<i class="fa fa-trash text-primary editor_remove" data-toggle="tooltip" data-placement="bottom" title="删除" style="cursor: pointer;"></i>'
                 }
             ],
             //隐藏ID列
@@ -332,9 +460,9 @@ echo $this->render('@backend/views/personal/_menu', [
         } );
 
         new $.fn.dataTable.Buttons( table, [
-            { extend: "create", editor: editor },
-            { extend: "edit",   editor: editor },
-            { extend: "remove", editor: editor },
+            { extend: "create", editor: editor, text: '<i class="fa fa-plus"></i> 新增' },
+            { extend: "edit",   editor: editor, text: '<i class="fa fa-pencil"></i> 修改' },
+            { extend: "remove", editor: editor, text: '<i class="fa fa-trash"></i> 删除' },
             /*{ extend: "edit",   editor: editor },
              { extend: "remove", editor: editor },*/
             //column selector
@@ -346,41 +474,52 @@ echo $this->render('@backend/views/personal/_menu', [
             },
             {
                 extend: 'collection',
-                text: '导出',
+                text: '<i class="fa fa-share-square-o"></i> 导出',
                 buttons: [
                     {
                         extend: 'copy',
-                        text: '复制',
+                        text: '<i class="fa fa-clipboard"></i> 复制',
                         exportOptions: {
                             columns: ':visible'
                         },
                     },
                     {
                         extend: 'excel',
-                        text: '导出Excel',
+                        text: '<i class="fa fa-file-excel-o"></i> 导出Excel',
                         exportOptions: {
                             columns: ':visible'
                         },
                     },
                     {
                         extend: 'csv',
-                        text: '导出Csv',
+                        text: '<i class="fa fa-file-excel-o"></i> 导出Csv',
                         exportOptions: {
                             columns: ':visible'
                         },
                     },
                     {
                         extend: 'print',
-                        text: '打印全部',
+                        text: '<i class="fa fa-print"></i> 打印全部',
                         //disable auto print
                         autoPrint: false,
                         exportOptions: {
                             columns: ':visible'
+                        },
+                        customize: function ( win ) {
+                            $(win.document.body)
+                                .css( 'font-size', '10pt' );
+
+                            $(win.document.body).find( 'table' )
+                                .addClass( 'compact' )
+                                .css( 'font-size', 'inherit' );
+
+                            $(win.document.body).find( 'h1' )
+                                .addClass( 'text-center' );
                         }
                     },
                     {
                         extend: 'print',
-                        text: '打印所选',
+                        text: '<i class="fa fa-print"></i> 打印所选',
                         //disable auto print
                         autoPrint: false,
                         exportOptions: {
@@ -401,6 +540,7 @@ echo $this->render('@backend/views/personal/_menu', [
                     search: 'applied',
                     order: 'applied'
                 }).nodes().each(function(cell, i) {
+                    //console.log(cell);
                     cell.innerHTML = i + 1;
                     table.cell(cell).invalidate('dom');//解决打印时不显示序号
                 });
@@ -416,7 +556,15 @@ echo $this->render('@backend/views/personal/_menu', [
             .append('&nbsp;&nbsp;&nbsp;&nbsp;')
             .prependTo( $('.col-sm-12:eq(0)', table.table().container() ) );
 
-
+        $(document)
+            //输入身份证，自动生成性别及出生日期
+            .on('keyup blur', '#DTE_Field_mfcode', function() {
+                var fcode = $(this).val();
+                var res   = certificateNoParse(fcode);
+                if ( res ) {
+                    $('#DTE_Field_marrowdate').val(res.birthday);
+                }
+            });
     } );
 </script>
 <?php \common\widgets\JsBlock::end(); ?>

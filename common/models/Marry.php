@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use bedezign\yii2\audit\models\AuditTrail;
 use common\behaviors\ARLogBehavior;
 use Yii;
 use yii\behaviors\BlameableBehavior;
@@ -55,13 +56,19 @@ class Marry extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'code1', 'marrow', 'because', 'becausedate', 'mfcode', 'mhkdz', 'marrowdate', 'marrowunit', 'othertel', 'hfp', 'maddr', 'mpostcode', 'marrowno', 'hmarry', 'marrycode', 'mem', 'unit', 'personal_id', 'do_man', 'created_by', 'updated_by', 'created_at', 'updated_at'], 'required'],
+            [['code1', 'marrow', 'because', 'becausedate', 'mfcode', 'mhkdz', 'marrowdate', 'marrowunit', 'othertel', 'hfp', 'maddr', 'mpostcode', 'marrowno', 'hmarry'], 'required'],
             [['id', 'marrowno', 'created_by', 'updated_by', 'created_at', 'updated_at'], 'integer'],
+            [
+                ['becausedate', 'marrowdate'],
+                'date',
+                'format' => 'php:Ymd',
+                'message' => '日期格式：YYYYMMDD'
+            ],
             [['code1'], 'string', 'max' => 36],
             [['marrow', 'othertel', 'marrycode', 'do_man'], 'string', 'max' => 50],
             [['because', 'hfp', 'hmarry'], 'string', 'max' => 2],
             [['becausedate', 'marrowdate', 'mpostcode'], 'string', 'max' => 10],
-            [['mfcode'], 'string', 'max' => 18],
+            [['mfcode'], 'string', 'max' => 18, 'min' => 15],
             [['mhkdz', 'marrowunit', 'maddr'], 'string', 'max' => 80],
             [['mem'], 'string', 'max' => 100],
             [['unit'], 'string', 'max' => 30],
@@ -119,6 +126,32 @@ class Marry extends \yii\db\ActiveRecord
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
+    }
+
+    /**
+     * (int) generateId : 返回最大id
+     * @static
+     * @param $pid
+     * @return int
+     */
+    public static function generateId( $pid )
+    {
+        $query = self::find()
+            ->where(['personal_id' => $pid])
+            ->max('id');
+
+        return $query ? intval($query) + 1 : 1;
+    }
+
+    /**
+     * ($this)  getAuditTrails : get trails for this model
+     * @param   $pid
+     * @return  $this
+     */
+    public function getAuditTrails(  )
+    {
+        return $this->hasMany(AuditTrail::className(), ['model_id' => 'mid'])
+            ->andOnCondition(['model' => get_class($this)]);
     }
 
     /**

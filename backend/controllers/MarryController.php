@@ -17,18 +17,6 @@ use yii\filters\VerbFilter;
  */
 class MarryController extends Controller
 {
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['post'],
-                ],
-            ],
-        ];
-    }
-
     /**
      * (string) actionIndex : marryList
      * @param $pid personal_id
@@ -57,14 +45,24 @@ class MarryController extends Controller
         }
         /*配置参数*/
         $preferences            = [];
+        $preferencesForDT       = [];
         $preferences['marry']   = Preferences::getByClassmark('pmarry');
         $preferences['hkxz']    = Preferences::getByClassmark('chkxz');
+
+        $preferencesForDT['marry']  = Preferences::getByClassmarkForDatatables('pmarry');
+        $preferencesForDT['hkxz']   = Preferences::getByClassmarkForDatatables('chkxz');
+
+
         return $this->render('index', [
-            'pid'           => $pid,
-            'code1'         => $code1,
-            'because'       => $because,
-            'becausedate'   => $becausedate,
-            'preferences'   => Json::encode($preferences),
+            'pPrimaryKey'       => $personal->id,
+            'pid'               => $pid,
+            'id'                => Marry::generateId($pid),//marry 序号
+            'code1'             => $code1,
+            'because'           => $because,
+            'becausedate'       => $becausedate,
+            'selfno'            => $personal->selfno,
+            'preferences'       => Json::encode($preferences),
+            'preferencesForDT'  => Json::encode($preferencesForDT),
         ]);
     }
 
@@ -86,12 +84,11 @@ class MarryController extends Controller
                 return Json::encode($returnData);
             case "crud":
                 $requestAction = Yii::$app->request->post('action');
-
                 switch($requestAction) {
                     case "create":
                         $requestID  = key(Yii::$app->request->post('data'));
                         $requestData = Yii::$app->request->post('data')[$requestID];
-                        $model = new Personal();
+                        $model = new Marry();
                         //块赋值
                         $model->attributes = $requestData;
                         //返回错误信息给datatable
@@ -106,7 +103,7 @@ class MarryController extends Controller
                             return Json::encode(['fieldErrors' => $fieldErrors, 'data' => []]);
                         }
                         if($model->save()) {
-                            $requestData['id'] = $model->id;
+                            $requestData['mid'] = $model->mid;
                             $data = [];
                             $data[] = $requestData;
                             return Json::encode(['data' => $data]);
@@ -118,13 +115,13 @@ class MarryController extends Controller
                     case "edit":
                         $editID = array_keys(Yii::$app->request->post('data'));
                         //执行事务，保存必须都成功了才行
-                        $transaction = Personal::getDb()->beginTransaction();
+                        $transaction = Marry::getDb()->beginTransaction();
                         //返回值
                         $data = [];
                         try {
                             foreach($editID as $requestID) {
                                 $requestData = Yii::$app->request->post('data')[$requestID];
-                                $model = Personal::findOne($requestID);
+                                $model = Marry::findOne($requestID);
                                 //块赋值
                                 $model->attributes = $requestData;
                                 //返回错误信息给datatable
@@ -141,11 +138,11 @@ class MarryController extends Controller
                                 $model->save();
                                 //单个字段更新的时候
                                 if(count($requestData)==1 || !is_array($requestData)) {
-                                    $requestData = Personal::find()->select(['*'])->where([
-                                        'id' => $requestID,
+                                    $requestData = Marry::find()->select(['*'])->where([
+                                        'mid' => $requestID,
                                     ])->one();
                                 } else {
-                                    $requestData['id'] = $requestID;
+                                    $requestData['mid'] = $requestID;
                                 }
                                 $data[] = $requestData;
                             }
@@ -159,7 +156,7 @@ class MarryController extends Controller
                     case "remove":
                         //多选则删除全部 用deleteAll()不会触发 event： EVENT_BEFORE_DELETE 和 EVENT_AFTER_DELETE
                         foreach(Yii::$app->request->post('data') as $removeID => $removeData) {
-                            Personal::findOne($removeID)->delete();
+                            Marry::findOne($removeID)->delete();
                         }
                         return Json::encode($returnData);
                     default:
@@ -171,18 +168,17 @@ class MarryController extends Controller
     }
 
     /**
-     * Finds the Marry model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return Marry the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
+     * (string) actionLog : 日志视图
+     * @param   string $pid
+     * @return  string
      */
-    protected function findModel($id)
+    public function actionLog( $pid )
     {
-        if (($model = Marry::findOne($id)) !== null) {
-            return $model;
-        } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
-        }
+        //$model = (new Marry)->getAuditTrails( );
+        //var_dump($model);
+        //return;
+        //return $this->render('log', ['model' => $model]);
+        $model = Marry::findOne(['personal_id' => $pid]);
+        return $this->render('@bedezign/yii2/audit/views/_audit_trails', ['query' => $model->getAuditTrails()]);
     }
 }

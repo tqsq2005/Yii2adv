@@ -324,7 +324,7 @@
     submitEnd: function (data) {
       layer.msg('截图已保存', { icon: 6, time: 1500 }, function() {
         layer.closeAll('loading');
-        window.location.reload();
+        //window.location.reload();
       });
     },
 
