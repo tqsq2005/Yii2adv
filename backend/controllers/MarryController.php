@@ -6,11 +6,10 @@ use common\models\Personal;
 use common\populac\models\Preferences;
 use Yii;
 use common\models\Marry;
-use yii\data\ActiveDataProvider;
+use yii\di\Instance;
 use yii\helpers\Json;
 use yii\web\Controller;
-use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
+use yii\web\User;
 
 /**
  * MarryController implements the CRUD actions for Marry model.
@@ -174,11 +173,28 @@ class MarryController extends Controller
      */
     public function actionLog( $pid )
     {
-        //$model = (new Marry)->getAuditTrails( );
-        //var_dump($model);
-        //return;
-        //return $this->render('log', ['model' => $model]);
-        $model = Marry::findOne(['personal_id' => $pid]);
-        return $this->render('@bedezign/yii2/audit/views/_audit_trails', ['query' => $model->getAuditTrails()]);
+        /** @var Marry $model*/
+        $model = Marry::findAll(['personal_id' => $pid]);
+        return $this->render('@bedezign/yii2/audit/views/_audit_trails', [
+            // model to display audit trais for, must have a getAuditTrails() method
+            'query' => $model->getAuditTrails(),
+            // params for the AuditTrailSearch::search() (optional)
+            'params' => [
+                'AuditTrailSearch' => [
+                    // can either be a field or an array of fields
+                    // in this case we only want to show trails for the "status" field
+                    //'field' => 'status',
+                ]
+            ],
+            // which columns to show
+            'columns' => ['user_id', 'entry_id', 'action', 'field', 'old_value', 'new_value', 'created'],
+            // set to false to hide filter
+            'filter' => false,
+        ]);
+    }
+
+    public function actionTest()
+    {
+        echo \yii\helpers\Url::to(['/populac/default/log-retrieve']);
     }
 }

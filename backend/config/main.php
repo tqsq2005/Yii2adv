@@ -104,10 +104,11 @@ return [
             'ignoreActions' => ['audit/*', 'debug/*', 'site/qrcode'],
             // Maximum age (in days) of the audit entries before they are truncated
             'maxAge' => '9999',
+            //accessIps 优先级最高，只要符合了就能访问，然后是accessRoles，最后才是accessUsers
             // IP address or list of IP addresses with access to the viewer, null for everyone (if the IP matches)
-            'accessIps' => ['127.0.0.1', '192.168.*'],
+            //'accessIps' => ['127.0.0.1', '192.168.*'],
             // Role or list of roles with access to the viewer, null for everyone (if the user matches)
-            'accessRoles' => [],
+            'accessRoles' => ['超级管理员'],
             // User ID or list of user IDs with access to the viewer, null for everyone (if the role matches)
             //'accessUsers' => [1, 2],
             // Compress extra data generated or just keep in text? For people who don't like binary data in the DB

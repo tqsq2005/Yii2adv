@@ -117,14 +117,14 @@ class Marry extends \yii\db\ActiveRecord
             'hmarry' => '配偶婚姻状况',
             'marrycode' => '结婚证号',
             'mem' => '备注',
-            'unit' => 'Unit',
-            'personal_id' => 'Personal ID',
+            'unit' => '单位编码',
+            'personal_id' => '员工PID',
             'do_man' => 'Do Man',
-            'mid' => 'Mid',
-            'created_by' => 'Created By',
-            'updated_by' => 'Updated By',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
+            'mid' => '主键ID',
+            'created_by' => '添加者',
+            'updated_by' => '末次修改者',
+            'created_at' => '添加时间',
+            'updated_at' => '末次修改时间',
         ];
     }
 
@@ -145,12 +145,12 @@ class Marry extends \yii\db\ActiveRecord
 
     /**
      * ($this)  getAuditTrails : get trails for this model
-     * @param   $pid
      * @return  $this
      */
-    public function getAuditTrails(  )
+    public function getAuditTrails()
     {
         return $this->hasMany(AuditTrail::className(), ['model_id' => 'mid'])
+            ->andOnCondition(['REGEXP', 'field', '^\[(.)*\]$'])
             ->andOnCondition(['model' => get_class($this)]);
     }
 

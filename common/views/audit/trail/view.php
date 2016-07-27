@@ -12,29 +12,39 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('audit', 'Audit'), 'url' => 
 $this->params['breadcrumbs'][] = ['label' => Yii::t('audit', 'Trails'), 'url' => ['trail/index']];
 $this->params['breadcrumbs'][] = '#' . $model->id;
 
-echo Html::tag('h1', $this->title);
-
-echo DetailView::widget([
-    'model' => $model,
-    'attributes' => [
-        'id',
-        [
-            'label' => $model->getAttributeLabel('user_id'),
-            'value' => Audit::getInstance()->getUserIdentifier($model->user_id),
-            'format' => 'raw',
+?>
+<div class="box box-primary">
+    <div class="box-header" style="cursor: pointer;">
+        <i class="fa fa-info-circle"></i>
+        <h3 class="box-title"><?= Html::encode($this->title) ?></h3>
+    </div>
+    <div class="box-body">
+    <?php
+    echo DetailView::widget([
+        'model' => $model,
+        'attributes' => [
+            'id',
+            [
+                'label' => $model->getAttributeLabel('user_id'),
+                'value' => Audit::getInstance()->getUserIdentifier($model->user_id),
+                'format' => 'raw',
+            ],
+            [
+                'attribute' => 'entry_id',
+                'value' => $model->entry_id ? Html::a($model->entry_id, ['entry/view', 'id' => $model->entry_id]) : '',
+                'format' => 'raw',
+            ],
+            'action',
+            'model',
+            'model_id',
+            'field',
+            'created',
         ],
-        [
-            'attribute' => 'entry_id',
-            'value' => $model->entry_id ? Html::a($model->entry_id, ['entry/view', 'id' => $model->entry_id]) : '',
-            'format' => 'raw',
-        ],
-        'action',
-        'model',
-        'model_id',
-        'field',
-        'created',
-    ],
-]);
+    ]);
 
-echo Html::tag('h2', Yii::t('audit', 'Difference'));
-echo $model->getDiffHtml();
+    echo Html::tag('h2', Yii::t('audit', 'Difference'));
+    echo $model->getDiffHtml();
+    ?>
+    </div>
+</div>
+

@@ -128,7 +128,8 @@ $config = [
         'view' => [
             'theme' => [
                 'pathMap' => [
-                    '@dektrium/user/views' => '@common/views/user'
+                    '@dektrium/user/views' => '@common/views/user',
+                    '@bedezign/yii2/audit/views' => '@common/views/audit',
                 ],
             ],
         ],
@@ -178,7 +179,15 @@ $config = [
                     'sourceLanguage' => 'en-US',
                     'basePath' => '@common/messages',
                     'fileMap' => [
-                        'yii2tech-admin' => 'user.php',
+                        'user' => 'user.php',
+                    ]
+                ],
+                'audit' => [
+                    'class' => 'yii\i18n\PhpMessageSource',
+                    'sourceLanguage' => 'en-US',
+                    'basePath' => '@common/messages',
+                    'fileMap' => [
+                        'audit' => 'audit.php',
                     ]
                 ],
             ],
